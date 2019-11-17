@@ -1,5 +1,6 @@
 package com.github.vlmap.annotation;
 
+ import com.github.vlmap.cloud.loadbalancer.tag.TagProcess;
  import org.apache.commons.lang3.StringUtils;
  import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
@@ -31,20 +32,20 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
 
 
         imports = importsList.toArray(new String[0]);
-            Environment env = getEnvironment();
-            if (ConfigurableEnvironment.class.isInstance(env)) {
-                ConfigurableEnvironment configEnv = (ConfigurableEnvironment) env;
-                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                map.put("ribbon.NFLoadBalancerRuleClassName", "com.github.vlmap.cloud.loadbalancer.TagRule");
-               String tag= env.getProperty("loadbalancer.tag");
-               if(StringUtils.isBlank(tag)){
-                   map.put("loadbalancer.tag","Loadbalancer-Tag");
-               }
-
-                 MapPropertySource propertySource = new MapPropertySource(
-                        "springCloudTagRule", map);
-                configEnv.getPropertySources().addLast(propertySource);
-            }
+//            Environment env = getEnvironment();
+//            if (ConfigurableEnvironment.class.isInstance(env)) {
+//                ConfigurableEnvironment configEnv = (ConfigurableEnvironment) env;
+//                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+//                map.put("ribbon.NFLoadBalancerRuleClassName", "com.github.vlmap.cloud.loadbalancer.TagRule");
+//               String tag= env.getProperty(TagProcess.LOADBALANCER_TAG);
+//               if(StringUtils.isBlank(tag)){
+//                   map.put("loadbalancer.tag","Loadbalancer-Tag");
+//               }
+//
+//                 MapPropertySource propertySource = new MapPropertySource(
+//                        "springCloudTagRule", map);
+//                configEnv.getPropertySources().addLast(propertySource);
+//            }
 
 
 

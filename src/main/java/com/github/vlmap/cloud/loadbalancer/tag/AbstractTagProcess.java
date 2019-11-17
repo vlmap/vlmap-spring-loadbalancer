@@ -27,7 +27,7 @@ public abstract class AbstractTagProcess implements TagProcess {
      * 当前节点配置的TAG
      * @return
      */
-    protected final String getLoadbalancerTag() {
+    protected final String currentServerTag() {
 
         if (propertySource != null) {
             Object tag = propertySource.getProperty(LOADBALANCER_TAG);
@@ -42,7 +42,7 @@ public abstract class AbstractTagProcess implements TagProcess {
      */
     protected abstract String getRequestTag();
     public   String getTag(){
-        String loadbalancerTag = getLoadbalancerTag();
+        String loadbalancerTag = currentServerTag();
         String requestTag = getRequestTag();
         String tag = null;
         if (StringUtils.isNotBlank(requestTag)) {

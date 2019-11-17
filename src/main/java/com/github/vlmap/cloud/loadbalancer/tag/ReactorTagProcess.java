@@ -10,7 +10,7 @@ public class ReactorTagProcess extends AbstractTagProcess {
     public void setTag(String tag) {
         ServerHttpRequest request = TagContextHolder.getRequest();
         if (request != null) {
-            request.getHeaders().add(loadbalancerTag, tag);
+            request.getHeaders().add(LOADBALANCER_TAG_HEADER, tag);
         }
 
     }
@@ -19,7 +19,7 @@ public class ReactorTagProcess extends AbstractTagProcess {
     protected String getRequestTag() {
         ServerHttpRequest request = TagContextHolder.getRequest();
         if (request != null) {
-            return request.getHeaders().getFirst(loadbalancerTag);
+            return request.getHeaders().getFirst(LOADBALANCER_TAG_HEADER);
         }
         return null;
     }

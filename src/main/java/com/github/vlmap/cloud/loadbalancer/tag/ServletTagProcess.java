@@ -13,7 +13,7 @@ public class ServletTagProcess  extends AbstractTagProcess {
 
 //        ServerHttpRequest request= TagContextHolder.getRequest();
 //        if(request!=null){
-//            request.getHeaders().add(loadbalancerTag,tag);
+//            request.getHeaders().add(LOADBALANCER_TAG_HEADER,tag);
 //        }
     }
 
@@ -21,7 +21,7 @@ public class ServletTagProcess  extends AbstractTagProcess {
     protected String getRequestTag() {
 //        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 //        if (request != null) {
-//            String tag = request.getHeader(loadbalancerTag);
+//            String tag = request.getHeader(LOADBALANCER_TAG_HEADER);
 //           return tag;
 //        }
 

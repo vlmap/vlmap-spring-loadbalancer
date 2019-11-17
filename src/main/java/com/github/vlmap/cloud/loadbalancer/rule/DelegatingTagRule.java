@@ -1,4 +1,4 @@
-package com.github.vlmap.cloud.loadbalancer.ribbon;
+package com.github.vlmap.cloud.loadbalancer.rule;
 
 import com.github.vlmap.cloud.loadbalancer.tag.TagProcess;
 import com.netflix.client.IClientConfigAware;
@@ -9,13 +9,21 @@ import com.netflix.loadbalancer.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class DelegatingTagRule implements IRule, IClientConfigAware {
     private  IRule target;
-
-    public DelegatingTagRule(IRule target) {
+    private String currentServerTag;
+    private List<TagProcess> tagProcesses= Collections.emptyList();
+    public DelegatingTagRule(IRule target,String currentServerTag) {
         this.target = target;
+        this.currentServerTag=currentServerTag;
+    }
+
+    public void setTagProcesses(List<TagProcess> tagProcesses) {
+        this.tagProcesses = tagProcesses;
     }
 
     @Override
@@ -24,11 +32,10 @@ public class DelegatingTagRule implements IRule, IClientConfigAware {
             ((IClientConfigAware)target).initWithNiwsConfig(clientConfig);
         }
     }
-    @Autowired
-    private Map<String, TagProcess> tagProcessMap;
+
 
     protected String tag() {
-        for (TagProcess process : tagProcessMap.values()) {
+        for (TagProcess process : tagProcesses) {
             String tag = process.getTag();
             if (StringUtils.isNotBlank(tag)) {
                 return tag;
@@ -38,7 +45,7 @@ public class DelegatingTagRule implements IRule, IClientConfigAware {
     }
 
     protected void setTag(String tag) {
-        for (TagProcess process : tagProcessMap.values()) {
+        for (TagProcess process : tagProcesses) {
             process.setTag(tag);
 
         }
@@ -52,10 +59,13 @@ public class DelegatingTagRule implements IRule, IClientConfigAware {
     public Server choose(Object key) {
         String tag = tag();
         if (StringUtils.isNotBlank(tag)) {
-            setTag(tag);
+            if(StringUtils.isNotBlank(currentServerTag)){
+                setTag(currentServerTag);
+            }
+
 
         }
-            return target.choose(key);
+        return target.choose(key);
     }
 
     @Override
