@@ -3,28 +3,35 @@ package com.github.vlmap.cloud.loadbalancer.rule;
 import com.github.vlmap.cloud.loadbalancer.tag.TagProcess;
 import com.netflix.client.IClientConfigAware;
 import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.AvailabilityFilteringRule;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
+
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class DelegatingTagRule implements IRule, IClientConfigAware {
-    private  IRule target;
-    private String currentServerTag;
-    private List<TagProcess> tagProcesses= Collections.emptyList();
-    public DelegatingTagRule(IRule target,String currentServerTag) {
-        this.target = target;
-        this.currentServerTag=currentServerTag;
+
+    private  IRule target=new AvailabilityFilteringRule();
+    private List<TagProcess> tagProcesses = Collections.emptyList();
+    private ILoadBalancer lb;
+
+    public DelegatingTagRule() {
+
     }
 
-    public void setTagProcesses(List<TagProcess> tagProcesses) {
-        this.tagProcesses = tagProcesses;
+    public DelegatingTagRule(IRule target) {
+        this.target = target;
     }
+    @PostConstruct
+    public void init(){
+        System.out.println("xx");
+    }
+
 
     @Override
     public void initWithNiwsConfig(IClientConfig clientConfig) {
@@ -59,23 +66,25 @@ public class DelegatingTagRule implements IRule, IClientConfigAware {
     public Server choose(Object key) {
         String tag = tag();
         if (StringUtils.isNotBlank(tag)) {
-            if(StringUtils.isNotBlank(currentServerTag)){
-                setTag(currentServerTag);
-            }
-
+            setTag(tag);
 
         }
+
         return target.choose(key);
     }
 
     @Override
     public void setLoadBalancer(ILoadBalancer lb) {
-        target.setLoadBalancer(lb);
+        this.target.setLoadBalancer(lb);
+        this.lb=lb;
+
+
     }
 
     @Override
     public ILoadBalancer getLoadBalancer() {
-        return target.getLoadBalancer();
+
+        return this.lb;
     }
 
 

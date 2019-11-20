@@ -3,8 +3,7 @@ package com.github.vlmap.cloud.loadbalancer;
 import com.github.vlmap.cloud.loadbalancer.tag.TagProcess;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -27,7 +24,6 @@ public class TagRule extends AbstractLoadBalancerRule {
 
 
 
-    private static Logger log = LoggerFactory.getLogger(TagRule.class);
 
 
     public TagRule(ILoadBalancer lb) {
