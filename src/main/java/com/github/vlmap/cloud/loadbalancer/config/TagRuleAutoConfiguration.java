@@ -19,11 +19,7 @@ public class TagRuleAutoConfiguration {
 //    }
 
 
-    @Bean
-    public TagProcess reactorTagProcess() {
-        return new ReactorTagProcess();
 
-    }
 
     //    @Bean
 //    @ConditionalOnClass(RequestContextHolder.class)

@@ -23,7 +23,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnClass({ LoadBalancerClient.class, RibbonAutoConfiguration.class,
         DispatcherHandler.class })
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
-@EnableConfigurationProperties(LoadBalancerProperties.class)
+@EnableConfigurationProperties({LoadBalancerProperties.class,SpringToolsProperties.class})
 @AutoConfigureOrder(AutoConfigureOrder.DEFAULT_ORDER-100)
 
 public class GatewayLoadBalancerClientAutoConfiguration {
