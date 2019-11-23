@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigProperties;
@@ -53,7 +54,8 @@ import java.util.List;
 @Configuration
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
-@ConfigurationProperties(SpringToolsProperties.class)
+@EnableConfigurationProperties({SpringToolsProperties.class})
+
 public class ZookeeperConfigAutoConfiguration {
 
     private final Logger log = LoggerFactory.getLogger(ZookeeperConfigAutoConfiguration.class);
