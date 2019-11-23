@@ -72,6 +72,11 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--		<dependency>-->
         <!--			<groupId>org.springframework.cloud</groupId>-->
         <!--			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>-->
@@ -83,7 +88,11 @@
             <scope>provided</scope>
 
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

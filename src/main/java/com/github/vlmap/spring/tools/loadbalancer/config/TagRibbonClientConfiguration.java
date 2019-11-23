@@ -3,7 +3,7 @@ package com.github.vlmap.spring.tools.loadbalancer.config;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
-import com.github.vlmap.spring.tools.loadbalancer.tag.TagProcess;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -12,6 +12,7 @@ import com.netflix.loadbalancer.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -24,9 +25,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+@EnableConfigurationProperties({SpringToolsProperties.class})
 
 @Configuration
  public class TagRibbonClientConfiguration extends org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration {
+    @Autowired
 
     private SpringToolsProperties properties;
     @Autowired
@@ -34,9 +37,6 @@ import java.util.concurrent.atomic.AtomicReference;
     Environment env;
 
 
-    public TagRibbonClientConfiguration(SpringToolsProperties properties) {
-        this.properties = properties;
-    }
 
 
 
@@ -103,7 +103,7 @@ import java.util.concurrent.atomic.AtomicReference;
     protected String tagStateInProgress(IClientConfig clientConfig, Map source, Server server) {
 
         String name = clientConfig.getClientName();
-        String tagKey = "spring.tools.loadbalancer." + name + ".tag." + server.getId();
+        String tagKey = "tag-loadbalancer." + name + ".process." + server.getId();
         String tagValue = null;
         if (source != null) {
             tagValue = (String) source.get(tagKey);

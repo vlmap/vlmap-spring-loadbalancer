@@ -3,7 +3,7 @@ package com.github.vlmap.spring.tools.cloud.zookeeper.config.listener;
 
 import com.github.vlmap.spring.tools.cloud.zookeeper.config.ProxyMap;
 import com.github.vlmap.spring.tools.cloud.zookeeper.config.event.AttachRefreshEvent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;

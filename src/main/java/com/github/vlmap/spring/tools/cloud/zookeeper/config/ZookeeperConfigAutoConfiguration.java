@@ -16,6 +16,7 @@
 
 package com.github.vlmap.spring.tools.cloud.zookeeper.config;
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.cloud.zookeeper.config.listener.AttachTreeCacheListener;
 import com.github.vlmap.spring.tools.cloud.zookeeper.config.listener.ConfigTreeCacheListener;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigProperties;
@@ -51,12 +53,14 @@ import java.util.List;
 @Configuration
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
+@ConfigurationProperties(SpringToolsProperties.class)
 public class ZookeeperConfigAutoConfiguration {
 
     private final Logger log = LoggerFactory.getLogger(ZookeeperConfigAutoConfiguration.class);
     public final static String ATTACH = "spring.cloud.zookeeper.config.attach";
 
-
+    @Autowired
+    SpringToolsProperties properties;
     @Configuration
     @ConditionalOnClass(RefreshEndpoint.class)
     protected static class ZkRefreshConfiguration {

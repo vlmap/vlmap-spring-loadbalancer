@@ -1,6 +1,11 @@
 package com.github.vlmap.spring.tools.annotation;
 
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
+//import com.github.vlmap.spring.tools.loadbalancer.config.TagRibbonAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.feign.TagFeignAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagGatewayAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate.TagRestTemplateAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -17,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<EnableTagRule> {
     private static final String PROPERTY_SOURCE_NAME = "spring.tools.property-source-name";
-    private static final String TAG_RULE_HEADER_NAME = "spring.tools.tag-rule.header-name";
+    private static final String TAG_RULE_HEADER_NAME = "spring.tools.process-rule.header-name";
 
 
     @Override
@@ -27,6 +32,11 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
 
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
+
+        importsList.add(TagGatewayAutoConfiguration.class.getName());
+        importsList.add(TagFeignAutoConfiguration.class.getName());
+        importsList.add(TagRestTemplateAutoConfiguration.class.getName());
+        importsList.add(TagZuulAutoConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);
@@ -81,7 +91,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
     @Override
     protected boolean isEnabled() {
 
-        return getEnvironment().getProperty("spring.tools.tag-rule.enabled",
+        return getEnvironment().getProperty("spring.tools.process-rule.enabled",
                 Boolean.class, Boolean.TRUE);
     }
 

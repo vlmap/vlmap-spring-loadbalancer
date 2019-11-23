@@ -1,6 +1,7 @@
-package com.github.vlmap.spring.tools.loadbalancer.config;
+package com.github.vlmap.spring.tools.loadbalancer.platform.gateway;
 
-import com.github.vlmap.spring.tools.loadbalancer.filter.TagLoadBalancerClientFilter;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.loadbalancer.process.ReactorTagProcess;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -23,8 +24,14 @@ import org.springframework.web.reactive.DispatcherHandler;
         DispatcherHandler.class})
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
 @EnableConfigurationProperties(LoadBalancerProperties.class)
-public class TagGatewayLoadBalancerClientAutoConfiguration extends GatewayLoadBalancerClientAutoConfiguration {
+//@Import(RibbonAutoConfiguration.class)
 
+public class TagGatewayAutoConfiguration extends GatewayLoadBalancerClientAutoConfiguration {
+    @Bean
+    public TagProcess reactorTagProcess() {
+        return new ReactorTagProcess();
+
+    }
 
     // GlobalFilter beans
 

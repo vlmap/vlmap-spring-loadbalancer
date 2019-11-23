@@ -1,7 +1,8 @@
-package com.github.vlmap.spring.tools.loadbalancer.tag;
+package com.github.vlmap.spring.tools.loadbalancer.process;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import org.apache.commons.lang.StringUtils;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractTagProcess implements TagProcess {
@@ -14,17 +15,19 @@ public abstract class AbstractTagProcess implements TagProcess {
      *
      * @return
      */
-    protected final String currentServerTag() {
+    public final String currentServerTag() {
 
         return properties.getTagHeader();
     }
+
+    public abstract void setTag(String tag);
 
     /**
      * 获取当前请求带来的Tag
      *
      * @return
      */
-    protected abstract String getRequestTag();
+    public abstract String getRequestTag();
 
     public String getTag() {
         String loadbalancerTag = currentServerTag();

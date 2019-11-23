@@ -1,15 +1,14 @@
 package com.github.vlmap.spring.tools.loadbalancer;
 
 
-import com.github.vlmap.spring.tools.loadbalancer.tag.TagProcess;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,6 +26,13 @@ public class DelegatingLoadBalancer implements
         this.tagsInProgress = tagsInProgress;
     }
 
+    @PostConstruct
+    public void init() {
+        if (CollectionUtils.isNotEmpty(tagProcesses)) {
+            AnnotationAwareOrderComparator.sort(tagProcesses);
+
+        }
+    }
 
     @Override
     public void addServers(List<Server> newServers) {
