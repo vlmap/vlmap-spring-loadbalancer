@@ -1,14 +1,14 @@
 package com.github.vlmap.spring.tools.loadbalancer.process;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractTagProcess implements TagProcess {
 
     @Autowired
-    protected SpringToolsProperties properties;
+    protected DynamicToolProperties properties;
 
     /**
      * 当前节点配置的TAG

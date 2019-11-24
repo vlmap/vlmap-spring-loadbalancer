@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.cloud.zookeeper.config.event;
+package com.github.vlmap.spring.tools.zookeeper.event;
 
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.springframework.context.ApplicationEvent;

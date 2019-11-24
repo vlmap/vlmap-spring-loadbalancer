@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.cloud.zookeeper.config.listener;
+package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
 import org.apache.commons.lang3.ArrayUtils;

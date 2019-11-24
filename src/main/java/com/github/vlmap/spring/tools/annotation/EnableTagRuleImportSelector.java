@@ -1,11 +1,15 @@
 package com.github.vlmap.spring.tools.annotation;
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
-//import com.github.vlmap.spring.tools.loadbalancer.config.TagRibbonAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.feign.TagFeignAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagGatewayAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate.TagRestTemplateAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -16,14 +20,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<EnableTagRule> {
-    private static final String PROPERTY_SOURCE_NAME = "spring.tools.property-source-name";
-    private static final String TAG_RULE_HEADER_NAME = "spring.tools.process-rule.header-name";
 
+    SpringToolsProperties properties=  new SpringToolsProperties();
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
@@ -40,59 +42,36 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
 
 
         imports = importsList.toArray(new String[0]);
-        Environment env = getEnvironment();
-        String propertySourceName = env.getProperty(PROPERTY_SOURCE_NAME, "defaultStateProps");
-        String loadbalancerTag = env.getProperty(TAG_RULE_HEADER_NAME, "Loadbalancer-Tag");
 
+        DynamicToolProperties dynamicToolProperties= new DynamicToolProperties(getEnvironment(),properties);
+        dynamicToolProperties.doAfterPropertiesSet();
+        PropertySource propertySource =  dynamicToolProperties.getPropertySource();
 
-        if (env instanceof ConfigurableEnvironment) {
-            ConfigurableEnvironment configEnv = (ConfigurableEnvironment) env;
-            PropertySource propertySource = configEnv.getPropertySources().get(propertySourceName);
-
-            Map map = null;
-            if (propertySource == null) {
-                map = new ConcurrentHashMap<>();
-
-                propertySource = new MapPropertySource(propertySourceName, map);
-                configEnv.getPropertySources().addLast(propertySource);
-
-            } else if (propertySource instanceof MapPropertySource) {
-                MapPropertySource object = (MapPropertySource) propertySource;
-                if (object.getSource() instanceof Map) {
-                    map = object.getSource();
-                }
-            } else if (!(propertySource instanceof MapPropertySource) && propertySource instanceof EnumerablePropertySource) {
-                map = new ConcurrentHashMap<>();
-
-                EnumerablePropertySource enumerablePropertySource = (EnumerablePropertySource) propertySource;
-                String[] names = enumerablePropertySource.getPropertyNames();
-                if (names != null) {
-                    for (String name : names) {
-                        map.put(name, propertySource.getProperty(name));
-                    }
-                }
-                configEnv.getPropertySources().replace(propertySourceName, propertySource);
-
-
-            }
+        if(propertySource!=null&&Map.class.isInstance(propertySource.getSource())){
+            Map<String,String>  map=(Map)propertySource.getSource();
             if (map != null) {
-                map.put(PROPERTY_SOURCE_NAME, propertySourceName);
-                map.put("spring.tools.tag-rule.enabled", "true");
-                map.put(TAG_RULE_HEADER_NAME, loadbalancerTag);
+                map.put("spring.tools.property-source-name", String.valueOf(properties.getPropertySourceName()));
+                map.put("spring.tools.tag-load-balancer.enabled",String.valueOf(properties.getTagLoadBalancer().isEnabled()));
+                map.put("spring.tools.tag-load-balancer.feign.enabled",String.valueOf(properties.getTagLoadBalancer().getFeign().isEnabled()));
+                map.put("spring.tools.tag-load-balancer.rest-template.enabled",String.valueOf(properties.getTagLoadBalancer().getRestTemplate().isEnabled()));
+
+                map.put("spring.tools.tag-load-balancer.header",properties.getTagLoadBalancer().getHeader());
+
+                map.put("spring.tools.tag-load-balancer.header-name", properties.getTagLoadBalancer().getHeaderName());
 
 
             }
-
-
         }
+
         return imports;
     }
 
     @Override
     protected boolean isEnabled() {
+        Environment env = getEnvironment();
+        Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
-        return getEnvironment().getProperty("spring.tools.process-rule.enabled",
-                Boolean.class, Boolean.TRUE);
+        return properties.getTagLoadBalancer().isEnabled();
     }
 
     @Override

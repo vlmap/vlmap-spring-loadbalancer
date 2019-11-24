@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
 public class TagZuulFilter extends ZuulFilter {
-    @Autowired
+
     private ZuulTagProcess process;
+
+    public TagZuulFilter(ZuulTagProcess process) {
+        this.process = process;
+    }
 
     @Override
     public String filterType() {

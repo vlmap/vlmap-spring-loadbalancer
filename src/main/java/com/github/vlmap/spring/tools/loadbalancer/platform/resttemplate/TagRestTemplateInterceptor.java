@@ -1,10 +1,11 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
@@ -19,12 +20,14 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@ConditionalOnProperty( "spring.tools.tag-load-balancer.rest-template.enabled")
+
 public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor {
     @Autowired(required = false)
     List<TagProcess> tagProcesses= Collections.emptyList();
     @Autowired
 
-    private SpringToolsProperties properties;
+    private DynamicToolProperties properties;
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {

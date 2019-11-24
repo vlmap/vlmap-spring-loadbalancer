@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.vlmap.spring.tools.cloud.zookeeper.config;
+package com.github.vlmap.spring.tools.zookeeper;
 
 
-import com.github.vlmap.spring.tools.cloud.zookeeper.config.listener.AbstractTreeCacheListener;
+import com.github.vlmap.spring.tools.zookeeper.listener.AbstractTreeCacheListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +57,7 @@ public class ConfigWatcher implements Closeable, ApplicationEventPublisherAware 
 
     private HashMap<String, TreeCache> caches;
     private Supplier<? extends AbstractTreeCacheListener> supplier;
-    private CompositePropertySource composite;
+    private  PropertySource composite;
 
     public ConfigWatcher(List<String> contexts, CuratorFramework source, Supplier<? extends AbstractTreeCacheListener> supplier) {
         this.contexts = contexts;
@@ -80,40 +80,40 @@ public class ConfigWatcher implements Closeable, ApplicationEventPublisherAware 
                 if (!context.startsWith("/")) {
                     context = "/" + context;
                 }
-                try {
-                    TreeCache cache = TreeCache.newBuilder(this.source, context).build();
-                    AbstractTreeCacheListener listener = supplier.get();
-                    listener.setContext(context);
-                    if (composite != null) {
-                        for (PropertySource propertySource : composite.getPropertySources()) {
-                            String name = propertySource.getName();
-                            if (!name.startsWith("/")) {
-                                name = "/" + name;
-                            }
-                            if (StringUtils.equals(context, name)) {
-                                listener.setPropertySource(propertySource);
-                                break;
-                            }
-
-                        }
-                    }
-                    listener.setPublisher(publisher);
-                    cache.getListenable().addListener(listener);
-                    cache.start();
-                    this.caches.put(context, cache);
-                    // no race condition since ZookeeperAutoConfiguration.curatorFramework
-                    // calls curator.blockUntilConnected
-                } catch (KeeperException.NoNodeException e) {
-                    // no node, ignore
-                } catch (Exception e) {
-                    log.error("Error initializing listener for context " + context, e);
-                }
+//                try {
+//                    TreeCache cache = TreeCache.newBuilder(this.source, context).build();
+//                    AbstractTreeCacheListener listener = supplier.get();
+//                    listener.setContext(context);
+//                    if (composite != null) {
+//                        for (PropertySource propertySource : composite.getPropertySources()) {
+//                            String name = propertySource.getName();
+//                            if (!name.startsWith("/")) {
+//                                name = "/" + name;
+//                            }
+//                            if (StringUtils.equals(context, name)) {
+//                                listener.setPropertySource(propertySource);
+//                                break;
+//                            }
+//
+//                        }
+//                    }
+//                    listener.setPublisher(publisher);
+//                    cache.getListenable().addListener(listener);
+//                    cache.start();
+//                    this.caches.put(context, cache);
+//                    // no race condition since ZookeeperAutoConfiguration.curatorFramework
+//                    // calls curator.blockUntilConnected
+//                } catch (KeeperException.NoNodeException e) {
+//                    // no node, ignore
+//                } catch (Exception e) {
+//                    log.error("Error initializing listener for context " + context, e);
+//                }
             }
         }
     }
 
-    public void setComposite(CompositePropertySource composite) {
-        this.composite = composite;
+    public void setPropertySource( PropertySource propertySource) {
+        this.composite = propertySource;
     }
 
     @Override

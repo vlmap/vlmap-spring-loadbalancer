@@ -1,8 +1,7 @@
-package com.github.vlmap.spring.tools.cloud.zookeeper.config.listener;
+package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
-import com.github.vlmap.spring.tools.cloud.zookeeper.config.ProxyMap;
-import com.github.vlmap.spring.tools.cloud.zookeeper.config.event.AttachRefreshEvent;
+import com.github.vlmap.spring.tools.zookeeper.event.AttachRefreshEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -26,11 +25,10 @@ public class AttachTreeCacheListener extends AbstractTreeCacheListener {
 
         if (event.getData() != null) {
 
-            Object object = this.propertySource.getSource();
+            Map source = (Map)this.propertySource.getSource();
             //通过对象替换解决多线程问题，提高读效率
-            if (object instanceof ProxyMap) {
-                ProxyMap source = (ProxyMap) object;
-                String path = event.getData().getPath();
+
+                 String path = event.getData().getPath();
                 if (!StringUtils.equals(this.context, path)) {
                     String key = sanitizeKey(path);
                     String value = null;
@@ -45,11 +43,11 @@ public class AttachTreeCacheListener extends AbstractTreeCacheListener {
                     } else if (eventType == TreeCacheEvent.Type.NODE_REMOVED) {
                         map.remove(key);
                     }
-                    source.setMap(new HashMap(map));
-                    this.publisher.publishEvent(new AttachRefreshEvent(this, key, value, event, getEventDesc(event)));
+//                    source.setMap(new HashMap(map));
+//                    this.publisher.publishEvent(new AttachRefreshEvent(this, key, value, event, getEventDesc(event)));
                 }
 
-            }
+
 
         }
     }

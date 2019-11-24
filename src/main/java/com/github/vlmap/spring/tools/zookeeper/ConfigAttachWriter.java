@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.cloud.zookeeper.config;
+package com.github.vlmap.spring.tools.zookeeper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;

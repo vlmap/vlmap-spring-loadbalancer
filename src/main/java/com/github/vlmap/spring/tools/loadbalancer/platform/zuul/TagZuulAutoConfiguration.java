@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Configuration;
 
 public class TagZuulAutoConfiguration {
     @Bean
-    public TagProcess zuulTagProcess() {
+    public ZuulTagProcess zuulTagProcess() {
         return new ZuulTagProcess();
 
     }
     @Bean
-    public TagZuulFilter tagZuulFilter(){
-        return new  TagZuulFilter();
+    public TagZuulFilter tagZuulFilter(ZuulTagProcess zuulTagProcess){
+        return new  TagZuulFilter(zuulTagProcess);
     }
 }

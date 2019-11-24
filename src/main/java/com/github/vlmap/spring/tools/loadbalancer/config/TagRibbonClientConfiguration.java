@@ -4,6 +4,7 @@ package com.github.vlmap.spring.tools.loadbalancer.config;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -31,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  public class TagRibbonClientConfiguration extends org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration {
     @Autowired
 
-    private SpringToolsProperties properties;
+    private DynamicToolProperties properties;
     @Autowired
 
     Environment env;

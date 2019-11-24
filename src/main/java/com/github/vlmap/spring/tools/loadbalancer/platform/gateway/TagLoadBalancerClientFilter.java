@@ -12,11 +12,11 @@ import reactor.core.publisher.Mono;
 
 
 public class TagLoadBalancerClientFilter extends org.springframework.cloud.gateway.filter.LoadBalancerClientFilter {
-    @Autowired
-    private ReactorTagProcess process;
+     private ReactorTagProcess process;
 
-    public TagLoadBalancerClientFilter(LoadBalancerClient loadBalancer, LoadBalancerProperties properties) {
+    public TagLoadBalancerClientFilter(LoadBalancerClient loadBalancer, LoadBalancerProperties properties,ReactorTagProcess process) {
         super(loadBalancer, properties);
+        this.process=process;
     }
 
     @Override

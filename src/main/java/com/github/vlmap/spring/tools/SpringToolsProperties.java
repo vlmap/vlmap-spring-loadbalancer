@@ -1,28 +1,21 @@
 package com.github.vlmap.spring.tools;
 
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
 
-import java.util.Map;
 
 
 @ConfigurationProperties(prefix = "spring.tools")
 
-public class SpringToolsProperties implements InitializingBean {
-    @Autowired
-    private Environment env;
+public class SpringToolsProperties  {
 
-    private String propertySourceName;
 
-    private Map map = null;
-    private TagRule tagRule = new TagRule();
-    private PropertySource propertySource;
+    private String propertySourceName="defaultToolsProps";
+
+
+
+
+    private TagLoadBalancer tagLoadBalancer = new TagLoadBalancer();
 
     public String getPropertySourceName() {
         return propertySourceName;
@@ -32,63 +25,69 @@ public class SpringToolsProperties implements InitializingBean {
         this.propertySourceName = propertySourceName;
     }
 
-    public PropertySource getPropertySource() {
-        return propertySource;
+
+    public TagLoadBalancer getTagLoadBalancer() {
+        return tagLoadBalancer;
     }
 
-    public TagRule getTagRule() {
-        return tagRule;
-    }
-
-    public void setTagRule(TagRule tagRule) {
-        this.tagRule = tagRule;
+    public void setTagLoadBalancer(TagLoadBalancer tagLoadBalancer) {
+        this.tagLoadBalancer = tagLoadBalancer;
     }
 
 
-    public String getTagHeader() {
-        if (map != null) {
-            return (String) map.get(tagRule.getHeaderName());
-        }
-        return tagRule.getHeader();
-    }
+
 
     public String getTagHeaderName() {
-        return tagRule.getHeaderName();
+        return tagLoadBalancer.getHeaderName();
     }
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (StringUtils.isBlank(propertySourceName)) return;
-        if (env instanceof ConfigurableEnvironment) {
-            ConfigurableEnvironment configEnv = (ConfigurableEnvironment) env;
-            PropertySource propertySource = configEnv.getPropertySources().get(propertySourceName);
 
 
-            if (propertySource != null) {
-                Object source = propertySource.getSource();
-                if (source instanceof Map) {
-                    map = (Map) source;
-                }
+    static public class Feign{
+        private boolean enabled = true;
 
-            }
-            if (map != null) {
-                String header = tagRule.getHeader();
-                if (header != null) {
-                    map.put(tagRule.getHeaderName(), header);
+        public boolean isEnabled() {
+            return enabled;
+        }
 
-                }
-            }
-            this.propertySource = propertySource;
-
-
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
+    static public class RestTemplate{
+        private boolean enabled = true;
 
-    static class TagRule {
-        private boolean enabled = false;
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+    static public class TagLoadBalancer {
+        private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
         private String header;
+        private Feign feign=new Feign();
+        private RestTemplate restTemplate=new RestTemplate();
+
+        public RestTemplate getRestTemplate() {
+            return restTemplate;
+        }
+
+        public void setRestTemplate(RestTemplate restTemplate) {
+            this.restTemplate = restTemplate;
+        }
+
+        public Feign getFeign() {
+            return feign;
+        }
+
+        public void setFeign(Feign feign) {
+            this.feign = feign;
+        }
 
         public boolean isEnabled() {
             return enabled;

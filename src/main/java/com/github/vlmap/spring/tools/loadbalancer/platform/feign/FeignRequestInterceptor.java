@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.feign;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.apache.commons.collections.CollectionUtils;
@@ -20,7 +20,7 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     List<TagProcess> tagProcesses= Collections.emptyList();
     @Autowired
 
-    private SpringToolsProperties properties;
+    private DynamicToolProperties properties;
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {

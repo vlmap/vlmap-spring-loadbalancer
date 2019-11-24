@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.vlmap.spring.tools.cloud.zookeeper.config;
+package com.github.vlmap.spring.tools.zookeeper;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.cloud.zookeeper.config.listener.AttachTreeCacheListener;
-import com.github.vlmap.spring.tools.cloud.zookeeper.config.listener.ConfigTreeCacheListener;
+import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.zookeeper.listener.AttachTreeCacheListener;
+import com.github.vlmap.spring.tools.zookeeper.listener.ConfigTreeCacheListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
@@ -35,12 +36,8 @@ import org.springframework.cloud.zookeeper.config.ZookeeperConfigProperties;
 import org.springframework.cloud.zookeeper.config.ZookeeperPropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -55,18 +52,21 @@ import java.util.List;
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
 @EnableConfigurationProperties({SpringToolsProperties.class})
-
 public class ZookeeperConfigAutoConfiguration {
 
-    private final Logger log = LoggerFactory.getLogger(ZookeeperConfigAutoConfiguration.class);
-    public final static String ATTACH = "spring.cloud.zookeeper.config.attach";
+     public final static String ATTACH = "spring.cloud.zookeeper.config.attach";
 
-    @Autowired
-    SpringToolsProperties properties;
+    @Bean
+    @ConditionalOnMissingBean
+
+    public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties){
+        return new DynamicToolProperties(env,properties);
+    }
+
+
     @Configuration
     @ConditionalOnClass(RefreshEndpoint.class)
     protected static class ZkRefreshConfiguration {
-        private final Logger log = LoggerFactory.getLogger(ZookeeperConfigAutoConfiguration.class);
 
         @Bean
         @ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", matchIfMissing = true, havingValue = "false")
@@ -80,10 +80,6 @@ public class ZookeeperConfigAutoConfiguration {
     }
 
 
-    @Bean
-    public CompositePropertySource propertySource() {
-        return new CompositePropertySource("zookeeper");
-    }
 
     /**
      * 实时更新,并且不产生事件RefreshEvent
@@ -91,14 +87,14 @@ public class ZookeeperConfigAutoConfiguration {
      * @param env
      * @param curator
      * @param properties
-     * @param composite
+     * @param dynamicToolProperties
      * @return
      */
     @Bean
     public ConfigWatcher configAttachWatcher(Environment env,
                                              CuratorFramework curator,
                                              ZookeeperConfigProperties properties,
-                                             CompositePropertySource composite) {
+                                             DynamicToolProperties dynamicToolProperties) {
         ZookeeperConfigProperties readyProperties = new ZookeeperConfigProperties();
         readyProperties.setEnabled(properties.isEnabled());
         readyProperties.setFailFast(properties.isFailFast());
@@ -113,36 +109,36 @@ public class ZookeeperConfigAutoConfiguration {
             ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(curator, readyProperties);
             locator.locate(env);
             contexts = locator.getContexts();
-            composite.getPropertySources().clear();
-            for (String context : contexts) {
-
-                PropertySource propertySource = new MapPropertySource(context, new ProxyMap(new HashMap<>(), true));
-
-                composite.addPropertySource(propertySource);
-
-
-            }
+//            composite.getPropertySources().clear();
+//            for (String context : contexts) {
+//
+//                PropertySource propertySource = new MapPropertySource(context, new ProxyMap(new HashMap<>(), true));
+//
+//                composite.addPropertySource(propertySource);
+//
+//
+//            }
 
         }
 
 
         ConfigWatcher watcher = new ConfigWatcher(contexts, curator, AttachTreeCacheListener::new);
-        watcher.setComposite(composite);
+        watcher.setPropertySource(dynamicToolProperties.getPropertySource());
 
 
-        String defaultContext = root + "/" + properties.getDefaultContext();
-        writer.setDefaultContext(defaultContext);
-        writer.setContext(contexts);
-        writer.setCurator(curator);
+//        String defaultContext = root + "/" + properties.getDefaultContext();
+//        writer.setDefaultContext(defaultContext);
+//        writer.setContext(contexts);
+//        writer.setCurator(curator);
         return watcher;
     }
 
-    ConfigAttachWriter writer = new ConfigAttachWriter();
-
-    @Bean
-    public ConfigAttachWriter ConfigAttachWriter(@Autowired @Qualifier("configAttachWatcher") ConfigWatcher configWatcher) {
-        return writer;
-    }
+//    ConfigAttachWriter writer = new ConfigAttachWriter();
+//
+//    @Bean
+//    public ConfigAttachWriter ConfigAttachWriter(@Autowired @Qualifier("configAttachWatcher") ConfigWatcher configWatcher) {
+//        return writer;
+//    }
 
 //    @Configuration
 //    @AutoConfigureAfter(EurekaClientAutoConfiguration.class)

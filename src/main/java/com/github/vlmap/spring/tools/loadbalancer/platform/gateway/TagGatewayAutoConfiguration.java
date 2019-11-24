@@ -28,7 +28,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 
 public class TagGatewayAutoConfiguration extends GatewayLoadBalancerClientAutoConfiguration {
     @Bean
-    public TagProcess reactorTagProcess() {
+    public ReactorTagProcess reactorTagProcess() {
         return new ReactorTagProcess();
 
     }
@@ -38,9 +38,9 @@ public class TagGatewayAutoConfiguration extends GatewayLoadBalancerClientAutoCo
     @Bean
     @ConditionalOnBean(LoadBalancerClient.class)
     @ConditionalOnMissingBean(LoadBalancerClientFilter.class)
-    public LoadBalancerClientFilter loadBalancerClientFilter(LoadBalancerClient client,
+    public LoadBalancerClientFilter loadBalancerClientFilter(ReactorTagProcess reactorTagProcess,LoadBalancerClient client,
                                                              LoadBalancerProperties properties) {
-        return new TagLoadBalancerClientFilter(client, properties);
+        return new TagLoadBalancerClientFilter(client, properties,reactorTagProcess);
     }
 
 }
