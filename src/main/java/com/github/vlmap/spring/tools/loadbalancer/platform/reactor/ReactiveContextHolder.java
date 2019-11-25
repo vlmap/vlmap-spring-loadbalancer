@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.gateway;
+package com.github.vlmap.spring.tools.loadbalancer.platform.reactor;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GatewayContextHolder {
+public class ReactiveContextHolder {
     private final static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";

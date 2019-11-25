@@ -2,10 +2,8 @@ package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
-import com.github.vlmap.spring.tools.loadbalancer.process.SpringMVCTagProcess;
+import com.github.vlmap.spring.tools.loadbalancer.process.SpringMvcTagProcess;
 import com.github.vlmap.spring.tools.DynamicToolProperties;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,8 +36,8 @@ public class RibbonClientSpecificationAutoConfiguration {
     @Configuration
     static class SpringMVCConfiguration {
         @Bean
-        public SpringMVCTagProcess SpringMVCTagProcess() {
-            return new SpringMVCTagProcess();
+        public SpringMvcTagProcess SpringMVCTagProcess() {
+            return new SpringMvcTagProcess();
         }
     }
 

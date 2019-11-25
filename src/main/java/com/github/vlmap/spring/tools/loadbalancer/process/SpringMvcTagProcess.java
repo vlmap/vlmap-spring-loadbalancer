@@ -7,7 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 @Order(30)
-public class SpringMVCTagProcess extends AbstractTagProcess {
+public class SpringMvcTagProcess extends AbstractTagProcess {
 
     public void setTag(String tag) {
       //交由feign resttemplate 的Interceptor处理

@@ -28,11 +28,7 @@ public class ZuulTagProcess extends AbstractTagProcess {
             return request.getHeader(this.properties.getTagHeaderName());
         }
 
-//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        if (request != null) {
-//            String process = request.getHeader(LOADBALANCER_TAG_HEADER);
-//           return process;
-//        }
+
 
         return null;
     }

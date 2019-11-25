@@ -16,8 +16,7 @@ public class SpringToolsProperties  {
 
 
     private TagLoadBalancer tagLoadBalancer = new TagLoadBalancer();
-
-    public String getPropertySourceName() {
+     public String getPropertySourceName() {
         return propertySourceName;
     }
 
@@ -66,12 +65,32 @@ public class SpringToolsProperties  {
             this.enabled = enabled;
         }
     }
+    static public class WebClient{
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
     static public class TagLoadBalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
         private String header;
         private Feign feign=new Feign();
         private RestTemplate restTemplate=new RestTemplate();
+        private WebClient webClient=new WebClient();
+
+        public WebClient getWebClient() {
+            return webClient;
+        }
+
+        public void setWebClient(WebClient webClient) {
+            this.webClient = webClient;
+        }
 
         public RestTemplate getRestTemplate() {
             return restTemplate;

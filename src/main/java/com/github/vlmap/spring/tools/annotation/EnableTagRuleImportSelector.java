@@ -3,8 +3,9 @@ package com.github.vlmap.spring.tools.annotation;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.feign.TagFeignAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagGatewayAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.TagReactorAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate.TagRestTemplateAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.webclient.TagWebClientAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -35,10 +36,11 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
 
-        importsList.add(TagGatewayAutoConfiguration.class.getName());
+        importsList.add(TagReactorAutoConfiguration.class.getName());
         importsList.add(TagFeignAutoConfiguration.class.getName());
         importsList.add(TagRestTemplateAutoConfiguration.class.getName());
         importsList.add(TagZuulAutoConfiguration.class.getName());
+        importsList.add(TagWebClientAutoConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);
@@ -54,6 +56,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
                 map.put("spring.tools.tag-load-balancer.enabled",String.valueOf(properties.getTagLoadBalancer().isEnabled()));
                 map.put("spring.tools.tag-load-balancer.feign.enabled",String.valueOf(properties.getTagLoadBalancer().getFeign().isEnabled()));
                 map.put("spring.tools.tag-load-balancer.rest-template.enabled",String.valueOf(properties.getTagLoadBalancer().getRestTemplate().isEnabled()));
+                map.put("spring.tools.tag-load-balancer.web-client.enabled",String.valueOf(properties.getTagLoadBalancer().getWebClient().isEnabled()));
 
                 map.put("spring.tools.tag-load-balancer.header",properties.getTagLoadBalancer().getHeader());
 
