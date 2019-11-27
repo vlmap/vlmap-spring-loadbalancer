@@ -6,11 +6,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.PropertySource;
 
 import java.nio.charset.Charset;
+import java.util.Map;
 
 public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener {
     protected ApplicationEventPublisher publisher;
     protected String context;
-    protected PropertySource propertySource;
+    protected Map<String,Object> source;
 
     public void setPublisher(ApplicationEventPublisher publisher) {
         this.publisher = publisher;
@@ -20,9 +21,6 @@ public abstract class AbstractTreeCacheListener implements org.apache.curator.fr
         this.context = context;
     }
 
-    public void setPropertySource(PropertySource propertySource) {
-        this.propertySource = propertySource;
-    }
 
     protected String sanitizeKey(String path) {
         return path.replace(this.context + "/", "").replace('/', '.');

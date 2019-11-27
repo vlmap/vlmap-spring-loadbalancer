@@ -1,8 +1,7 @@
 package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
-import com.github.vlmap.spring.tools.zookeeper.event.AttachRefreshEvent;
-import org.apache.commons.lang3.StringUtils;
+ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
@@ -19,14 +18,12 @@ public class AttachTreeCacheListener extends AbstractTreeCacheListener {
     Map<String, String> map = new HashMap<>();
 
     @Override
-    public void childEvent(CuratorFramework client, TreeCacheEvent event)
-            throws Exception {
+    public void childEvent(CuratorFramework client, TreeCacheEvent event)  throws Exception {
         TreeCacheEvent.Type eventType = event.getType();
 
         if (event.getData() != null) {
 
-            Map source = (Map)this.propertySource.getSource();
-            //通过对象替换解决多线程问题，提高读效率
+
 
                  String path = event.getData().getPath();
                 if (!StringUtils.equals(this.context, path)) {

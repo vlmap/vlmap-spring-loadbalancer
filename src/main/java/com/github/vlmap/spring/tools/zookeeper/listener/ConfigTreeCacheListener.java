@@ -18,8 +18,7 @@ public class ConfigTreeCacheListener extends AbstractTreeCacheListener {
 
 
     @Override
-    public void childEvent(CuratorFramework client, TreeCacheEvent event)
-            throws Exception {
+    public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
         TreeCacheEvent.Type eventType = event.getType();
         if (eventType == NODE_ADDED || eventType == NODE_UPDATED) {
             if (event.getData() != null) {

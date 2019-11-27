@@ -22,10 +22,8 @@ import com.github.vlmap.spring.tools.zookeeper.listener.AttachTreeCacheListener;
 import com.github.vlmap.spring.tools.zookeeper.listener.ConfigTreeCacheListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,6 +34,7 @@ import org.springframework.cloud.zookeeper.config.ZookeeperConfigProperties;
 import org.springframework.cloud.zookeeper.config.ZookeeperPropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -54,7 +53,6 @@ import java.util.List;
 @EnableConfigurationProperties({SpringToolsProperties.class})
 public class ZookeeperConfigAutoConfiguration {
 
-     public final static String ATTACH = "spring.cloud.zookeeper.config.attach";
 
     @Bean
     @ConditionalOnMissingBean
@@ -62,6 +60,7 @@ public class ZookeeperConfigAutoConfiguration {
     public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties){
         return new DynamicToolProperties(env,properties);
     }
+
 
 
     @Configuration
@@ -79,6 +78,11 @@ public class ZookeeperConfigAutoConfiguration {
 
     }
 
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public AttachTreeCacheListener attachTreeCacheListener(){
+        return new AttachTreeCacheListener();
+    }
 
 
     /**
@@ -94,36 +98,36 @@ public class ZookeeperConfigAutoConfiguration {
     public ConfigWatcher configAttachWatcher(Environment env,
                                              CuratorFramework curator,
                                              ZookeeperConfigProperties properties,
-                                             DynamicToolProperties dynamicToolProperties) {
+                                             DynamicToolProperties dynamicToolProperties, ObjectProvider<AttachTreeCacheListener> provider) {
         ZookeeperConfigProperties readyProperties = new ZookeeperConfigProperties();
         readyProperties.setEnabled(properties.isEnabled());
         readyProperties.setFailFast(properties.isFailFast());
         readyProperties.setProfileSeparator(properties.getProfileSeparator());
 
         readyProperties.setDefaultContext(properties.getDefaultContext());
-        String root = env.getProperty(ATTACH, properties.getRoot() + "-" + "attach");
-
+//        String root = env.getProperty(ATTACH, properties.getRoot() + "-" + "attach");
+//
         List<String> contexts = null;
-        if (!StringUtils.equals(root, properties.getRoot())) {
-            readyProperties.setRoot(root);
-            ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(curator, readyProperties);
-            locator.locate(env);
-            contexts = locator.getContexts();
-//            composite.getPropertySources().clear();
-//            for (String context : contexts) {
+//        if (!StringUtils.equals(root, properties.getRoot())) {
+//            readyProperties.setRoot(root);
+//            ZookeeperPropertySourceLocator locator = new ZookeeperPropertySourceLocator(curator, readyProperties);
+//            locator.locate(env);
+//            contexts = locator.getContexts();
+////            composite.getPropertySources().clear();
+////            for (String context : contexts) {
+////
+////                PropertySource propertySource = new MapPropertySource(context, new ProxyMap(new HashMap<>(), true));
+////
+////                composite.addPropertySource(propertySource);
+////
+////
+////            }
 //
-//                PropertySource propertySource = new MapPropertySource(context, new ProxyMap(new HashMap<>(), true));
-//
-//                composite.addPropertySource(propertySource);
-//
-//
-//            }
-
-        }
+//        }
 
 
         ConfigWatcher watcher = new ConfigWatcher(contexts, curator, AttachTreeCacheListener::new);
-        watcher.setPropertySource(dynamicToolProperties.getPropertySource());
+        watcher.setPropertySource(dynamicToolProperties.getDefaultToolsProps());
 
 
 //        String defaultContext = root + "/" + properties.getDefaultContext();
@@ -133,22 +137,7 @@ public class ZookeeperConfigAutoConfiguration {
         return watcher;
     }
 
-//    ConfigAttachWriter writer = new ConfigAttachWriter();
-//
-//    @Bean
-//    public ConfigAttachWriter ConfigAttachWriter(@Autowired @Qualifier("configAttachWatcher") ConfigWatcher configWatcher) {
-//        return writer;
-//    }
 
-//    @Configuration
-//    @AutoConfigureAfter(EurekaClientAutoConfiguration.class)
-//    protected static class ZkEventListenerConfiguration {
-//        @Bean
-//        @ConditionalOnClass(EurekaInstanceConfigBean.class)
-//        public ZkAttachValue eurekaEventListener() {
-//            return new ZkAttachValue();
-//        }
-//    }
 
 
 }

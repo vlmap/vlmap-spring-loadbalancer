@@ -63,7 +63,7 @@ import java.util.concurrent.atomic.AtomicReference;
     }
 
     protected Map getSource() {
-        PropertySource propertySource = properties.getPropertySource();
+        PropertySource propertySource = properties.getDefaultToolsProps();
         if (propertySource != null) {
             Object source = propertySource.getSource();
             if (source instanceof Map) {

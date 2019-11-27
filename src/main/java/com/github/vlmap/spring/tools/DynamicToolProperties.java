@@ -1,13 +1,12 @@
 package com.github.vlmap.spring.tools;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.*;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class DynamicToolProperties implements InitializingBean {
 
@@ -20,15 +19,15 @@ public class DynamicToolProperties implements InitializingBean {
         this.properties = properties;
     }
 
-    private Map map = null;
-    private PropertySource propertySource;
-    public PropertySource getPropertySource() {
-        return propertySource;
+
+    private MapPropertySource defaultToolsProps;
+    public MapPropertySource getDefaultToolsProps() {
+        return defaultToolsProps;
     }
 
     public String getTagHeader() {
-        if (map != null) {
-            return (String) map.get(properties.getTagLoadBalancer().getHeaderName());
+        if (defaultToolsProps != null) {
+            return (String) defaultToolsProps.getProperty(properties.getTagLoadBalancer().getHeaderName());
         }
         return properties.getTagLoadBalancer().getHeader();
     }
@@ -39,27 +38,33 @@ public class DynamicToolProperties implements InitializingBean {
     public void doAfterPropertiesSet(){
         String  propertySourceName=properties.getPropertySourceName();
         if (StringUtils.isBlank(propertySourceName)) return;
-        if (env instanceof ConfigurableEnvironment) {
-            ConfigurableEnvironment configEnv = (ConfigurableEnvironment) env;
-            PropertySource propertySource = configEnv.getPropertySources().get(propertySourceName);
-
-
-            if (propertySource != null) {
-                Object source = propertySource.getSource();
-                if (source instanceof Map) {
-                    map = (Map) source;
-                }
-
+        if (env instanceof ConfigurableEnvironment ) {
+            ConfigurableEnvironment enviroment = (ConfigurableEnvironment) env;
+            MutablePropertySources propertySources=  enviroment.getPropertySources();
+            PropertySource propertySource = propertySources.get(propertySourceName);
+            if (MapPropertySource.class.isInstance(propertySource)&& ConcurrentMap.class.isInstance(propertySource.getSource())) {
+                this.defaultToolsProps =(MapPropertySource)propertySource;
+                return;
             }
-            if (map != null) {
-                String header = properties.getTagLoadBalancer().getHeader();
-                if (header != null) {
-                    map.put(properties.getTagLoadBalancer().getHeaderName(), header);
+            Map<String,Object> source=new ConcurrentHashMap<>();
+            MapPropertySource result=new MapPropertySource(propertySourceName,source);
+            this.defaultToolsProps =result;
+            if(propertySource==null){
+                propertySources.addLast(result);
+            }else {
+                if(EnumerablePropertySource.class.isInstance(propertySource)){
+                    EnumerablePropertySource     enumerablePropertySource=(EnumerablePropertySource)propertySource;
+                    for(String key:enumerablePropertySource.getPropertyNames()){
+                        Object value=enumerablePropertySource.getProperty(key);
+                        if(value!=null){
+                            source.put(key,value);
+                        }
+
+                    }
 
                 }
+                propertySources.replace(propertySourceName,result);
             }
-            this.propertySource = propertySource;
-
 
         }
     }

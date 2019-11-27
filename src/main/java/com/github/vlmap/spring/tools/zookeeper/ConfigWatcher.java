@@ -80,6 +80,8 @@ public class ConfigWatcher implements Closeable, ApplicationEventPublisherAware 
                 if (!context.startsWith("/")) {
                     context = "/" + context;
                 }
+
+
 //                try {
 //                    TreeCache cache = TreeCache.newBuilder(this.source, context).build();
 //                    AbstractTreeCacheListener listener = supplier.get();
