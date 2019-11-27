@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.process;
 
 
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -9,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 @Order(30)
 public class SpringMvcTagProcess extends AbstractTagProcess {
 
-    public void setTag(String tag) {
-      //交由feign resttemplate 的Interceptor处理
+    public SpringMvcTagProcess(DynamicToolProperties properties) {
+        super(properties);
     }
 
     @Override

@@ -1,30 +1,26 @@
 package com.github.vlmap.spring.tools.loadbalancer.process;
 
+import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.ReactiveContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
+
 @Order(20)
 public class ReactorTagProcess extends AbstractTagProcess {
 
-
-    @Override
-    public void setTag(String tag) {
-        if(StringUtils.isBlank(tag))return;
-
-        ServerHttpRequest request = ReactiveContextHolder.getRequest();
-        if (request != null) {
-            request.getHeaders().add(this.properties.getTagHeaderName(), tag);
-        }
-
+    public ReactorTagProcess(DynamicToolProperties properties) {
+        super(properties);
     }
 
     @Override
     public String getRequestTag() {
-        ServerHttpRequest request = ReactiveContextHolder.getRequest();
-        if (request != null) {
-            return request.getHeaders().getFirst(this.properties.getTagHeaderName());
+        ServerWebExchange exchange=ReactiveContextHolder.get();
+        if(exchange!=null){
+         return    exchange.getRequest().getHeaders().getFirst(this.properties.getTagHeaderName());
         }
+
         return null;
     }
 }

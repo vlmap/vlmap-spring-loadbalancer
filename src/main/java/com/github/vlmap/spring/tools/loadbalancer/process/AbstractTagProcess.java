@@ -7,8 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractTagProcess implements TagProcess {
 
-    @Autowired
+
     protected DynamicToolProperties properties;
+    public AbstractTagProcess(DynamicToolProperties properties) {
+        this.properties=properties;
+    }
+
+    @Override
+    public String getTagHeaderName() {
+        return properties.getTagHeaderName();
+    }
 
     /**
      * 当前节点配置的TAG
@@ -20,7 +28,6 @@ public abstract class AbstractTagProcess implements TagProcess {
         return properties.getTagHeader();
     }
 
-    public abstract void setTag(String tag);
 
     /**
      * 获取当前请求带来的Tag
@@ -30,15 +37,16 @@ public abstract class AbstractTagProcess implements TagProcess {
     public abstract String getRequestTag();
 
     public String getTag() {
-        String loadbalancerTag = currentServerTag();
         String requestTag = getRequestTag();
         String tag = null;
         if (StringUtils.isNotBlank(requestTag)) {
             tag = requestTag;
-        } else if (StringUtils.isNotBlank(loadbalancerTag)) {
-            tag = loadbalancerTag;
+        } else {
+            String loadbalancerTag = currentServerTag();
+            if (StringUtils.isNotBlank(loadbalancerTag)) {
+                tag = loadbalancerTag;
+            }
         }
-
         return tag;
     }
 

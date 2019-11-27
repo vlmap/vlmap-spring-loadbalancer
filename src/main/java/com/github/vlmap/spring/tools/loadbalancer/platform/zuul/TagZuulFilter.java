@@ -3,10 +3,12 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.zuul;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.github.vlmap.spring.tools.loadbalancer.process.ZuulTagProcess;
 import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+
 
 public class TagZuulFilter extends ZuulFilter {
 
@@ -33,11 +35,15 @@ public class TagZuulFilter extends ZuulFilter {
 
     @Override
     public Object run() throws ZuulException {
-        String tag=process.getRequestTag();
-        if(StringUtils.isBlank(tag)){
-            String _tag=process.currentServerTag();
-            if(StringUtils.isNotBlank(_tag)){
-                process.setTag(_tag);
+        String tag = process.getRequestTag();
+        if (StringUtils.isBlank(tag)) {
+            tag = process.currentServerTag();
+            if (StringUtils.isNotBlank(tag)) {
+                RequestContext context = RequestContext.getCurrentContext();
+
+                context.addZuulRequestHeader(process.getTagHeaderName(), tag);
+
+
             }
         }
         return null;

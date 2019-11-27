@@ -10,39 +10,16 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 
-public class TagReactorContextWebFilter implements WebFilter, Ordered {
-     private ReactorTagProcess process;
+public class TagReactorContextWebFilter extends  AbstractReactorContextWebFilter implements WebFilter {
 
     public TagReactorContextWebFilter(ReactorTagProcess process) {
-
-        this.process=process;
+        super(process);
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain){
-        Mono<Void> mono = null;
-        try {
-            ReactiveContextHolder.set(ReactiveContextHolder.REQUEST, exchange.getRequest());
-            ReactiveContextHolder.set(ReactiveContextHolder.RESPONSE, exchange.getResponse());
-            String tag=process.getRequestTag();
-            if(StringUtils.isBlank(tag)){
-                String _tag=process.currentServerTag();
-                if(StringUtils.isNotBlank(_tag)){
-                    process.setTag(_tag);
-                }
-            }
-            mono =chain.filter(exchange);
-        } finally {
-
-            ReactiveContextHolder.dispose();
-        }
-        return mono;
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        filter(exchange);
+        return chain.filter(exchange);
     }
 
-    @Override
-    public int getOrder() {
-        return 0;
-    }
-
-//
 }

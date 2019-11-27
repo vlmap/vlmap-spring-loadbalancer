@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @EnableConfigurationProperties({SpringToolsProperties.class})
 
 @Configuration
- public class TagRibbonClientConfiguration extends org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration {
+ public class TagRibbonClientConfiguration  {
     @Autowired
 
     private DynamicToolProperties properties;
