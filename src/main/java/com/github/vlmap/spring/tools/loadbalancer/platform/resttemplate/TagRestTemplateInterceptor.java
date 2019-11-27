@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnProperty( "spring.tools.tag-load-balancer.rest-template.enabled")
+@ConditionalOnProperty( value = "spring.tools.tag-load-balancer.rest-template.enabled",matchIfMissing = true)
 
 public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor {
     @Autowired(required = false)

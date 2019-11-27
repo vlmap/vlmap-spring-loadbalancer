@@ -32,7 +32,8 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate template) {
         Map<String, Collection<String>> headers = template.headers();
         String headerName=properties.getTagHeaderName();
-        String header=headers.get(headerName).stream().findFirst().orElse(null);
+
+        String header=headers.getOrDefault(headerName,Collections.emptyList()).stream().findFirst().orElse(null);
         String tag=header;
         if(StringUtils.isBlank(tag)) {
             for (TagProcess tagProcess : tagProcesses) {

@@ -20,8 +20,7 @@ public class AbstractReactorContextWebFilter implements Ordered {
     public void filter(ServerWebExchange exchange) {
 
         try {
-            ReactiveContextHolder.set(ReactiveContextHolder.REQUEST, exchange.getRequest());
-            ReactiveContextHolder.set(ReactiveContextHolder.RESPONSE, exchange.getResponse());
+            ReactiveContextHolder.set(exchange);
             String tag = process.getRequestTag();
             if (StringUtils.isBlank(tag)) {
                 tag = process.currentServerTag();
