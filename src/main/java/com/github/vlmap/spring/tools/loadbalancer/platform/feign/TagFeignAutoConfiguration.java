@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
-@ConditionalOnProperty(name = "spring.tools.tag-load-balancer.feign.enabled",matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.feign.enabled",matchIfMissing = true)
 @AutoConfigureAfter(RibbonClientSpecificationAutoConfiguration.class)
 
 public class TagFeignAutoConfiguration {

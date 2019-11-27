@@ -15,7 +15,7 @@ public class SpringToolsProperties  {
 
 
 
-    private TagLoadBalancer tagLoadBalancer = new TagLoadBalancer();
+    private TagLoadbalancer tagLoadbalancer = new TagLoadbalancer();
      public String getPropertySourceName() {
         return propertySourceName;
     }
@@ -25,19 +25,19 @@ public class SpringToolsProperties  {
     }
 
 
-    public TagLoadBalancer getTagLoadBalancer() {
-        return tagLoadBalancer;
+    public TagLoadbalancer getTagLoadbalancer() {
+        return tagLoadbalancer;
     }
 
-    public void setTagLoadBalancer(TagLoadBalancer tagLoadBalancer) {
-        this.tagLoadBalancer = tagLoadBalancer;
+    public void setTagLoadbalancer(TagLoadbalancer tagLoadbalancer) {
+        this.tagLoadbalancer = tagLoadbalancer;
     }
 
 
 
 
     public String getTagHeaderName() {
-        return tagLoadBalancer.getHeaderName();
+        return tagLoadbalancer.getHeaderName();
     }
 
 
@@ -76,7 +76,7 @@ public class SpringToolsProperties  {
             this.enabled = enabled;
         }
     }
-    static public class TagLoadBalancer {
+    static public class TagLoadbalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
         private String header;

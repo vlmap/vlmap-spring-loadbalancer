@@ -58,19 +58,19 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
                     map.put("spring.tools.property-source-name", object);
                 }
 
-                map.put("spring.tools.tag-load-balancer.enabled",String.valueOf(properties.getTagLoadBalancer().isEnabled()));
-                map.put("spring.tools.tag-load-balancer.feign.enabled",String.valueOf(properties.getTagLoadBalancer().getFeign().isEnabled()));
-                map.put("spring.tools.tag-load-balancer.rest-template.enabled",String.valueOf(properties.getTagLoadBalancer().getRestTemplate().isEnabled()));
-                map.put("spring.tools.tag-load-balancer.web-client.enabled",String.valueOf(properties.getTagLoadBalancer().getWebClient().isEnabled()));
+                map.put("spring.tools.tag-loadbalancer.enabled",String.valueOf(properties.getTagLoadbalancer().isEnabled()));
+                map.put("spring.tools.tag-loadbalancer.feign.enabled",String.valueOf(properties.getTagLoadbalancer().getFeign().isEnabled()));
+                map.put("spring.tools.tag-loadbalancer.rest-template.enabled",String.valueOf(properties.getTagLoadbalancer().getRestTemplate().isEnabled()));
+                map.put("spring.tools.tag-loadbalancer.web-client.enabled",String.valueOf(properties.getTagLoadbalancer().getWebClient().isEnabled()));
 
-                object = properties.getTagLoadBalancer().getHeader();
+                object = properties.getTagLoadbalancer().getHeader();
                 if (object != null) {
-                    map.put("spring.tools.tag-load-balancer.header", object);
+                    map.put("spring.tools.tag-loadbalancer.header", object);
                 }
 
-                object = properties.getTagLoadBalancer().getHeaderName();
+                object = properties.getTagLoadbalancer().getHeaderName();
                 if (object != null) {
-                    map.put("spring.tools.tag-load-balancer.header-name", object);
+                    map.put("spring.tools.tag-loadbalancer.header-name", object);
                 }
 
 
@@ -86,7 +86,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
         Environment env = getEnvironment();
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
-        return properties.getTagLoadBalancer().isEnabled();
+        return properties.getTagLoadbalancer().isEnabled();
     }
 
     @Override

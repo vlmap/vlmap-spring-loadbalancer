@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 @ConditionalOnClass(WebClient.class)
-@ConditionalOnProperty(name = "spring.tools.tag-load-balancer.web-client.enabled",matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled",matchIfMissing = true)
 
 public class TagWebClientAutoConfiguration {
     @Bean
