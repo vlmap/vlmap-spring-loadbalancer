@@ -27,9 +27,9 @@ public class DynamicToolProperties implements InitializingBean {
 
     public String getTagHeader() {
         if (defaultToolsProps != null) {
-            return (String) defaultToolsProps.getProperty(properties.getTagLoadBalancer().getHeaderName());
+            return (String) defaultToolsProps.getProperty(properties.getTagLoadbalancer().getHeaderName());
         }
-        return properties.getTagLoadBalancer().getHeader();
+        return properties.getTagLoadbalancer().getHeader();
     }
     public String getTagHeaderName() {
         return properties.getTagHeaderName();

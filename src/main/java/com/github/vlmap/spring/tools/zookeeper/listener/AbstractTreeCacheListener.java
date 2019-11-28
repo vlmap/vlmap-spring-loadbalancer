@@ -2,20 +2,18 @@ package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.env.PropertySource;
 
 import java.nio.charset.Charset;
 import java.util.Map;
 
-public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener {
-    protected ApplicationEventPublisher publisher;
+public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener , ApplicationEventPublisherAware {
+//
     protected String context;
-    protected Map<String,Object> source;
-
-    public void setPublisher(ApplicationEventPublisher publisher) {
-        this.publisher = publisher;
-    }
+    protected ApplicationEventPublisher publisher;
 
     public void setContext(String context) {
         this.context = context;
@@ -34,6 +32,12 @@ public abstract class AbstractTreeCacheListener implements org.apache.curator.fr
         if (data != null && data.length > 0) {
             out.append(", data=").append(new String(data, Charset.forName("UTF-8")));
         }
+
         return out.toString();
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.publisher=applicationEventPublisher;
     }
 }

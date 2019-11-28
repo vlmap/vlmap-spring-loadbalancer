@@ -8,10 +8,13 @@ import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.TagReactorAut
 import com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate.TagRestTemplateAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.webclient.TagWebClientAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
+import com.github.vlmap.spring.tools.zookeeper.ZookeeperPropAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
+import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -25,7 +28,8 @@ import java.util.Map;
 
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
-public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<EnableTagRule> {
+@AutoConfigureBefore(ZookeeperConfigAutoConfiguration.class)
+public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelector<EnableZookeeperProp> {
 
     SpringToolsProperties properties=  new SpringToolsProperties();
 
@@ -33,48 +37,15 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
     public String[] selectImports(AnnotationMetadata metadata) {
         String[] imports = super.selectImports(metadata);
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
-        importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
-
-        importsList.add(TagReactorAutoConfiguration.class.getName());
-        importsList.add(TagFeignAutoConfiguration.class.getName());
-        importsList.add(TagRestTemplateAutoConfiguration.class.getName());
-        importsList.add(TagZuulAutoConfiguration.class.getName());
-        importsList.add(TagWebClientAutoConfiguration.class.getName());
-
-
-        imports = importsList.toArray(new String[0]);
+        importsList.add(ZookeeperPropAutoConfiguration.class.getName());
 
         DynamicToolProperties dynamicToolProperties= new DynamicToolProperties(getEnvironment(),properties);
         dynamicToolProperties.doAfterPropertiesSet();
-        PropertySource propertySource = dynamicToolProperties.getDefaultToolsProps();
+        dynamicToolProperties.getDefaultToolsProps().getSource().put("spring.tools.zookeeper.enabled",String.valueOf(properties.getZookeeper().isEnabled()));
 
-        if(propertySource!=null&&Map.class.isInstance(propertySource.getSource())){
-            Map<String,String>  map=(Map)propertySource.getSource();
-            if (map != null) {
-                String object = properties.getPropertySourceName();
-                if (object != null) {
-                    map.put("spring.tools.property-source-name", object);
-                }
-
-                map.put("spring.tools.tag-loadbalancer.enabled",String.valueOf(properties.getTagLoadbalancer().isEnabled()));
-                map.put("spring.tools.tag-loadbalancer.feign.enabled",String.valueOf(properties.getTagLoadbalancer().getFeign().isEnabled()));
-                map.put("spring.tools.tag-loadbalancer.rest-template.enabled",String.valueOf(properties.getTagLoadbalancer().getRestTemplate().isEnabled()));
-                map.put("spring.tools.tag-loadbalancer.web-client.enabled",String.valueOf(properties.getTagLoadbalancer().getWebClient().isEnabled()));
-
-                object = properties.getTagLoadbalancer().getHeader();
-                if (object != null) {
-                    map.put("spring.tools.tag-loadbalancer.header", object);
-                }
-
-                object = properties.getTagLoadbalancer().getHeaderName();
-                if (object != null) {
-                    map.put("spring.tools.tag-loadbalancer.header-name", object);
-                }
+        imports = importsList.toArray(new String[0]);
 
 
-
-            }
-        }
 
         return imports;
     }
@@ -84,7 +55,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
         Environment env = getEnvironment();
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
-        return properties.getTagLoadbalancer().isEnabled();
+        return properties.getZookeeper().isEnabled();
     }
 
     @Override
