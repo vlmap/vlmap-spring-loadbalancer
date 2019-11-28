@@ -1,5 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate;
 
+import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 @Configuration
-@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class, RestTemplateAutoConfiguration.class})
+@AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class, RestTemplateAutoConfiguration.class})
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled",matchIfMissing = true)
 
 public class TagRestTemplateAutoConfiguration {

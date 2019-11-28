@@ -49,17 +49,6 @@ import java.util.List;
 @EnableConfigurationProperties({SpringToolsProperties.class, ZookeeperProperties.class})
 
 public class ZookeeperPropAutoConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
-    public ProspEndPoint prospEndPoint(DynamicToolProperties properties){
-        return new ProspEndPoint(properties);
-    }
-    @Bean
-    @ConditionalOnMissingBean
-
-    public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties) {
-        return new DynamicToolProperties(env, properties);
-    }
 
 
     @Bean
@@ -82,17 +71,7 @@ public class ZookeeperPropAutoConfiguration {
     }
 
 
-    @Configuration
-    @ConditionalOnClass(RefreshEndpoint.class)
-    protected static class ZkRefreshConfiguration {
 
-        @Bean
-
-        public RefreshListener refreshListener() {
-            return new RefreshListener();
-        }
-
-    }
 
 
 }

@@ -70,7 +70,7 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
                             }else{
                                 defaultToolsProps.getSource().put(key,newValue);
                             }
-                            this.publisher.publishEvent(new PropsChangeEvent(this, key, value, event, getEventDesc(event)));
+                            this.publisher.publishEvent(new PropsChangeEvent(this, key, value, getEventDesc(event)));
 
                         }
                     }

@@ -1,17 +1,15 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.reactor;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.process.ReactorTagProcess;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.*;
+ import org.springframework.boot.autoconfigure.condition.*;
 
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
-import org.springframework.cloud.gateway.config.GatewayLoadBalancerClientAutoConfiguration;
 
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
@@ -22,7 +20,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 @Configuration
 @ConditionalOnClass({DispatcherHandler.class})
 
-@AutoConfigureAfter(RibbonClientSpecificationAutoConfiguration.class)
+@AutoConfigureAfter({SpringToolsAutoConfiguration.class,RibbonClientSpecificationAutoConfiguration.class})
 public class TagReactorAutoConfiguration  {
     @Bean
     public ReactorTagProcess reactorTagProcess(DynamicToolProperties properties) {

@@ -19,12 +19,8 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableConfigurationProperties({SpringToolsProperties.class})
  public class RibbonClientSpecificationAutoConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
 
-    public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties) {
-        return new DynamicToolProperties(env, properties);
-    }
+
 
     @Bean
     public RibbonClientSpecification specification() {
