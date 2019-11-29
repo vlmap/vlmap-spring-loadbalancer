@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@EnableConfigurationProperties({SpringToolsProperties.class})
+//@EnableConfigurationProperties({SpringToolsProperties.class})
  public class RibbonClientSpecificationAutoConfiguration {
 
 

@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.event.listener;
 
-import com.github.vlmap.spring.tools.event.PropsChangeEvent;
+import com.github.vlmap.spring.tools.event.PropChangeEvent;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.endpoint.event.RefreshEvent;
@@ -12,8 +12,8 @@ public class RefreshListener implements ApplicationEventPublisherAware {
     private static final String REFRESH_APPLICATION = "spring.application.refresh";
     protected ApplicationEventPublisher publisher;
 
-    @EventListener(PropsChangeEvent.class)
-    public void listener(PropsChangeEvent event) {
+    @EventListener(PropChangeEvent.class)
+    public void listener(PropChangeEvent event) {
         String key = event.getKey();
         String value = event.getValue();
         if (StringUtils.equals(REFRESH_APPLICATION, key)) {
@@ -25,6 +25,7 @@ public class RefreshListener implements ApplicationEventPublisherAware {
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+
         this.publisher = applicationEventPublisher;
     }
 }

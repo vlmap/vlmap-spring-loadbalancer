@@ -9,21 +9,18 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DelegatingLoadBalancer implements
         ILoadBalancer {
     List<TagProcess> tagProcesses;
     private ILoadBalancer target;
-    private AtomicBoolean tagRuleInProgress;
-    private AtomicReference<Map<Server, String>> tagsInProgress;
+     private AtomicReference<Map<Server, String>> tagsInProgress;
 
-    public DelegatingLoadBalancer(ILoadBalancer target, List<TagProcess> tagProcesses, AtomicBoolean tagRuleInProgress, AtomicReference<Map<Server, String>> tagsInProgress) {
+    public DelegatingLoadBalancer(ILoadBalancer target, List<TagProcess> tagProcesses,  AtomicReference<Map<Server, String>> tagsInProgress) {
         this.target = target;
         this.tagProcesses = tagProcesses;
-        this.tagRuleInProgress = tagRuleInProgress;
-        this.tagsInProgress = tagsInProgress;
+         this.tagsInProgress = tagsInProgress;
     }
 
     @PostConstruct
@@ -80,27 +77,48 @@ public class DelegatingLoadBalancer implements
     }
 
     protected List<Server> processServers(List<Server> servers) {
-        if (tagRuleInProgress == null) return servers;
-        String tagValue = tag();
-        boolean state = tagRuleInProgress.get();
+
         Map<Server, String> map = tagsInProgress.get();
+        if(map.isEmpty()){
+            return servers;             // 如果所有节点都没配标签，返回所有列表，
+
+        }
+        String tagValue = tag();
         List<Server> list = new ArrayList<>(servers.size());
-        if (state) {
+
+        if(StringUtils.isBlank(tagValue)){
+            //无标签请求，排除包含标签的节点
+
+                for (Server server : servers) {
+                    if(!map.containsKey(server)){
+                        list.add(server);
+                    }
+
+                }
+                return list;
+
+        }else{
+            //有标签的请求,优先匹配标签，匹配不到则返回，无标签节点
+
             for (Server server : servers) {
-                String tag = map.get(server);
-                if (StringUtils.equals(tagValue, tag)) {
+                String tag=map.get(server);
+                if(StringUtils.equals(tagValue,tag)){
                     list.add(server);
                 }
+
             }
-        } else {
-            for (Server server : servers) {
-                String tag = map.get(server);
-                if (StringUtils.isBlank(tag)) {
-                    list.add(server);
+            if(list.isEmpty()){
+                for (Server server : servers) {
+                    if(!map.containsKey(server)){
+                        list.add(server);
+                    }
+
                 }
             }
 
+
         }
+
         return Collections.unmodifiableList(list);
     }
 

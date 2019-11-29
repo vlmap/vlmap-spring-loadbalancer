@@ -1,8 +1,7 @@
 package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
-import com.github.vlmap.spring.tools.event.PropsChangeEvent;
-import com.github.vlmap.spring.tools.zookeeper.listener.AbstractTreeCacheListener;
+import com.github.vlmap.spring.tools.event.PropChangeEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +69,7 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
                             }else{
                                 defaultToolsProps.getSource().put(key,newValue);
                             }
-                            this.publisher.publishEvent(new PropsChangeEvent(this, key, value, getEventDesc(event)));
+                            this.publisher.publishEvent(new PropChangeEvent(this, key, value, getEventDesc(event)));
 
                         }
                     }

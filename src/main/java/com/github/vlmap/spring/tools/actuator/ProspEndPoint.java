@@ -1,14 +1,11 @@
 package com.github.vlmap.spring.tools.actuator;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
-import com.github.vlmap.spring.tools.event.PropsChangeEvent;
+import com.github.vlmap.spring.tools.event.PropChangeEvent;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -48,7 +45,7 @@ public class ProspEndPoint  implements ApplicationEventPublisherAware {
         value=StringUtils.defaultIfBlank(value,"");
         source.put(name, value);
         if(!StringUtils.equals(oldValue,value)){
-            this.publisher.publishEvent(new PropsChangeEvent(this, name, value,""));
+            this.publisher.publishEvent(new PropChangeEvent(this, name, value,""));
 
         }
         return props();
@@ -59,7 +56,7 @@ public class ProspEndPoint  implements ApplicationEventPublisherAware {
         String oldValue=(String)source.get(name);
         source.remove(name);
         if(!StringUtils.equals(oldValue,null)){
-            this.publisher.publishEvent(new PropsChangeEvent(this, name, null,""));
+            this.publisher.publishEvent(new PropChangeEvent(this, name, null,""));
 
         }
 

@@ -46,7 +46,7 @@ import java.util.List;
 @Configuration
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", havingValue = "false", matchIfMissing = true)
-@EnableConfigurationProperties({SpringToolsProperties.class, ZookeeperProperties.class})
+@EnableConfigurationProperties({ ZookeeperProperties.class})
 
 public class ZookeeperPropAutoConfiguration {
 
