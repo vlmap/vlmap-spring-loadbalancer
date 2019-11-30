@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
+import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
 import com.github.vlmap.spring.tools.event.listener.PropChangeListener;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
@@ -25,12 +26,13 @@ import java.util.concurrent.atomic.AtomicReference;
 //@EnableConfigurationProperties({SpringToolsProperties.class})
 
 @Configuration
- public class TagRibbonClientConfiguration  {
+public class TagRibbonClientConfiguration {
 
     @Autowired
 
     private Environment env;
-
+    @Autowired(required = false)
+    private DelegatePropChangeListener delegatePropChangeListener;
     @Bean
     public AtomicReference<Map<Server, String>> tagsInProgress() {
 
@@ -40,7 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
     @Bean
     @ConditionalOnBean(TagProcess.class)
-    public String tagStateProgress(ILoadBalancer lb, IRule rule,AtomicReference<Map<Server, String>> tagsInProgress, @Autowired(required = false) List<TagProcess> tagProcesses) {
+    public String tagStateProgress(ILoadBalancer lb, IRule rule, AtomicReference<Map<Server, String>> tagsInProgress, @Autowired(required = false) List<TagProcess> tagProcesses) {
 
 
         if (lb instanceof BaseLoadBalancer) {
@@ -57,19 +59,22 @@ import java.util.concurrent.atomic.AtomicReference;
         return String.valueOf(false);
 
     }
-
     @Bean
-    public PropChangeListener tagloadbalancerListener(IClientConfig clientConfig,ILoadBalancer lb, AtomicReference<Map<Server, String>> tagsInProgress) {
+    public String  tagServerChangeListener( IClientConfig clientConfig, ILoadBalancer lb, AtomicReference<Map<Server, String>> tagsInProgress) {
+
+        String prefix=StringUtils.lowerCase(clientConfig.getClientName()) + ".tag-loadbalancer";
+        if(delegatePropChangeListener!=null){
+            PropChangeListener listener=  new PropChangeListener(prefix , () -> {
+                if (lb instanceof BaseLoadBalancer) {
+                    tagStateInProgress(lb.getAllServers(), tagsInProgress);
+                }
+
+            });
+            delegatePropChangeListener.addListener(listener);
+        }
 
 
-        return new PropChangeListener(clientConfig.getClientName()+".tag-loadbalancer.",()->{
-            if (lb instanceof BaseLoadBalancer) {
-                tagStateInProgress(lb.getAllServers(), tagsInProgress);
-            }
-
-        });
-
-
+        return prefix;
     }
 
 
@@ -100,9 +105,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
     protected String tagStateInProgressKey(Server server) {
 
-        String tagKey = "tag-loadbalancer." + server.getId();
+        return "tag-loadbalancer." + server.getId();
 
-        return env.getProperty(tagKey);
 
     }
 
