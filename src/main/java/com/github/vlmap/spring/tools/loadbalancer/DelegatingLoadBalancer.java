@@ -15,9 +15,9 @@ public class DelegatingLoadBalancer implements
         ILoadBalancer {
     List<TagProcess> tagProcesses;
     private ILoadBalancer target;
-     private AtomicReference<Map<Server, String>> tagsInProgress;
+     private AtomicReference<Map<String,Set<String>>> tagsInProgress;
 
-    public DelegatingLoadBalancer(ILoadBalancer target, List<TagProcess> tagProcesses,  AtomicReference<Map<Server, String>> tagsInProgress) {
+    public DelegatingLoadBalancer(ILoadBalancer target, List<TagProcess> tagProcesses,  AtomicReference<Map<String,Set<String>>> tagsInProgress) {
         this.target = target;
         this.tagProcesses = tagProcesses;
          this.tagsInProgress = tagsInProgress;
@@ -78,7 +78,7 @@ public class DelegatingLoadBalancer implements
 
     protected List<Server> processServers(List<Server> servers) {
 
-        Map<Server, String> map = tagsInProgress.get();
+        Map<String,Set<String>> map = tagsInProgress.get();
         if(map.isEmpty()){
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
@@ -90,7 +90,8 @@ public class DelegatingLoadBalancer implements
             //无标签请求，排除包含标签的节点
 
                 for (Server server : servers) {
-                    if(!map.containsKey(server)){
+                    Set<String> tags=map.get(server.getId());
+                    if(tags!=null&&tags.contains(tagValue)){
                         list.add(server);
                     }
 
@@ -98,18 +99,20 @@ public class DelegatingLoadBalancer implements
                 return list;
 
         }else{
-            //有标签的请求,优先匹配标签，匹配不到则返回，无标签节点
+            //有标签的请求,优先匹配标签
 
             for (Server server : servers) {
-                String tag=map.get(server);
-                if(StringUtils.equals(tagValue,tag)){
+                Set<String> tags=map.get(server.getId());
+                if(tags!=null&&tags.contains(tagValue)){
                     list.add(server);
                 }
 
             }
+            //匹配不到则返回，无标签节点
             if(list.isEmpty()){
                 for (Server server : servers) {
-                    if(!map.containsKey(server)){
+                    Set<String> tags=map.get(server.getId());
+                    if(CollectionUtils.isEmpty(tags)){
                         list.add(server);
                     }
 

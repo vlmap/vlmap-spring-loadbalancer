@@ -1,12 +1,10 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.zuul;
 
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.github.vlmap.spring.tools.loadbalancer.process.ZuulTagProcess;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
 

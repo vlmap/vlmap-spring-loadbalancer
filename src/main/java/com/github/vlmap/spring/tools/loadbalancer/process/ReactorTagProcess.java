@@ -2,9 +2,7 @@ package com.github.vlmap.spring.tools.loadbalancer.process;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.ReactiveContextHolder;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 @Order(20)

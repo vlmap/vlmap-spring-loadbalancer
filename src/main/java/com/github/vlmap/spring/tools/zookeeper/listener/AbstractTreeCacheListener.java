@@ -2,13 +2,10 @@ package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.core.env.PropertySource;
 
 import java.nio.charset.Charset;
-import java.util.Map;
 
 public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener , ApplicationEventPublisherAware {
 //

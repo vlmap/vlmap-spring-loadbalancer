@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.feign;
 
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.apache.commons.collections.CollectionUtils;

@@ -1,12 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.reactor;
 
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ReactiveContextHolder {
     private final static ThreadLocal<ServerWebExchange> threadLocal = new ThreadLocal<>();

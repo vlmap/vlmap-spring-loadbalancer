@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate;
 
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

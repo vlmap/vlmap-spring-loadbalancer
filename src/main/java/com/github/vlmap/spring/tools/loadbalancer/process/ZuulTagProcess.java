@@ -3,7 +3,6 @@ package com.github.vlmap.spring.tools.loadbalancer.process;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.netflix.zuul.context.RequestContext;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;

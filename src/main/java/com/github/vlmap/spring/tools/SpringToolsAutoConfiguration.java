@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools;
 
-import com.github.vlmap.spring.tools.actuator.PropsEndPoint;
+import com.github.vlmap.spring.tools.actuator.PropertiesEndPoint;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
 import com.github.vlmap.spring.tools.event.listener.RefreshListener;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -24,8 +24,8 @@ public class SpringToolsAutoConfiguration  {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnEnabledEndpoint
-    public PropsEndPoint propsEndPoint(DynamicToolProperties properties) {
-        return new PropsEndPoint(properties);
+    public PropertiesEndPoint propsEndPoint(DynamicToolProperties properties) {
+        return new PropertiesEndPoint(properties);
     }
     @Bean
 
