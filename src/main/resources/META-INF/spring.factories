@@ -1,5 +1,9 @@
 
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.github.vlmap.spring.tools.SpringToolEnvironmentPostProcessor
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.vlmap.spring.tools.SpringToolsAutoConfiguration
+#
+
+
+# Bootstrap Configuration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+com.github.vlmap.spring.tools.SpringToolsBootstrapConfiguration

@@ -18,17 +18,12 @@ package com.github.vlmap.spring.tools.zookeeper;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.actuator.ProspEndPoint;
-import com.github.vlmap.spring.tools.event.listener.RefreshListener;
 import com.github.vlmap.spring.tools.zookeeper.listener.PropTreeCacheListener;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.cloud.zookeeper.ConditionalOnZookeeperEnabled;
 import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.config.ZookeeperPropertySourceLocator;
@@ -46,17 +41,16 @@ import java.util.List;
 @Configuration
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", havingValue = "false", matchIfMissing = true)
-@EnableConfigurationProperties({ ZookeeperProperties.class})
+@EnableConfigurationProperties({ ZookeeperProperties.class,SpringToolsProperties.class})
 
 public class ZookeeperPropAutoConfiguration {
 
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public PropTreeCacheListener propsTreeCacheListener(DynamicToolProperties dynamicToolProperties) {
-        PropTreeCacheListener listener = new PropTreeCacheListener();
-        listener.setDefaultToolsProps(dynamicToolProperties.getDefaultToolsProps());
-        return listener;
+    public PropTreeCacheListener propsTreeCacheListener(Environment environment, SpringToolsProperties properties) {
+        PropTreeCacheListener listener = new PropTreeCacheListener(environment,properties);
+         return listener;
     }
 
 

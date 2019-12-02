@@ -13,27 +13,12 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableConfigurationProperties({SpringToolsProperties.class})
 
-public class SpringToolsAutoConfiguration  {
+public class SpringToolsBootstrapConfiguration {
+//ConfigBootstrapConfiguration
 
     @Bean
-    @ConditionalOnMissingBean
+    public SpringToolsPropertySourceLocator springToolsPropertySourceLocator(SpringToolsProperties properties){
+        return  new SpringToolsPropertySourceLocator(properties);
+    }
 
-    public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties) {
-        return new DynamicToolProperties(env, properties);
-    }
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnEnabledEndpoint
-    public PropsEndPoint propsEndPoint(DynamicToolProperties properties) {
-        return new PropsEndPoint(properties);
-    }
-    @Bean
-
-    public RefreshListener refreshListener() {
-        return new RefreshListener();
-    }
-    @Bean
-    public DelegatePropChangeListener delegatePropChangeListener(){
-        return new DelegatePropChangeListener();
-    }
 }

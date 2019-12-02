@@ -2,16 +2,19 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.reactor;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.process.ReactorTagProcess;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
  import org.springframework.boot.autoconfigure.condition.*;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.reactive.DispatcherHandler;
 
 /**
@@ -19,9 +22,18 @@ import org.springframework.web.reactive.DispatcherHandler;
  */
 @Configuration
 @ConditionalOnClass({DispatcherHandler.class})
+@EnableConfigurationProperties({SpringToolsProperties.class})
 
 @AutoConfigureAfter({SpringToolsAutoConfiguration.class,RibbonClientSpecificationAutoConfiguration.class})
 public class TagReactorAutoConfiguration  {
+
+
+    @Bean
+    @ConditionalOnMissingBean
+
+    public DynamicToolProperties dynamicToolProperties(Environment env, SpringToolsProperties properties) {
+        return new DynamicToolProperties(env, properties);
+    }
     @Bean
     public ReactorTagProcess reactorTagProcess(DynamicToolProperties properties) {
         return new ReactorTagProcess(properties);

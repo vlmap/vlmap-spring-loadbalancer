@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.event.PropChangeEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -8,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.springframework.core.env.CompositePropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 
 import java.nio.charset.StandardCharsets;
@@ -20,10 +23,22 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
 
     private CompositePropertySource composite;
     private MapPropertySource container;
-    private MapPropertySource defaultToolsProps;
 
-    public void setDefaultToolsProps(MapPropertySource defaultToolsProps) {
-        this.defaultToolsProps = defaultToolsProps;
+    private Environment environment;
+
+    private SpringToolsProperties properties;
+
+    public PropTreeCacheListener(Environment environment, SpringToolsProperties properties) {
+        this.environment = environment;
+        this.properties = properties;
+    }
+
+    public MapPropertySource defaultToolsProps() {
+        if (environment instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment env = (ConfigurableEnvironment) environment;
+            return (MapPropertySource) env.getPropertySources().get(properties.getPropertySourceName());
+        }
+        return null;
     }
 
     public void setComposite(CompositePropertySource composite) {
@@ -40,7 +55,8 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
 
         if (event.getData() != null) {
 
-
+            MapPropertySource defaultToolsProps = defaultToolsProps();
+            if (defaultToolsProps == null) return;
 
                  String path = event.getData().getPath();
                 if (!StringUtils.equals(this.context, path)) {

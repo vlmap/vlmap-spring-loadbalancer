@@ -14,11 +14,11 @@ import java.util.TreeMap;
 @Endpoint(
         id = "props"
 )
-public class ProspEndPoint  implements ApplicationEventPublisherAware {
+public class PropsEndPoint implements ApplicationEventPublisherAware {
     private DynamicToolProperties properties;
     protected ApplicationEventPublisher publisher;
 
-    public ProspEndPoint(DynamicToolProperties properties) {
+    public PropsEndPoint(DynamicToolProperties properties) {
         this.properties = properties;
     }
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -55,6 +56,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
     protected boolean isEnabled() {
         Environment env = getEnvironment();
         SpringToolsProperties properties=new SpringToolsProperties();
+
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
         return properties.getTagLoadbalancer().isEnabled();
