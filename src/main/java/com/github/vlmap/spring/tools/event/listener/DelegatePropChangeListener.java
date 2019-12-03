@@ -1,23 +1,23 @@
 package com.github.vlmap.spring.tools.event.listener;
 
-import com.github.vlmap.spring.tools.event.PropChangeEvent;
+import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DelegatePropChangeListener  {
-    Map<String,PropChangeListener> listeners=new ConcurrentHashMap<>();
+    Map<String, PropertiesListener> listeners=new ConcurrentHashMap<>();
 
-    @EventListener(PropChangeEvent.class)
-    public void listener(PropChangeEvent event) {
+    @EventListener(PropertyChangeEvent.class)
+    public void listener(PropertyChangeEvent event) {
 
-        for(PropChangeListener listener:listeners.values()){
+        for(PropertiesListener listener:listeners.values()){
             listener.listener(event);
         }
     }
 
-    public void addListener(PropChangeListener listener){
+    public void addListener(PropertiesListener listener){
         if(listener==null)return;
         String id=listener.getId();
         if(id!=null){

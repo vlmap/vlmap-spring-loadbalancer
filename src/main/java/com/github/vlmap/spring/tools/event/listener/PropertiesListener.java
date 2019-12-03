@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.event.listener;
 
-import com.github.vlmap.spring.tools.event.PropChangeEvent;
+import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +8,12 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.context.event.EventListener;
 
 
-public class PropChangeListener {
-    private  static    Logger logger= LoggerFactory.getLogger(PropChangeListener.class);
-    private Runnable call;
+public class PropertiesListener {
+   public interface ChangeListener{
+        void propertyChanged(PropertyChangeEvent event);
+    }
+    private  static    Logger logger= LoggerFactory.getLogger(PropertiesListener.class);
+    private ChangeListener call;
     private String name;
     private ConfigurationPropertyName propertyName = null;
     //监听以 name 开头的节点
@@ -18,12 +21,12 @@ public class PropChangeListener {
     private boolean useString;
     private String id;
 
-    public PropChangeListener(String name, Runnable call) {
+    public PropertiesListener(String name, ChangeListener call) {
 
         this(name,false,call);
     }
 
-    public PropChangeListener(ConfigurationPropertyName name, Runnable call) {
+    public PropertiesListener(ConfigurationPropertyName name, ChangeListener call) {
 
         this(name, false, call);
     }
@@ -35,7 +38,7 @@ public class PropChangeListener {
      * @param call
      */
 
-    public PropChangeListener(String name,boolean  prefix, Runnable call) {
+    public PropertiesListener(String name, boolean  prefix, ChangeListener call) {
         this.name = name;
         this.prefix = prefix;
         this.call = call;
@@ -52,7 +55,7 @@ public class PropChangeListener {
      */
 
 
-    public PropChangeListener(ConfigurationPropertyName name, boolean prefix, Runnable call) {
+    public PropertiesListener(ConfigurationPropertyName name, boolean prefix, ChangeListener call) {
 
         this.propertyName = name;
         this.prefix = prefix;
@@ -70,8 +73,8 @@ public class PropChangeListener {
         this.id = id;
     }
 
-    @EventListener(PropChangeEvent.class)
-    public void listener(PropChangeEvent event) {
+    @EventListener(PropertyChangeEvent.class)
+    public void listener(PropertyChangeEvent event) {
         String key = event.getKey();
 
         if(useString){
@@ -79,7 +82,7 @@ public class PropChangeListener {
                 if(StringUtils.startsWith(key,name)) {
                     try {
                         if (call != null) {
-                            call.run();
+                            call.propertyChanged(event);
                         }
 
                     } catch (Exception e) {
@@ -90,7 +93,7 @@ public class PropChangeListener {
                 if(StringUtils.equals(key,name)) {
                     try {
                         if (call != null) {
-                            call.run();
+                            call.propertyChanged(event);
                         }
 
                     } catch (Exception e) {
@@ -105,7 +108,7 @@ public class PropChangeListener {
                 if(propertyName.isAncestorOf(child)||propertyName.isParentOf(child)) {
                     try {
                         if (call != null) {
-                            call.run();
+                            call.propertyChanged(event);
                         }
 
                     } catch (Exception e) {
@@ -116,7 +119,7 @@ public class PropChangeListener {
                 if(propertyName.isAncestorOf(child) ) {
                     try {
                         if (call != null) {
-                            call.run();
+                            call.propertyChanged(event);
                         }
 
                     } catch (Exception e) {

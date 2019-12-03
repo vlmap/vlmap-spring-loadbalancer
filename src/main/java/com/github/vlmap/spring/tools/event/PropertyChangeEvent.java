@@ -5,14 +5,14 @@ import org.springframework.context.ApplicationEvent;
 /**
  *
  */
-public class PropChangeEvent extends ApplicationEvent {
+public class PropertyChangeEvent extends ApplicationEvent {
 
 
     private String eventDesc;
     private String key;
     private String value;
 
-    public PropChangeEvent(Object source, String key, String value, String eventDesc) {
+    public PropertyChangeEvent(Object source, String key, String value, String eventDesc) {
         super(source);
 
         this.eventDesc = eventDesc;

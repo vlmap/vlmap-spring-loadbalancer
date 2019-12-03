@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.actuator;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
-import com.github.vlmap.spring.tools.event.PropChangeEvent;
+import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +58,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         value = StringUtils.defaultIfBlank(value, "");
         source.put(name, value);
         if (!StringUtils.equals(oldValue, value)) {
-            this.publisher.publishEvent(new PropChangeEvent(this, name, value, ""));
+            this.publisher.publishEvent(new PropertyChangeEvent(this, name, value, ""));
 
         }
         return get(name);
@@ -70,7 +70,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         String oldValue = (String) source.get(name);
         source.remove(name);
         if (!StringUtils.equals(oldValue, null)) {
-            this.publisher.publishEvent(new PropChangeEvent(this, name, null, ""));
+            this.publisher.publishEvent(new PropertyChangeEvent(this, name, null, ""));
 
         }
 

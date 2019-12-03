@@ -1,19 +1,18 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
+import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
-import com.github.vlmap.spring.tools.event.listener.PropChangeListener;
+import com.github.vlmap.spring.tools.event.listener.PropertiesListener;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.github.vlmap.spring.tools.loadbalancer.Ribbon;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.configuration.event.EventSource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -22,19 +21,13 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-//@EnableConfigurationProperties({SpringToolsProperties.class})
 
 @Configuration
 public class TagRibbonClientConfiguration {
-
-    @Autowired
-
-    private Environment env;
 
 
     @Bean
@@ -63,9 +56,8 @@ public class TagRibbonClientConfiguration {
             this.tagStateInProgress(clientConfig, tagsInProgress);
 
 
-            String prefix = clientConfig.getClientName();
             if (delegatePropChangeListener != null) {
-                PropChangeListener listener = new PropChangeListener(prefix, () -> {
+                PropertiesListener listener = new PropertiesListener(clientConfig.getClientName(), true, (PropertyChangeEvent event) -> {
                     if (lb instanceof BaseLoadBalancer) {
                         tagStateInProgress(clientConfig, tagsInProgress);
                     }
@@ -84,14 +76,9 @@ public class TagRibbonClientConfiguration {
 
 
         org.apache.commons.configuration.Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientConfig.getClientName());
-        if(configuration instanceof EventSource){
-            EventSource eventSource=(EventSource)configuration;
-            eventSource.addConfigurationListener((event -> {
-                String  name=event.getPropertyName();
-                Object  value=event.getPropertyValue();
 
-            }));
-        }
+
+
         MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
         Iterator<String> iterator = configuration.getKeys();
         while (iterator.hasNext()) {
