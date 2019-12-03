@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.webclient;
 
-import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ public class TagWebClientInterceptor implements ExchangeFilterFunction {
     List<TagProcess> tagProcesses= Collections.emptyList();
     @Autowired
 
-    private DynamicToolProperties properties;
+    private SpringToolsProperties properties;
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {

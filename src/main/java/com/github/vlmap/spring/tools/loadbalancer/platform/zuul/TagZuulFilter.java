@@ -1,5 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.zuul;
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.process.ZuulTagProcess;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -7,13 +8,14 @@ import com.netflix.zuul.exception.ZuulException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 public class TagZuulFilter extends ZuulFilter {
 
-    private ZuulTagProcess process;
-
-    public TagZuulFilter(ZuulTagProcess process) {
-        this.process = process;
+     SpringToolsProperties properties;
+    public TagZuulFilter(  SpringToolsProperties properties) {
+         this.properties=properties;
     }
 
     @Override
@@ -33,13 +35,15 @@ public class TagZuulFilter extends ZuulFilter {
 
     @Override
     public Object run() throws ZuulException {
-        String tag = process.getRequestTag();
-        if (StringUtils.isBlank(tag)) {
-            tag = process.currentServerTag();
-            if (StringUtils.isNotBlank(tag)) {
-                RequestContext context = RequestContext.getCurrentContext();
+        RequestContext context = RequestContext.getCurrentContext();
+        HttpServletRequest request= context.getRequest();
 
-                context.addZuulRequestHeader(process.getTagHeaderName(), tag);
+        String tag =request.getHeader(this.properties.getTagHeaderName());
+        if (StringUtils.isBlank(tag)) {
+            tag = properties.getTagLoadbalancer().getHeader();
+            if (StringUtils.isNotBlank(tag)) {
+
+                context.addZuulRequestHeader(properties.getTagHeaderName(), tag);
 
 
             }

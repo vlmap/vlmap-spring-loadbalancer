@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration;
 import org.springframework.core.env.*;
 
+import java.util.LinkedHashSet;
+
 public class DynamicToolProperties   {
 
     private Environment env;
@@ -25,9 +27,10 @@ public class DynamicToolProperties   {
     }
 
     public String getTagHeader() {
-        if (getDefaultToolsProps() != null) {
-            return (String) getDefaultToolsProps().getProperty(properties.getTagLoadbalancer().getHeaderName());
-        }
+//        if (getDefaultToolsProps() != null) {
+//            String string= (String) getDefaultToolsProps().getProperty(properties.getTagLoadbalancer().getHeaderName());
+//            if(StringUtils.isNotBlank(string))
+//        }
         return properties.getTagLoadbalancer().getHeader();
     }
     public String getTagHeaderName() {

@@ -100,6 +100,9 @@ public class SpringToolsProperties  {
     static public class TagLoadbalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
+        /**
+         * 只在 gateway,zuul 网关才会用到
+         */
         private String header;
         private Feign feign=new Feign();
         private RestTemplate restTemplate=new RestTemplate();
