@@ -54,12 +54,12 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
     @Override
     protected boolean isEnabled() {
         Environment env = getEnvironment();
-        SpringToolsProperties properties=new SpringToolsProperties();
+        SpringToolsProperties properties = new SpringToolsProperties();
 
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
         return properties.getTagLoadbalancer().isEnabled();
-     }
+    }
 
     @Override
     protected boolean hasDefaultFactory() {

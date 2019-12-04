@@ -1,6 +1,5 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.feign;
 
-import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import feign.RequestInterceptor;
@@ -18,10 +17,11 @@ import java.util.Map;
 
 public class FeignRequestInterceptor implements RequestInterceptor {
     @Autowired(required = false)
-    List<TagProcess> tagProcesses= Collections.emptyList();
+    List<TagProcess> tagProcesses = Collections.emptyList();
     @Autowired
 
     private SpringToolsProperties properties;
+
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {
@@ -29,14 +29,15 @@ public class FeignRequestInterceptor implements RequestInterceptor {
 
         }
     }
+
     @Override
     public void apply(RequestTemplate template) {
         Map<String, Collection<String>> headers = template.headers();
-        String headerName=properties.getTagHeaderName();
+        String headerName = properties.getTagHeaderName();
 
-        String header=headers.getOrDefault(headerName,Collections.emptyList()).stream().findFirst().orElse(null);
-        String tag=header;
-        if(StringUtils.isBlank(tag)) {
+        String header = headers.getOrDefault(headerName, Collections.emptyList()).stream().findFirst().orElse(null);
+        String tag = header;
+        if (StringUtils.isBlank(tag)) {
             for (TagProcess tagProcess : tagProcesses) {
                 String _tag = tagProcess.getTag();
                 if (StringUtils.isNotBlank(_tag)) {
@@ -45,8 +46,8 @@ public class FeignRequestInterceptor implements RequestInterceptor {
                 }
             }
         }
-        if(StringUtils.isNotBlank(tag)&&!StringUtils.equals(tag,header)){
-            template.header(headerName,tag);
+        if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
+            template.header(headerName, tag);
         }
     }
 }

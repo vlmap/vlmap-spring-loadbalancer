@@ -19,10 +19,11 @@ import java.util.List;
 
 public class TagWebClientInterceptor implements ExchangeFilterFunction {
     @Autowired(required = false)
-    List<TagProcess> tagProcesses= Collections.emptyList();
+    List<TagProcess> tagProcesses = Collections.emptyList();
     @Autowired
 
     private SpringToolsProperties properties;
+
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {
@@ -30,14 +31,15 @@ public class TagWebClientInterceptor implements ExchangeFilterFunction {
 
         }
     }
+
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 
         HttpHeaders headers = request.headers();
-        String headerName=properties.getTagHeaderName();
-        String header=headers.getFirst(headerName);
-        String tag=header;
-        if(StringUtils.isBlank(tag)) {
+        String headerName = properties.getTagHeaderName();
+        String header = headers.getFirst(headerName);
+        String tag = header;
+        if (StringUtils.isBlank(tag)) {
             for (TagProcess tagProcess : tagProcesses) {
                 String _tag = tagProcess.getTag();
                 if (StringUtils.isNotBlank(_tag)) {
@@ -46,8 +48,8 @@ public class TagWebClientInterceptor implements ExchangeFilterFunction {
                 }
             }
         }
-        if(StringUtils.isNotBlank(tag)&&!StringUtils.equals(tag,header)){
-            headers.add(headerName,tag);
+        if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
+            headers.add(headerName, tag);
         }
 
         return next.exchange(request);

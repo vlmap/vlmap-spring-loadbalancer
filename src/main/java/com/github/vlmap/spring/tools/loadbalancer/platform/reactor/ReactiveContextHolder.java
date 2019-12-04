@@ -6,21 +6,19 @@ public class ReactiveContextHolder {
     private final static ThreadLocal<ServerWebExchange> threadLocal = new ThreadLocal<>();
     public static final String SERVER_WEB_EXCHANGE = "exchange";
 
-    public static ServerWebExchange get( ) {
-       return threadLocal.get();
+    public static ServerWebExchange get() {
+        return threadLocal.get();
 
     }
 
-    public static void set(ServerWebExchange  exchange) {
+    public static void set(ServerWebExchange exchange) {
         threadLocal.set(exchange);
     }
-
 
 
     public static void dispose() {
         threadLocal.remove();
     }
-
 
 
 }

@@ -17,13 +17,13 @@ public class ReactorTagProcess implements TagProcess {
 
     @Override
     public String getTag() {
-        ServerWebExchange exchange=ReactiveContextHolder.get();
-        String header=null;
-        if(exchange!=null){
-            header=    exchange.getRequest().getHeaders().getFirst(this.properties.getTagHeaderName());
+        ServerWebExchange exchange = ReactiveContextHolder.get();
+        String header = null;
+        if (exchange != null) {
+            header = exchange.getRequest().getHeaders().getFirst(this.properties.getTagHeaderName());
         }
-        if(StringUtils.isBlank(header)){
-            header=properties.getTagLoadbalancer().getHeader();
+        if (StringUtils.isBlank(header)) {
+            header = properties.getTagLoadbalancer().getHeader();
         }
         return header;
     }

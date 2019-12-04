@@ -39,7 +39,7 @@ public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelect
     protected boolean isEnabled() {
 
         Environment env = getEnvironment();
-        SpringToolsProperties properties=new SpringToolsProperties();
+        SpringToolsProperties properties = new SpringToolsProperties();
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
         return properties.getZookeeper().isEnabled();

@@ -21,27 +21,32 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DelegatingLoadBalancer implements ILoadBalancer, InitializingBean {
+public class DelegatingLoadBalancer implements ILoadBalancer {
 
     private AtomicReference<Map<String, Set<String>>> tagsInProgress = new AtomicReference(Collections.emptyMap());
     private IClientConfig clientConfig;
-    private List<TagProcess> tagProcesses;
-    private BaseLoadBalancer target;
-    private DelegatePropChangeListener delegatePropChangeListener;
+    private List<TagProcess> tagProcesses=Collections.emptyList();
+    private ILoadBalancer target;
 
-    public DelegatingLoadBalancer(IClientConfig clientConfig, BaseLoadBalancer target, List<TagProcess> tagProcesses) {
-        this.target = target;
-        this.tagProcesses = tagProcesses == null ? Collections.emptyList() : tagProcesses;
+
+
+    public void setClientConfig(IClientConfig clientConfig) {
         this.clientConfig = clientConfig;
-        if (CollectionUtils.isNotEmpty(tagProcesses)) {
-            AnnotationAwareOrderComparator.sort(tagProcesses);
+    }
 
+    public void setTagProcesses(List<TagProcess> tagProcesses) {
+        if(tagProcesses!=null){
+            this.tagProcesses = tagProcesses;
+            if (CollectionUtils.isNotEmpty(tagProcesses)) {
+                AnnotationAwareOrderComparator.sort(tagProcesses);
+
+            }
         }
 
     }
 
-    public void setDelegatePropChangeListener(DelegatePropChangeListener delegatePropChangeListener) {
-        this.delegatePropChangeListener = delegatePropChangeListener;
+    public void setTarget(ILoadBalancer target) {
+        this.target = target;
     }
 
     @Override
@@ -175,34 +180,23 @@ public class DelegatingLoadBalancer implements ILoadBalancer, InitializingBean {
     }
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (delegatePropChangeListener != null) {
-            PropertiesListener listener = new PropertiesListener(clientConfig.getClientName(), true, (PropertyChangeEvent event) -> {
-
-                tagStateInProgress();
 
 
-            });
-            delegatePropChangeListener.addListener(listener);
-        }
-        tagStateInProgress();
-    }
     public static class RibbonTagOfServers {
 
-        List< TagOfServers> tagOfServers;
+        List<TagOfServers> tagOfServers;
 
-        public List< TagOfServers> getTagOfServers() {
+        public List<TagOfServers> getTagOfServers() {
             return tagOfServers;
         }
 
-        public void setTagOfServers(List< TagOfServers> tagOfServers) {
+        public void setTagOfServers(List<TagOfServers> tagOfServers) {
             this.tagOfServers = tagOfServers;
         }
 
         public static class TagOfServers {
-            private   String id;
-            private   Set<String> tags;
+            private String id;
+            private Set<String> tags;
 
             public String getId() {
                 return id;

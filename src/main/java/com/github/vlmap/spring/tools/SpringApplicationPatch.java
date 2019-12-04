@@ -5,7 +5,7 @@ import com.github.vlmap.spring.tools.boot.InitializedEventListener;
 import org.springframework.boot.SpringApplication;
 
 
-public class SpringApplicationPatch  {
+public class SpringApplicationPatch {
 
     public static SpringApplication patch(Class<?>... primarySources) {
         SpringApplication application = new SpringApplication(primarySources);

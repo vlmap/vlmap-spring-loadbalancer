@@ -53,7 +53,6 @@ public class PropWatcher implements Closeable {
     private CuratorFramework curator;
 
 
-
     private HashMap<String, TreeCache> caches;
 
     private ObjectProvider<? extends AbstractTreeCacheListener> provider;
@@ -64,7 +63,6 @@ public class PropWatcher implements Closeable {
         this.curator = curator;
         this.provider = provider;
     }
-
 
 
     @PostConstruct
@@ -87,9 +85,9 @@ public class PropWatcher implements Closeable {
                     AbstractTreeCacheListener listener = provider.getIfAvailable();
                     listener.setContext(context);
                     if (listener instanceof PropTreeCacheListener) {
-                        MapPropertySource container=new MapPropertySource(context, new ConcurrentHashMap<>());
+                        MapPropertySource container = new MapPropertySource(context, new ConcurrentHashMap<>());
                         composite.addPropertySource(container);
-                        PropTreeCacheListener propsListener=(PropTreeCacheListener)listener;
+                        PropTreeCacheListener propsListener = (PropTreeCacheListener) listener;
                         propsListener.setComposite(composite);
                         propsListener.setContainer(container);
 

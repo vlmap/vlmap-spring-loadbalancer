@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.actuator;
 
-import com.github.vlmap.spring.tools.DynamicToolProperties;
+import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.common.PropertiesUtils;
 import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.Configuration;
@@ -8,7 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,17 +22,28 @@ import java.util.TreeMap;
         id = "props"
 )
 public class PropertiesEndPoint implements ApplicationEventPublisherAware {
-    private DynamicToolProperties properties;
+    private SpringToolsProperties properties;
     protected ApplicationEventPublisher publisher;
+    private Map source = Collections.emptyMap();
+    private Environment environment;
 
-    public PropertiesEndPoint(DynamicToolProperties properties) {
+    public PropertiesEndPoint(Environment environment, SpringToolsProperties properties) {
+        this.environment = environment;
         this.properties = properties;
+    }
+
+    @PostConstruct
+    public void initMethod() {
+        MapPropertySource propertySource = PropertiesUtils.getPropertiesSource(environment, properties);
+        if (propertySource != null) {
+            this.source = propertySource.getSource();
+        }
     }
 
     @ReadOperation
     public Response props() {
 
-        return new Response(new TreeMap(properties.getDefaultToolsProps().getSource()));
+        return new Response(new TreeMap(this.source));
     }
 
     @ReadOperation
@@ -41,7 +56,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
             String value = configuration.getString(key);
             map.put(key, value);
         }
-        String value = (String) properties.getDefaultToolsProps().getSource().get(name);
+        String value = (String) this.source.get(name);
         if (value == null) {
             return new Response(map);
 
@@ -53,7 +68,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
 
     @WriteOperation
     public Response update(@Selector String name, @Selector String value) {
-        Map<String, Object> source = properties.getDefaultToolsProps().getSource();
+        Map<String, Object> source = this.source;
         String oldValue = (String) source.get(name);
         value = StringUtils.defaultIfBlank(value, "");
         source.put(name, value);
@@ -66,7 +81,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
 
     @DeleteOperation
     public Response delete(@Selector String name) {
-        Map<String, Object> source = properties.getDefaultToolsProps().getSource();
+        Map<String, Object> source = this.source;
         String oldValue = (String) source.get(name);
         source.remove(name);
         if (!StringUtils.equals(oldValue, null)) {
@@ -79,7 +94,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
 
     @DeleteOperation
     public Response clean() {
-        Map<String, Object> source = properties.getDefaultToolsProps().getSource();
+        Map<String, Object> source = this.source;
         source.clear();
 
         return props();

@@ -1,6 +1,5 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.zuul;
 
-import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(RibbonRoutingFilter.class)
-@AutoConfigureAfter({SpringToolsAutoConfiguration.class,RibbonClientSpecificationAutoConfiguration.class})
+@AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class})
 
 public class TagZuulAutoConfiguration {
     @Bean
@@ -21,8 +20,9 @@ public class TagZuulAutoConfiguration {
         return new ZuulTagProcess(properties);
 
     }
+
     @Bean
-    public TagZuulFilter tagZuulFilter(SpringToolsProperties properties){
-        return new  TagZuulFilter(properties);
+    public TagZuulFilter tagZuulFilter(SpringToolsProperties properties) {
+        return new TagZuulFilter(properties);
     }
 }

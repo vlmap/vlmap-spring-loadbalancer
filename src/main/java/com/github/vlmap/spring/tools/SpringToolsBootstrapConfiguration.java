@@ -12,8 +12,8 @@ public class SpringToolsBootstrapConfiguration implements Ordered {
 //ConfigBootstrapConfiguration
 
     @Bean
-    public SpringToolsPropertySourceLocator springToolsPropertySourceLocator(SpringToolsProperties properties){
-        return  new SpringToolsPropertySourceLocator(properties);
+    public SpringToolsPropertySourceLocator springToolsPropertySourceLocator(SpringToolsProperties properties) {
+        return new SpringToolsPropertySourceLocator(properties);
     }
 
     @Override

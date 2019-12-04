@@ -2,7 +2,7 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.AbstractReactorContextWebFilter;
+import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.ReactorFilter;
 import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulFilter;
 import com.github.vlmap.spring.tools.loadbalancer.process.SpringmvcTagProcess;
@@ -25,8 +25,8 @@ public class TagSpringmvcAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean({TagZuulFilter.class, AbstractReactorContextWebFilter.class})
-    public TagSpringmvcFilter tagSpringmvcFilter(SpringToolsProperties properties){
-        return new  TagSpringmvcFilter(properties);
+    @ConditionalOnMissingBean({TagZuulFilter.class, ReactorFilter.class})
+    public TagSpringmvcFilter tagSpringmvcFilter(SpringToolsProperties properties) {
+        return new TagSpringmvcFilter(properties);
     }
 }

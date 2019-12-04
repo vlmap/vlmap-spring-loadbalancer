@@ -18,7 +18,7 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
 
     @Override
     public PropertySource<?> locate(Environment environment) {
-        String propertySourceName=properties.getPropertySourceName();
+        String propertySourceName = properties.getPropertySourceName();
 
 
         Map<String, Object> map = new ConcurrentHashMap<>();

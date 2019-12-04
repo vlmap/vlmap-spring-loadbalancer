@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.webclient;
 
 
-
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -10,10 +9,11 @@ import org.springframework.cloud.client.loadbalancer.reactive.WebClientCustomize
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+
 @Configuration
 @ConditionalOnClass(WebClient.class)
 @AutoConfigureAfter({SpringToolsAutoConfiguration.class})
-@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled",matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled", matchIfMissing = true)
 
 public class TagWebClientAutoConfiguration {
     @Bean
@@ -26,8 +26,6 @@ public class TagWebClientAutoConfiguration {
             TagWebClientInterceptor filterFunction) {
         return builder -> builder.filter(filterFunction);
     }
-
-
 
 
 }

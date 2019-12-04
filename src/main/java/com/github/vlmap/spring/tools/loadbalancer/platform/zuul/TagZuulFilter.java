@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 
 public class TagZuulFilter extends ZuulFilter {
 
-     SpringToolsProperties properties;
+    SpringToolsProperties properties;
 
     public TagZuulFilter(SpringToolsProperties properties) {
-         this.properties=properties;
+        this.properties = properties;
     }
 
     @Override
@@ -36,9 +36,9 @@ public class TagZuulFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
-        HttpServletRequest request= context.getRequest();
+        HttpServletRequest request = context.getRequest();
 
-        String tag =request.getHeader(this.properties.getTagHeaderName());
+        String tag = request.getHeader(this.properties.getTagHeaderName());
         if (StringUtils.isBlank(tag)) {
             tag = properties.getTagLoadbalancer().getHeader();
             if (StringUtils.isNotBlank(tag)) {

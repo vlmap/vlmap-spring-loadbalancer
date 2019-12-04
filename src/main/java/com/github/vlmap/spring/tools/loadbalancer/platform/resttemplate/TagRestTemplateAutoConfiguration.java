@@ -16,19 +16,20 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Configuration
 @AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class, RestTemplateAutoConfiguration.class})
-@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled",matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
 public class TagRestTemplateAutoConfiguration {
 
     @Bean
-    public String  doInitTagRestTemplateCustomizer(@Autowired(required = false) RestTemplateBuilder builder,TagRestTemplateInterceptor interceptor){
-        if(builder!=null){
+    public String doInitTagRestTemplateCustomizer(@Autowired(required = false) RestTemplateBuilder builder, TagRestTemplateInterceptor interceptor) {
+        if (builder != null) {
             RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 
-                 List<ClientHttpRequestInterceptor> list = new ArrayList<>(restTemplate.getInterceptors());
+                List<ClientHttpRequestInterceptor> list = new ArrayList<>(restTemplate.getInterceptors());
 
                 if (!list.contains(interceptor)) {
                     list.add(interceptor);
@@ -41,17 +42,16 @@ public class TagRestTemplateAutoConfiguration {
         }
         return "doInitTagRestTemplateCustomizer";
     }
+
     @Bean
     public TagRestTemplateInterceptor tagClientHttpRequestInterceptor() {
         return new TagRestTemplateInterceptor();
     }
 
 
-
-
     @Bean
     public String doInitTagRestTemplate(@Autowired(required = false) List<RestTemplate> templateList,
-                                              TagRestTemplateInterceptor interceptor) {
+                                        TagRestTemplateInterceptor interceptor) {
         RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 

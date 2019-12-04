@@ -7,8 +7,8 @@ import org.springframework.context.ApplicationEventPublisherAware;
 
 import java.nio.charset.Charset;
 
-public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener , ApplicationEventPublisherAware {
-//
+public abstract class AbstractTreeCacheListener implements org.apache.curator.framework.recipes.cache.TreeCacheListener, ApplicationEventPublisherAware {
+    //
     protected String context;
     protected ApplicationEventPublisher publisher;
 
@@ -35,6 +35,6 @@ public abstract class AbstractTreeCacheListener implements org.apache.curator.fr
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.publisher=applicationEventPublisher;
+        this.publisher = applicationEventPublisher;
     }
 }

@@ -40,7 +40,7 @@ import java.util.List;
 @Configuration
 @ConditionalOnZookeeperEnabled
 @ConditionalOnProperty(name = "spring.cloud.zookeeper.config.watcher.enabled", havingValue = "false", matchIfMissing = true)
-@EnableConfigurationProperties({ ZookeeperProperties.class,SpringToolsProperties.class})
+@EnableConfigurationProperties({ZookeeperProperties.class, SpringToolsProperties.class})
 
 public class ZookeeperPropAutoConfiguration {
 
@@ -48,8 +48,8 @@ public class ZookeeperPropAutoConfiguration {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public PropTreeCacheListener propsTreeCacheListener(Environment environment, SpringToolsProperties properties) {
-        PropTreeCacheListener listener = new PropTreeCacheListener(environment,properties);
-         return listener;
+        PropTreeCacheListener listener = new PropTreeCacheListener(environment, properties);
+        return listener;
     }
 
 
@@ -62,9 +62,6 @@ public class ZookeeperPropAutoConfiguration {
 
         return watcher;
     }
-
-
-
 
 
 }

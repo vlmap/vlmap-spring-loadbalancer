@@ -1,6 +1,5 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate;
 
-import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import org.apache.commons.collections.CollectionUtils;
@@ -20,15 +19,17 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnProperty( value = "spring.tools.tag-loadbalancer.rest-template.enabled",matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
 public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor {
     @Autowired(required = false)
-    List<TagProcess> tagProcesses= Collections.emptyList();
+    List<TagProcess> tagProcesses = Collections.emptyList();
     @Autowired
 
     private SpringToolsProperties properties;
+
     @PostConstruct
     public void init() {
         if (CollectionUtils.isNotEmpty(tagProcesses)) {
@@ -36,14 +37,15 @@ public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor 
 
         }
     }
+
     @Override
     public ClientHttpResponse intercept(
             HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpHeaders headers = request.getHeaders();
-        String headerName=properties.getTagHeaderName();
-        String header=headers.getFirst(headerName);
-        String tag=header;
-        if(StringUtils.isBlank(tag)) {
+        String headerName = properties.getTagHeaderName();
+        String header = headers.getFirst(headerName);
+        String tag = header;
+        if (StringUtils.isBlank(tag)) {
             for (TagProcess tagProcess : tagProcesses) {
                 String _tag = tagProcess.getTag();
                 if (StringUtils.isNotBlank(_tag)) {
@@ -53,8 +55,8 @@ public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor 
             }
         }
 
-        if(StringUtils.isNotBlank(tag)&&!StringUtils.equals(tag,header)){
-            headers.add(headerName,tag);
+        if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
+            headers.add(headerName, tag);
         }
 
         return execution.execute(request, body);

@@ -4,20 +4,17 @@ package com.github.vlmap.spring.tools;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
-
 @ConfigurationProperties(prefix = "spring.tools")
 
-public class SpringToolsProperties  {
+public class SpringToolsProperties {
 
 
-    private String propertySourceName="defaultToolsProperties";
-
-
+    private String propertySourceName = "defaultToolsProperties";
 
 
     private TagLoadbalancer tagLoadbalancer = new TagLoadbalancer();
 
-    private Zookeeper zookeeper=new Zookeeper();
+    private Zookeeper zookeeper = new Zookeeper();
 
     public Zookeeper getZookeeper() {
         return zookeeper;
@@ -45,14 +42,12 @@ public class SpringToolsProperties  {
     }
 
 
-
-
     public String getTagHeaderName() {
         return tagLoadbalancer.getHeaderName();
     }
 
 
-    static public class Zookeeper{
+    static public class Zookeeper {
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -64,7 +59,7 @@ public class SpringToolsProperties  {
         }
     }
 
-    static public class Feign{
+    static public class Feign {
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -75,7 +70,8 @@ public class SpringToolsProperties  {
             this.enabled = enabled;
         }
     }
-    static public class RestTemplate{
+
+    static public class RestTemplate {
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -86,7 +82,8 @@ public class SpringToolsProperties  {
             this.enabled = enabled;
         }
     }
-    static public class WebClient{
+
+    static public class WebClient {
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -97,6 +94,7 @@ public class SpringToolsProperties  {
             this.enabled = enabled;
         }
     }
+
     static public class TagLoadbalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
@@ -104,9 +102,9 @@ public class SpringToolsProperties  {
          * 只在 gateway,zuul 网关才会用到
          */
         private String header;
-        private Feign feign=new Feign();
-        private RestTemplate restTemplate=new RestTemplate();
-        private WebClient webClient=new WebClient();
+        private Feign feign = new Feign();
+        private RestTemplate restTemplate = new RestTemplate();
+        private WebClient webClient = new WebClient();
 
         public WebClient getWebClient() {
             return webClient;

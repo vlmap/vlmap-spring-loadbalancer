@@ -1,7 +1,9 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
+import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
+import com.github.vlmap.spring.tools.event.listener.PropertiesListener;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
 import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.netflix.client.config.IClientConfig;
@@ -20,30 +22,42 @@ import java.util.List;
 public class TagRibbonClientConfiguration {
 
 
+    DelegatingLoadBalancer delegating = new DelegatingLoadBalancer();
+
     @Bean
     @ConditionalOnBean(TagProcess.class)
     public String delegatingLoadBalancer(IClientConfig clientConfig,
                                          ILoadBalancer lb,
                                          IRule rule,
 
-                                         @Autowired(required = false) List<TagProcess> tagProcesses,
-                                         @Autowired(required = false) DelegatePropChangeListener delegatePropChangeListener) {
-
-
-        if (lb instanceof BaseLoadBalancer) {
-            BaseLoadBalancer target = (BaseLoadBalancer) lb;
-
-
-            DelegatingLoadBalancer delegating = new DelegatingLoadBalancer(clientConfig, target, tagProcesses);
-            delegating.setDelegatePropChangeListener(delegatePropChangeListener);
-            rule.setLoadBalancer(delegating);
-
+                                         @Autowired(required = false) List<TagProcess> tagProcesses) {
+        if(lb instanceof BaseLoadBalancer){
 
         }
+        delegating.setClientConfig(clientConfig);
+        delegating.setTagProcesses(tagProcesses);
+        delegating.setTarget(lb);
 
+        delegating.tagStateInProgress();
 
+        rule.setLoadBalancer(delegating);
         return "delegatingLoadBalancer";
     }
 
+    @Bean
+    @ConditionalOnBean(TagProcess.class)
+    public String listener(IClientConfig clientConfig, @Autowired(required = false) DelegatePropChangeListener delegatePropChangeListener) {
+
+        PropertiesListener listener = new PropertiesListener(clientConfig.getClientName(), true, (PropertyChangeEvent event) -> {
+
+            delegating.tagStateInProgress();
+
+
+        });
+        delegatePropChangeListener.addListener(listener);
+
+
+        return "listener";
+    }
 
 }

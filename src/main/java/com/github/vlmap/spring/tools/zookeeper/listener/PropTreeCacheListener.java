@@ -50,7 +50,7 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
     }
 
     @Override
-    public void childEvent(CuratorFramework client, TreeCacheEvent event)  throws Exception {
+    public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
         TreeCacheEvent.Type eventType = event.getType();
 
         if (event.getData() != null) {
@@ -58,40 +58,39 @@ public class PropTreeCacheListener extends AbstractTreeCacheListener {
             MapPropertySource defaultToolsProps = defaultToolsProps();
             if (defaultToolsProps == null) return;
 
-                 String path = event.getData().getPath();
-                if (!StringUtils.equals(this.context, path)) {
-                    String key = sanitizeKey(path);
-                    String oldValue=(String)composite.getProperty(key);
+            String path = event.getData().getPath();
+            if (!StringUtils.equals(this.context, path)) {
+                String key = sanitizeKey(path);
+                String oldValue = (String) composite.getProperty(key);
 
-                    String value = null;
+                String value = null;
 
-                    if (eventType == TreeCacheEvent.Type.NODE_ADDED || eventType == TreeCacheEvent.Type.NODE_UPDATED) {
+                if (eventType == TreeCacheEvent.Type.NODE_ADDED || eventType == TreeCacheEvent.Type.NODE_UPDATED) {
 
-                        byte[] data = event.getData().getData();
-                        if (ArrayUtils.isNotEmpty(data)) {
-                            value = new String(data, StandardCharsets.UTF_8);
-                        }
-
-                        container.getSource().put(key, value);
-                    } else if (eventType == TreeCacheEvent.Type.NODE_REMOVED) {
-                        container.getSource().remove(key);
-                    }
-                    String newValue=(String)composite.getProperty(key);
-                    if(ObjectUtils.notEqual(oldValue,newValue)){
-                        String localValue=(String)defaultToolsProps.getProperty(key);
-                        if(ObjectUtils.notEqual(localValue,newValue)){
-                            if(newValue==null){
-                                defaultToolsProps.getSource().remove(key)    ;
-                            }else{
-                                defaultToolsProps.getSource().put(key,newValue);
-                            }
-                            this.publisher.publishEvent(new PropertyChangeEvent(this, key, value, getEventDesc(event)));
-
-                        }
+                    byte[] data = event.getData().getData();
+                    if (ArrayUtils.isNotEmpty(data)) {
+                        value = new String(data, StandardCharsets.UTF_8);
                     }
 
-                 }
+                    container.getSource().put(key, value);
+                } else if (eventType == TreeCacheEvent.Type.NODE_REMOVED) {
+                    container.getSource().remove(key);
+                }
+                String newValue = (String) composite.getProperty(key);
+                if (ObjectUtils.notEqual(oldValue, newValue)) {
+                    String localValue = (String) defaultToolsProps.getProperty(key);
+                    if (ObjectUtils.notEqual(localValue, newValue)) {
+                        if (newValue == null) {
+                            defaultToolsProps.getSource().remove(key);
+                        } else {
+                            defaultToolsProps.getSource().put(key, newValue);
+                        }
+                        this.publisher.publishEvent(new PropertyChangeEvent(this, key, value, getEventDesc(event)));
 
+                    }
+                }
+
+            }
 
 
         }
