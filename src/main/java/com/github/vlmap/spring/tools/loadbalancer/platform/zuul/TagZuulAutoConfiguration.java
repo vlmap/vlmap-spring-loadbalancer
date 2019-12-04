@@ -2,6 +2,7 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.zuul;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.process.ZuulTagProcess;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -16,12 +17,12 @@ import org.springframework.context.annotation.Configuration;
 
 public class TagZuulAutoConfiguration {
     @Bean
-    public ZuulTagProcess zuulTagProcess(DynamicToolProperties properties) {
+    public ZuulTagProcess zuulTagProcess(SpringToolsProperties properties) {
         return new ZuulTagProcess(properties);
 
     }
     @Bean
-    public TagZuulFilter tagZuulFilter(ZuulTagProcess zuulTagProcess){
-        return new  TagZuulFilter(zuulTagProcess);
+    public TagZuulFilter tagZuulFilter(SpringToolsProperties properties){
+        return new  TagZuulFilter(properties);
     }
 }

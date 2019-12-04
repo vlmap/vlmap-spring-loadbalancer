@@ -26,22 +26,7 @@ public class DynamicToolProperties   {
         return propertySource;
     }
 
-    public String getTagHeader() {
-//        if (getDefaultToolsProps() != null) {
-//            String string= (String) getDefaultToolsProps().getProperty(properties.getTagLoadbalancer().getHeaderName());
-//            if(StringUtils.isNotBlank(string))
-//        }
-        return properties.getTagLoadbalancer().getHeader();
-    }
-    public String getTagHeaderName() {
-        return properties.getTagHeaderName();
-    }
 
-
-
-    public SpringToolsProperties getProperties() {
-        return properties;
-    }
 
     private static MapPropertySource getPropertiySource(Environment environment, SpringToolsProperties properties) {
 

@@ -35,7 +35,7 @@ public class TagReactorAutoConfiguration  {
         return new DynamicToolProperties(env, properties);
     }
     @Bean
-    public ReactorTagProcess reactorTagProcess(DynamicToolProperties properties) {
+    public ReactorTagProcess reactorTagProcess(SpringToolsProperties properties) {
         return new ReactorTagProcess(properties);
 
     }
@@ -48,8 +48,8 @@ public class TagReactorAutoConfiguration  {
         @Bean
         @ConditionalOnMissingBean(AbstractReactorContextWebFilter.class)
 
-        public AbstractReactorContextWebFilter reactorContextWebFilter(ReactorTagProcess reactorTagProcess) {
-            return new TagGatewayContextWebFilter(reactorTagProcess);
+        public AbstractReactorContextWebFilter reactorContextWebFilter(SpringToolsProperties properties) {
+            return new TagGatewayContextWebFilter(properties);
         }
     }
     @Configuration
@@ -59,8 +59,8 @@ public class TagReactorAutoConfiguration  {
     static public class ReactorFilterConfiguration{
         @Bean
         @ConditionalOnMissingBean(AbstractReactorContextWebFilter.class)
-        public AbstractReactorContextWebFilter reactorContextWebFilter(ReactorTagProcess reactorTagProcess) {
-            return new TagReactorContextWebFilter(reactorTagProcess);
+        public AbstractReactorContextWebFilter reactorContextWebFilter(SpringToolsProperties properties) {
+            return new TagReactorContextWebFilter(properties);
         }
     }
 }

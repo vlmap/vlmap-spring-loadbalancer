@@ -46,15 +46,13 @@ public class SpringToolsAutoConfiguration  {
         return new DelegatePropChangeListener();
     }
     @Bean
-    public PropertiesListener serverTagListener(Environment env,SpringToolsProperties properties){
-        ConfigurationPropertyName propertyName=ConfigurationPropertyName.of("spring.tools.tag-loadbalancer.headers");
+    public PropertiesListener serverTagListener( SpringToolsProperties properties){
+         ConfigurationPropertyName propertyName=ConfigurationPropertyName.of("spring.tools.tag-loadbalancer.header");
         PropertiesListener listener=new PropertiesListener(propertyName,false,(event -> {
-           List<String> headers= Binder.get(env).bind(propertyName, Bindable.listOf(String.class)).orElse(null);
-           if(headers!=null){
-               List _headers=headers.stream().filter(it->it!=null).collect(Collectors.toList());
-               properties.getTagLoadbalancer().setHeaders(_headers);
 
-           }
+            properties.getTagLoadbalancer().setHeader(event.getValue());
+
+
         }));
         return listener;
     }

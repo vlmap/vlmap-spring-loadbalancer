@@ -11,7 +11,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 
-public class TagGatewayContextWebFilter implements GlobalFilter, Ordered {
+public class TagGatewayContextWebFilter implements GlobalFilter, AbstractReactorContextWebFilter {
 
     private SpringToolsProperties properties;
 
@@ -39,11 +39,6 @@ public class TagGatewayContextWebFilter implements GlobalFilter, Ordered {
             ReactiveContextHolder.dispose();
         }
 
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
     }
 
 

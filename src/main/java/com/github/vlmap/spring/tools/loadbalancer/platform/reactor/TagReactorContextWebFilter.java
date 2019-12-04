@@ -11,7 +11,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 
-public class TagReactorContextWebFilter implements WebFilter, Ordered {
+public class TagReactorContextWebFilter implements WebFilter, AbstractReactorContextWebFilter {
      private SpringToolsProperties properties;
 
     public TagReactorContextWebFilter( SpringToolsProperties properties) {
@@ -41,9 +41,6 @@ public class TagReactorContextWebFilter implements WebFilter, Ordered {
 
     }
 
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
-    }
+
 
 }

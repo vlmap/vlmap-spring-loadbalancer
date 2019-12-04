@@ -20,14 +20,6 @@ import org.springframework.context.annotation.Configuration;
         return new RibbonClientSpecification("default." + TagRibbonClientConfiguration.class.getName(), classes);
     }
 
-    @ConditionalOnClass(org.springframework.web.servlet.DispatcherServlet.class)
-    @Configuration
-    static class SpringMVCConfiguration {
-        @Bean
-        public SpringmvcTagProcess SpringMVCTagProcess(DynamicToolProperties properties) {
-            return new SpringmvcTagProcess(properties);
-        }
-    }
 
 
 }

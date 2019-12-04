@@ -81,7 +81,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer, InitializingBean {
 
     protected String tag() {
         for (TagProcess process : tagProcesses) {
-            String tag = process.getRequestTag();
+            String tag = process.getTag();
             if (StringUtils.isNotBlank(tag)) {
                 return tag;
             }

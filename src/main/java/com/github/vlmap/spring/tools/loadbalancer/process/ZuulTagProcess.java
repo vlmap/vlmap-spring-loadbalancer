@@ -3,16 +3,18 @@ package com.github.vlmap.spring.tools.loadbalancer.process;
 
 import com.github.vlmap.spring.tools.DynamicToolProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
 import com.netflix.zuul.context.RequestContext;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
 @Order(10)
-public class ZuulTagProcess extends AbstractTagProcess {
+public class ZuulTagProcess implements TagProcess {
+    protected SpringToolsProperties properties;
 
-    public ZuulTagProcess(SpringToolsProperties properties) {
-        super(properties);
+    public ZuulTagProcess(SpringToolsProperties properties){
+         this.properties=properties;
     }
 
     @Override

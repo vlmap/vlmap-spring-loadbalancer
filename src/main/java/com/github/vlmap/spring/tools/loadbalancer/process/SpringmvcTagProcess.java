@@ -2,17 +2,19 @@ package com.github.vlmap.spring.tools.loadbalancer.process;
 
 
  import com.github.vlmap.spring.tools.SpringToolsProperties;
-import org.apache.commons.lang.StringUtils;
+ import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+ import org.apache.commons.lang.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 @Order(30)
-public class SpringmvcTagProcess extends AbstractTagProcess {
+public class SpringmvcTagProcess implements TagProcess {
+    protected SpringToolsProperties properties;
 
-    public SpringmvcTagProcess(SpringToolsProperties properties) {
-        super(properties);
+    public SpringmvcTagProcess(SpringToolsProperties properties){
+        this.properties=properties;
     }
 
     @Override
