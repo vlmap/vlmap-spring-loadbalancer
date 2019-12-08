@@ -1,22 +1,19 @@
 package com.github.vlmap.spring.tools.loadbalancer;
 
 
-import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
-import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
-import com.github.vlmap.spring.tools.event.listener.PropertiesListener;
+import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
-import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,25 +22,19 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
     private AtomicReference<Map<String, Set<String>>> tagsInProgress = new AtomicReference(Collections.emptyMap());
     private IClientConfig clientConfig;
-    private List<TagProcess> tagProcesses=Collections.emptyList();
     private ILoadBalancer target;
 
 
+    private SpringToolsProperties properties;
+
+    public void setProperties(SpringToolsProperties properties) {
+        this.properties = properties;
+    }
 
     public void setClientConfig(IClientConfig clientConfig) {
         this.clientConfig = clientConfig;
     }
 
-    public void setTagProcesses(List<TagProcess> tagProcesses) {
-        if(tagProcesses!=null){
-            this.tagProcesses = tagProcesses;
-            if (CollectionUtils.isNotEmpty(tagProcesses)) {
-                AnnotationAwareOrderComparator.sort(tagProcesses);
-
-            }
-        }
-
-    }
 
     public void setTarget(ILoadBalancer target) {
         this.target = target;
@@ -85,13 +76,12 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
     }
 
     protected String tag() {
-        for (TagProcess process : tagProcesses) {
-            String tag = process.getTag();
-            if (StringUtils.isNotBlank(tag)) {
-                return tag;
-            }
+        String tag = ContextManager.getRuntimeContext().getTag();
+        if (StringUtils.isBlank(tag)) {
+            tag=properties.getTagLoadbalancer().getHeader();
+
         }
-        return null;
+        return tag;
     }
 
     protected List<Server> processServers(List<Server> servers) {
@@ -109,7 +99,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
             for (Server server : servers) {
                 Set<String> tags = map.get(server.getId());
-                if (tags != null && tags.contains(tagValue)) {
+                if (CollectionUtils.isEmpty(tags)) {
                     list.add(server);
                 }
 
@@ -178,8 +168,6 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
 
     }
-
-
 
 
     public static class RibbonTagOfServers {

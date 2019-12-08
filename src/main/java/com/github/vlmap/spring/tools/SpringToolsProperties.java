@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class SpringToolsProperties {
 
 
+
     private String propertySourceName = "defaultToolsProperties";
 
 

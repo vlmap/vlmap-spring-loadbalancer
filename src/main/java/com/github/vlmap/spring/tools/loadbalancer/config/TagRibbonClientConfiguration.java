@@ -1,21 +1,20 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
 import com.github.vlmap.spring.tools.event.listener.PropertiesListener;
 import com.github.vlmap.spring.tools.loadbalancer.DelegatingLoadBalancer;
-import com.github.vlmap.spring.tools.loadbalancer.TagProcess;
+import com.github.vlmap.spring.tools.loadbalancer.RibbonClientRefresh;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 
 @Configuration
@@ -25,17 +24,14 @@ public class TagRibbonClientConfiguration {
     DelegatingLoadBalancer delegating = new DelegatingLoadBalancer();
 
     @Bean
-    @ConditionalOnBean(TagProcess.class)
     public String delegatingLoadBalancer(IClientConfig clientConfig,
                                          ILoadBalancer lb,
                                          IRule rule,
 
-                                         @Autowired(required = false) List<TagProcess> tagProcesses) {
-        if(lb instanceof BaseLoadBalancer){
+                                         SpringToolsProperties properties) {
 
-        }
         delegating.setClientConfig(clientConfig);
-        delegating.setTagProcesses(tagProcesses);
+        delegating.setProperties(properties);
         delegating.setTarget(lb);
 
         delegating.tagStateInProgress();
@@ -45,10 +41,9 @@ public class TagRibbonClientConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(TagProcess.class)
     public String listener(IClientConfig clientConfig, @Autowired(required = false) DelegatePropChangeListener delegatePropChangeListener) {
 
-        PropertiesListener listener = new PropertiesListener(clientConfig.getClientName(), true, (PropertyChangeEvent event) -> {
+        PropertiesListener listener = new PropertiesListener(clientConfig.getClientName()+".ribbon", true, (PropertyChangeEvent event) -> {
 
             delegating.tagStateInProgress();
 
@@ -58,6 +53,20 @@ public class TagRibbonClientConfiguration {
 
 
         return "listener";
+    }
+    @Autowired
+    public void ribbonClientRefresh(IClientConfig clientConfig, @Autowired(required = false) DelegatePropChangeListener delegatePropChangeListener, ContextRefresher contextRefresher) {
+        String name = clientConfig.getClientName() + ".context.refresh";
+        delegatePropChangeListener.addListener(new PropertiesListener(name,true, new PropertiesListener.ChangeListener() {
+            @Override
+            public void propertyChanged(PropertyChangeEvent event) {
+                boolean refresh = BooleanUtils.toBoolean(event.getValue());
+                if (refresh) {
+                    contextRefresher.refresh();
+                }
+            }
+        }));
+
     }
 
 }

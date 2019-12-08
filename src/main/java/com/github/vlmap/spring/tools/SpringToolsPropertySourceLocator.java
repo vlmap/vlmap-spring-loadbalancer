@@ -2,6 +2,7 @@ package com.github.vlmap.spring.tools;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.cloud.netflix.archaius.ConfigurableEnvironmentConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -15,12 +16,13 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
     public SpringToolsPropertySourceLocator(SpringToolsProperties properties) {
         this.properties = properties;
     }
+//    ConfigurableEnvironmentConfiguration environmentConfiguration;
 
     @Override
     public PropertySource<?> locate(Environment environment) {
         String propertySourceName = properties.getPropertySourceName();
 
-
+//        environmentConfiguration.get
         Map<String, Object> map = new ConcurrentHashMap<>();
 
         MapPropertySource result = new MapPropertySource(propertySourceName, map);

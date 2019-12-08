@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
@@ -32,23 +33,27 @@ public class TagSpringmvcFilter implements OrderedFilter {
         String name = this.properties.getTagHeaderName();
         String tag = httpServletRequest.getHeader(name);
 
+        try {
+            if (StringUtils.isBlank(tag)) {
+                tag = properties.getTagLoadbalancer().getHeader();
+                if (StringUtils.isNotBlank(tag)) {
 
-        if (StringUtils.isBlank(tag)) {
-            tag = properties.getTagLoadbalancer().getHeader();
-            if (StringUtils.isNotBlank(tag)) {
+                    Map<String, List<String>> headers = getHeaders(httpServletRequest);
 
-                Map<String, List<String>> headers = getHeaders(httpServletRequest);
+                    addHeader(headers, name, tag);
 
-                addHeader(headers, name, tag);
+                    request    = new HttpServletRequestWrapper(httpServletRequest, headers);
 
-                HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(httpServletRequest, headers);
 
-                chain.doFilter(wrapper, response);
-                return;
 
+                }
             }
+            ContextManager.getRuntimeContext().setTag(tag);
+            chain.doFilter(request, response);
+
+        } finally {
+            ContextManager.getRuntimeContext().onComplete();
         }
-        chain.doFilter(request, response);
 
     }
 

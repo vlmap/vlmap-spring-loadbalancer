@@ -1,11 +1,17 @@
 package com.github.vlmap.spring.tools.event.listener;
 
 import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
+import com.netflix.config.ConfigurationManager;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.context.event.EventListener;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class PropertiesListener {
@@ -19,7 +25,7 @@ public class PropertiesListener {
     private ConfigurationPropertyName propertyName = null;
     //监听以 name 开头的节点
     private boolean prefix = false;
-    private boolean useString;
+    private boolean useString=true;
     private String id;
 
     public PropertiesListener(String name, ChangeListener call) {
@@ -49,6 +55,7 @@ public class PropertiesListener {
 
     }
 
+
     /**
      * ConfigurationPropertyName方式监听
      *
@@ -76,7 +83,6 @@ public class PropertiesListener {
         this.id = id;
     }
 
-    @EventListener(PropertyChangeEvent.class)
     public void listener(PropertyChangeEvent event) {
         String key = event.getKey();
 

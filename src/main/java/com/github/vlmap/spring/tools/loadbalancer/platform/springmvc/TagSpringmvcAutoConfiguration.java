@@ -2,31 +2,28 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.platform.reactor.ReactorFilter;
-import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.zuul.TagZuulFilter;
-import com.github.vlmap.spring.tools.loadbalancer.process.SpringmvcTagProcess;
+import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.netflix.zuul.filters.route.RibbonRoutingFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
-@ConditionalOnClass(RibbonRoutingFilter.class)
-@AutoConfigureAfter({TagZuulAutoConfiguration.class, SpringToolsAutoConfiguration.class})
+@ConditionalOnMissingClass("org.springframework.web.reactive.DispatcherHandler")
+@AutoConfigureAfter({SpringToolsAutoConfiguration.class})
 
 public class TagSpringmvcAutoConfiguration {
-    @Bean
-    public SpringmvcTagProcess springmvcTagProcess(SpringToolsProperties properties) {
-        return new SpringmvcTagProcess(properties);
 
+    @Autowired
+    public void setPlatform(DispatcherServlet servlet) {
+        Platform.getInstnce().setPlatform(Platform.SERVLET);
     }
 
     @Bean
-    @ConditionalOnMissingBean({TagZuulFilter.class, ReactorFilter.class})
     public TagSpringmvcFilter tagSpringmvcFilter(SpringToolsProperties properties) {
+
         return new TagSpringmvcFilter(properties);
     }
 }

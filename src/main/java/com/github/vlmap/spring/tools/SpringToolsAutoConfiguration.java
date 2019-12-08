@@ -4,6 +4,7 @@ import com.github.vlmap.spring.tools.actuator.PropertiesEndPoint;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
 import com.github.vlmap.spring.tools.event.listener.PropertiesListener;
 import com.github.vlmap.spring.tools.event.listener.RefreshListener;
+import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagLoadBalancerClientFilterProxy;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,7 +18,10 @@ import org.springframework.core.env.Environment;
 
 public class SpringToolsAutoConfiguration {
 
-
+    @Bean
+    public TagLoadBalancerClientFilterProxy tagRequestAop(SpringToolsProperties properties){
+        return new TagLoadBalancerClientFilterProxy(properties);
+    }
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnEnabledEndpoint

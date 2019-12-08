@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.resttemplate;
+package com.github.vlmap.spring.tools.loadbalancer.client.resttemplate;
 
 import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
@@ -29,13 +29,15 @@ public class TagRestTemplateAutoConfiguration {
             RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 
-                List<ClientHttpRequestInterceptor> list = new ArrayList<>(restTemplate.getInterceptors());
+                List<ClientHttpRequestInterceptor> list = new ArrayList<>();
+                List<ClientHttpRequestInterceptor>  interceptors=    restTemplate.getInterceptors();
 
-                if (!list.contains(interceptor)) {
+                if (!interceptors.contains(interceptor)) {
                     list.add(interceptor);
-                    restTemplate.setInterceptors(list);
-                }
 
+                }
+                list.addAll(interceptors);
+                restTemplate.setInterceptors(list);
 
             };
             builder.additionalCustomizers(customizer);
@@ -55,14 +57,17 @@ public class TagRestTemplateAutoConfiguration {
         RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 
-            if (interceptor == null) return;
-            List<ClientHttpRequestInterceptor> list = new ArrayList<>(restTemplate.getInterceptors());
+//
 
-            if (!list.contains(interceptor)) {
+            List<ClientHttpRequestInterceptor> list = new ArrayList<>();
+            List<ClientHttpRequestInterceptor>  interceptors=    restTemplate.getInterceptors();
+
+            if (!interceptors.contains(interceptor)) {
                 list.add(interceptor);
-                restTemplate.setInterceptors(list);
-            }
 
+            }
+            list.addAll(interceptors);
+            restTemplate.setInterceptors(list);
 
         };
         if (CollectionUtils.isNotEmpty(templateList)) {
