@@ -14,7 +14,6 @@ import org.springframework.web.reactive.DispatcherHandler;
 
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
-@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class})
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.feign.enabled", matchIfMissing = true)
 @EnableConfigurationProperties({SpringToolsProperties.class})
 

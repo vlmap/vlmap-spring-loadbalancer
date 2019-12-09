@@ -20,8 +20,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnClass({DispatcherHandler.class})
 @EnableConfigurationProperties({SpringToolsProperties.class})
 
-@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class})
-public class TagReactorAutoConfiguration {
+ public class TagReactorAutoConfiguration {
     @Autowired
     public void setPlatform(DispatcherHandler dispatcherHandler) {
         Platform.getInstnce().setPlatform(Platform.WEBFLUX);

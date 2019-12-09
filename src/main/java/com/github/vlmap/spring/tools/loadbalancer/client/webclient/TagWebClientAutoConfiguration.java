@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Configuration
-@AutoConfigureBefore({ReactiveLoadBalancerAutoConfiguration.class})
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled", matchIfMissing = true)
 
 public class TagWebClientAutoConfiguration {

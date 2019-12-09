@@ -10,11 +10,6 @@ public class SpringToolsProperties {
 
     public static final String DEFAULT_TOOLS_PROPERTIES_NAME = "defaultToolsProperties";
 
-    public static final boolean ZOOKEEPER_ENABLE = true;
-    public static final boolean FEIGN_ENABLE = true;
-    public static final boolean REST_TEMPLATE_ENABLE = true;
-    public static final boolean WEB_CLIENT_ENABLE = true;
-    public static final boolean TAG_LOADBALANCER_ENABLE = true;
 
 
     private String propertySourceName = DEFAULT_TOOLS_PROPERTIES_NAME;
@@ -56,7 +51,7 @@ public class SpringToolsProperties {
 
 
     static public class Zookeeper {
-        private boolean enabled = ZOOKEEPER_ENABLE;
+        private boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -68,7 +63,7 @@ public class SpringToolsProperties {
     }
 
     static public class Feign {
-        private boolean enabled = FEIGN_ENABLE;
+        private boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -80,7 +75,7 @@ public class SpringToolsProperties {
     }
 
     static public class RestTemplate {
-        private boolean enabled = REST_TEMPLATE_ENABLE;
+        private boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -92,7 +87,7 @@ public class SpringToolsProperties {
     }
 
     static public class WebClient {
-        private boolean enabled = WEB_CLIENT_ENABLE;
+        private boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -104,7 +99,7 @@ public class SpringToolsProperties {
     }
 
     static public class TagLoadbalancer {
-        private boolean enabled = TAG_LOADBALANCER_ENABLE;
+        private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
         /**
          * 只在 gateway,zuul 网关才会用到
