@@ -5,8 +5,8 @@ import org.springframework.cloud.netflix.ribbon.RibbonClientSpecification;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-//@EnableConfigurationProperties({SpringToolsProperties.class})
+
+
 public class RibbonClientSpecificationAutoConfiguration {
 
 

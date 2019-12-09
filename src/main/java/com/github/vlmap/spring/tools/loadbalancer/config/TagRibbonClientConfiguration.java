@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
+import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
 import com.github.vlmap.spring.tools.event.listener.DelegatePropChangeListener;
@@ -12,12 +13,16 @@ import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
+@EnableConfigurationProperties({SpringToolsProperties.class})
+
 public class TagRibbonClientConfiguration {
 
 

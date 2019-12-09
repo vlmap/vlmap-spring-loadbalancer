@@ -6,6 +6,7 @@ import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificati
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
@@ -13,8 +14,9 @@ import org.springframework.web.reactive.DispatcherHandler;
 
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
-@AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class})
+@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class})
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.feign.enabled", matchIfMissing = true)
+@EnableConfigurationProperties({SpringToolsProperties.class})
 
 public class TagFeignAutoConfiguration {
     @Bean

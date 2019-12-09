@@ -13,18 +13,7 @@ import java.util.TreeMap;
 
 public class PropertiesUtils {
 
-    public static Map<String,String> getProperties(String name){
-        Configuration configuration = ConfigurationManager.getConfigInstance().subset(name);
-        configuration.addProperty();
-        Map<String, String> map = new TreeMap();
-        Iterator<String> iterator = configuration.getKeys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            String value = configuration.getString(key);
-            map.put(key, value);
-        }
-        return map;
-    }
+
     public static MapPropertySource getPropertiesSource(Environment environment, SpringToolsProperties properties) {
 
         if (environment instanceof ConfigurableEnvironment) {

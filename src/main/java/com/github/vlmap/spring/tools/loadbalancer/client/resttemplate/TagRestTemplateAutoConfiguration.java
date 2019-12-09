@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class, RestTemplateAutoConfiguration.class})
+@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class, RestTemplateAutoConfiguration.class})
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
 public class TagRestTemplateAutoConfiguration {

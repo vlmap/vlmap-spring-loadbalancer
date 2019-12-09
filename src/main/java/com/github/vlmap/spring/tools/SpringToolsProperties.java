@@ -8,9 +8,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 public class SpringToolsProperties {
 
+    public static final String DEFAULT_TOOLS_PROPERTIES_NAME = "defaultToolsProperties";
+
+    public static final boolean ZOOKEEPER_ENABLE = true;
+    public static final boolean FEIGN_ENABLE = true;
+    public static final boolean REST_TEMPLATE_ENABLE = true;
+    public static final boolean WEB_CLIENT_ENABLE = true;
+    public static final boolean TAG_LOADBALANCER_ENABLE = true;
 
 
-    private String propertySourceName = "defaultToolsProperties";
+    private String propertySourceName = DEFAULT_TOOLS_PROPERTIES_NAME;
 
 
     private TagLoadbalancer tagLoadbalancer = new TagLoadbalancer();
@@ -49,7 +56,7 @@ public class SpringToolsProperties {
 
 
     static public class Zookeeper {
-        private boolean enabled = true;
+        private boolean enabled = ZOOKEEPER_ENABLE;
 
         public boolean isEnabled() {
             return enabled;
@@ -61,7 +68,7 @@ public class SpringToolsProperties {
     }
 
     static public class Feign {
-        private boolean enabled = true;
+        private boolean enabled = FEIGN_ENABLE;
 
         public boolean isEnabled() {
             return enabled;
@@ -73,7 +80,7 @@ public class SpringToolsProperties {
     }
 
     static public class RestTemplate {
-        private boolean enabled = true;
+        private boolean enabled = REST_TEMPLATE_ENABLE;
 
         public boolean isEnabled() {
             return enabled;
@@ -85,7 +92,7 @@ public class SpringToolsProperties {
     }
 
     static public class WebClient {
-        private boolean enabled = true;
+        private boolean enabled = WEB_CLIENT_ENABLE;
 
         public boolean isEnabled() {
             return enabled;
@@ -97,7 +104,7 @@ public class SpringToolsProperties {
     }
 
     static public class TagLoadbalancer {
-        private boolean enabled = true;
+        private boolean enabled = TAG_LOADBALANCER_ENABLE;
         private String headerName = "Loadbalancer-Tag";
         /**
          * 只在 gateway,zuul 网关才会用到

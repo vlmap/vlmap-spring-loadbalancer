@@ -24,7 +24,6 @@ import java.util.List;
 
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
-@AutoConfigureAfter(SpringToolsAutoConfiguration.class)
 
 public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<EnableTagRule> {
 

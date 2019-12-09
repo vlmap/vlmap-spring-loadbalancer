@@ -20,7 +20,7 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnClass({DispatcherHandler.class})
 @EnableConfigurationProperties({SpringToolsProperties.class})
 
-@AutoConfigureAfter({SpringToolsAutoConfiguration.class, RibbonClientSpecificationAutoConfiguration.class})
+@AutoConfigureAfter({ RibbonClientSpecificationAutoConfiguration.class})
 public class TagReactorAutoConfiguration {
     @Autowired
     public void setPlatform(DispatcherHandler dispatcherHandler) {
