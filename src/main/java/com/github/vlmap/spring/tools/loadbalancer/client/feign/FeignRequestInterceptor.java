@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.feign;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
+import com.github.vlmap.spring.tools.context.ContextManager;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.apache.commons.lang3.StringUtils;

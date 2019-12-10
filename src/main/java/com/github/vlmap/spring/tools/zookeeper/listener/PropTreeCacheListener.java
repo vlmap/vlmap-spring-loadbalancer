@@ -2,7 +2,7 @@ package com.github.vlmap.spring.tools.zookeeper.listener;
 
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
+import com.github.vlmap.spring.tools.context.event.PropertyChangeEvent;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

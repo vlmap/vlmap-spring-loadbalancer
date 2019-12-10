@@ -2,10 +2,10 @@ package com.github.vlmap.spring.tools.actuator;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.common.PropertiesUtils;
-import com.github.vlmap.spring.tools.event.PropertyChangeEvent;
+import com.github.vlmap.spring.tools.context.event.PropertyChangeEvent;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;

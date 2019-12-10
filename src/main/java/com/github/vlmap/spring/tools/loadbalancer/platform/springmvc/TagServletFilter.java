@@ -1,27 +1,32 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
+import com.github.vlmap.spring.tools.context.ContextManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import org.springframework.core.Ordered;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
 
-public class TagSpringmvcFilter implements OrderedFilter {
+public class TagServletFilter implements OrderedFilter {
+    Logger logger= LoggerFactory.getLogger(this.getClass());
 
     SpringToolsProperties properties;
 
-    public TagSpringmvcFilter(SpringToolsProperties properties) {
+    public TagServletFilter(SpringToolsProperties properties) {
         this.properties = properties;
     }
 
@@ -30,11 +35,31 @@ public class TagSpringmvcFilter implements OrderedFilter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse=(HttpServletResponse)response;
         String name = this.properties.getTagHeaderName();
         String tag = httpServletRequest.getHeader(name);
+       String serverTag= properties.getTagLoadbalancer().getHeader();
+        /**
+         * 非兼容模式,请求标签不匹配拒绝响应
+         */
+        SpringToolsProperties.Compatible compatible=properties.getCompatible();
+        if(! compatible.isEnabled()&&StringUtils.isNotBlank(serverTag)&&!StringUtils.equals(tag,serverTag)){
+            if(logger.isInfoEnabled()){
+                logger.info("The server isn't compatible model,current request Header["+name+":"+tag+"] don't match \""+serverTag+"\",response code:"+compatible.getCode());
 
+            }
+            String message=compatible.getMessage();
+            if(StringUtils.isBlank(message)){
+                httpServletResponse.setStatus(compatible.getCode());
+
+            }else {
+                httpServletResponse.sendError(compatible.getCode(),message);
+            }
+           return;
+        }
         try {
             if (StringUtils.isBlank(tag)) {
+
                 tag = properties.getTagLoadbalancer().getHeader();
                 if (StringUtils.isNotBlank(tag)) {
 
@@ -48,6 +73,7 @@ public class TagSpringmvcFilter implements OrderedFilter {
 
                 }
             }
+
             ContextManager.getRuntimeContext().setTag(tag);
             chain.doFilter(request, response);
 
@@ -59,7 +85,7 @@ public class TagSpringmvcFilter implements OrderedFilter {
 
     @Override
     public int getOrder() {
-        return 0;
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 
     protected void addHeader(Map<String, List<String>> headers, String name, String value) {

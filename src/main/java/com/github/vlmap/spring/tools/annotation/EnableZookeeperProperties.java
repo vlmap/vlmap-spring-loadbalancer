@@ -8,5 +8,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(EnableZookeeperPropImportSelector.class)
-public @interface EnableZookeeperProp {
+public @interface EnableZookeeperProperties {
 }

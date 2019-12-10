@@ -20,7 +20,7 @@ import java.util.List;
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 @AutoConfigureBefore(ZookeeperConfigAutoConfiguration.class)
-public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelector<EnableZookeeperProp> {
+public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelector<EnableZookeeperProperties> {
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {

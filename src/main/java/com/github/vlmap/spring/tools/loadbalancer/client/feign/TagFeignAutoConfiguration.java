@@ -6,6 +6,7 @@ import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificati
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,9 @@ public class TagFeignAutoConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass({DispatcherHandler.class})
+
+    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+
     static class TagFeignClientProxyConfiguration {
         @Bean
         public TagFeignClientProxy feignClientProxy(SpringToolsProperties properties) {

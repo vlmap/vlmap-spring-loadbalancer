@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.webclient;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
+import com.github.vlmap.spring.tools.context.ContextManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

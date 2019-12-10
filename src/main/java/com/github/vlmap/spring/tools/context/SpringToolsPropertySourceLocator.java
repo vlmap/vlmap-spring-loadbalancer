@@ -1,5 +1,6 @@
-package com.github.vlmap.spring.tools;
+package com.github.vlmap.spring.tools.context;
 
+import com.github.vlmap.spring.tools.SpringToolsProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -35,8 +36,7 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
         map.put("spring.tools.tag-loadbalancer.feign.enabled", String.valueOf(properties.getTagLoadbalancer().getFeign().isEnabled()));
         map.put("spring.tools.tag-loadbalancer.rest-template.enabled", String.valueOf(properties.getTagLoadbalancer().getRestTemplate().isEnabled()));
         map.put("spring.tools.tag-loadbalancer.web-client.enabled", String.valueOf(properties.getTagLoadbalancer().getWebClient().isEnabled()));
-//        map.put("spring.tools.tag-loadbalancer.header", StringUtils.defaultString(properties.getTagLoadbalancer().getHeader(), ""));
-        map.put("spring.tools.tag-loadbalancer.header", "xxxxx");
+        map.put("spring.tools.tag-loadbalancer.header", StringUtils.defaultString(properties.getTagLoadbalancer().getHeader(), ""));
 
         map.put("spring.tools.tag-loadbalancer.header-name", StringUtils.defaultString(properties.getTagLoadbalancer().getHeaderName(), ""));
 

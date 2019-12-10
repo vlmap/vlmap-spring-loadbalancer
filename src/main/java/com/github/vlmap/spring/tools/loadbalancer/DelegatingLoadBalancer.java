@@ -2,7 +2,7 @@ package com.github.vlmap.spring.tools.loadbalancer;
 
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
+import com.github.vlmap.spring.tools.context.ContextManager;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -10,7 +10,6 @@ import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
@@ -157,7 +156,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
             for (RibbonTagOfServers.TagOfServers tagOfServer : tagOfServers) {
 
-                if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && org.apache.commons.lang.StringUtils.isNotBlank(tagOfServer.getId())) {
+                if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && StringUtils.isNotBlank(tagOfServer.getId())) {
                     map.put(tagOfServer.getId(), tagOfServer.getTags());
                 }
             }

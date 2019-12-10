@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.resttemplate;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.context.ContextManager;
+import com.github.vlmap.spring.tools.context.ContextManager;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor 
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             headers.add(headerName, tag);
         }
-        if (Platform.getInstnce().isWebflux()) {
+        if (Platform.getInstnce().isReactive()) {
             try {
                 ContextManager.getRuntimeContext().setTag(tag);
                 return execution.execute(request, body);

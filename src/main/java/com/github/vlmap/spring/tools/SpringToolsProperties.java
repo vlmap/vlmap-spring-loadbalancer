@@ -14,6 +14,7 @@ public class SpringToolsProperties {
 
     private String propertySourceName = DEFAULT_TOOLS_PROPERTIES_NAME;
 
+    private Compatible compatible=new Compatible();
 
     private TagLoadbalancer tagLoadbalancer = new TagLoadbalancer();
 
@@ -49,6 +50,13 @@ public class SpringToolsProperties {
         return tagLoadbalancer.getHeaderName();
     }
 
+    public Compatible getCompatible() {
+        return compatible;
+    }
+
+    public void setCompatible(Compatible compatible) {
+        this.compatible = compatible;
+    }
 
     static public class Zookeeper {
         private boolean enabled = true;
@@ -97,14 +105,49 @@ public class SpringToolsProperties {
             this.enabled = enabled;
         }
     }
+    /**
+     * 兼容模式
+     */
+    static public class Compatible{
 
+        private boolean enabled=false;
+       private int code=403;
+       private String message="Forbidden";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
     static public class TagLoadbalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
+
         /**
          * 只在 gateway,zuul 网关才会用到
          */
+
         private String header;
+
         private Feign feign = new Feign();
         private RestTemplate restTemplate = new RestTemplate();
         private WebClient webClient = new WebClient();

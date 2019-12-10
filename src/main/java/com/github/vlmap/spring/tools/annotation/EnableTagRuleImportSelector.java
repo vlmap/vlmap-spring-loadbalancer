@@ -1,14 +1,12 @@
 package com.github.vlmap.spring.tools.annotation;
 
-import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.feign.TagFeignAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagReactorAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagReactiveAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.resttemplate.TagRestTemplateAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.TagSpringmvcAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.webclient.TagWebClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -34,7 +32,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
 
-        importsList.add(TagReactorAutoConfiguration.class.getName());
+        importsList.add(TagReactiveAutoConfiguration.class.getName());
         importsList.add(TagSpringmvcAutoConfiguration.class.getName());
 
         importsList.add(TagFeignAutoConfiguration.class.getName());

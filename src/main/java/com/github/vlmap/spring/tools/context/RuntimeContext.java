@@ -16,7 +16,7 @@
  *
  */
 
-package com.github.vlmap.spring.tools.loadbalancer.context;
+package com.github.vlmap.spring.tools.context;
 
 
 import java.util.Map;

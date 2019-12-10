@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.tools.event;
+package com.github.vlmap.spring.tools.context.event;
 
 import org.springframework.context.ApplicationEvent;
 
