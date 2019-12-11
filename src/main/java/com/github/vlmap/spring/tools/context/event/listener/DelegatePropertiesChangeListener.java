@@ -37,15 +37,10 @@ public class DelegatePropertiesChangeListener {
         boolean prefix=listener.isPrefix();
 
         if (prefix) {
-            if (StringUtils.startsWith(key, name)) {
-              return true;
-            }
+            return StringUtils.startsWith(key, name);
         } else {
-            if (StringUtils.equals(key, name)) {
-               return true;
-            }
+            return StringUtils.equals(key, name);
         }
-        return  false;
     }
 
     public void addListener(PropertiesListener listener) {

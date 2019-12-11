@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.common.AntPathMatcherUtils;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
@@ -42,20 +43,25 @@ public class TagServletFilter implements OrderedFilter {
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */
-        SpringToolsProperties.Compatible compatible=properties.getCompatible();
+         SpringToolsProperties.Compatible compatible=properties.getCompatible();
         if(! compatible.isEnabled()&&StringUtils.isNotBlank(serverTag)&&!StringUtils.equals(tag,serverTag)){
-            if(logger.isInfoEnabled()){
-                logger.info("The server isn't compatible model,current request Header["+name+":"+tag+"] don't match \""+serverTag+"\",response code:"+compatible.getCode());
+            List<String> ignoreUrls=compatible.ignoreUrls();
+            String uri = ((HttpServletRequest) request).getRequestURI();
 
-            }
-            String message=compatible.getMessage();
-            if(StringUtils.isBlank(message)){
-                httpServletResponse.setStatus(compatible.getCode());
+            if(!AntPathMatcherUtils.matcher(ignoreUrls,uri)) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("The server isn't compatible model,current request Header[" + name + ":" + tag + "] don't match \"" + serverTag + "\",response code:" + compatible.getCode());
 
-            }else {
-                httpServletResponse.sendError(compatible.getCode(),message);
+                }
+                String message = compatible.getMessage();
+                if (StringUtils.isBlank(message)) {
+                    httpServletResponse.setStatus(compatible.getCode());
+
+                } else {
+                    httpServletResponse.sendError(compatible.getCode(), message);
+                }
+                return;
             }
-           return;
         }
         try {
             if (StringUtils.isBlank(tag)) {

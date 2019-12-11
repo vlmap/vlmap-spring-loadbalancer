@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer;
 
 
+import com.github.vlmap.spring.tools.RibbonTagOfServersProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import com.netflix.client.config.IClientConfig;
@@ -147,14 +148,14 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
         }
 
         Binder binder = new Binder(propertySource);
-        RibbonTagOfServers ribbon = new RibbonTagOfServers();
+        RibbonTagOfServersProperties ribbon = new RibbonTagOfServersProperties();
         binder.bind("ribbon", Bindable.ofInstance(ribbon));
 
-        List<RibbonTagOfServers.TagOfServers> tagOfServers = ribbon.getTagOfServers();
+        List<RibbonTagOfServersProperties.TagOfServers> tagOfServers = ribbon.getTagOfServers();
         if (tagOfServers != null) {
             Map<String, Set<String>> map = new HashMap<>(tagOfServers.size());
 
-            for (RibbonTagOfServers.TagOfServers tagOfServer : tagOfServers) {
+            for (RibbonTagOfServersProperties.TagOfServers tagOfServer : tagOfServers) {
 
                 if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && StringUtils.isNotBlank(tagOfServer.getId())) {
                     map.put(tagOfServer.getId(), tagOfServer.getTags());
@@ -169,39 +170,6 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
     }
 
 
-    public static class RibbonTagOfServers {
 
-        List<TagOfServers> tagOfServers;
-
-        public List<TagOfServers> getTagOfServers() {
-            return tagOfServers;
-        }
-
-        public void setTagOfServers(List<TagOfServers> tagOfServers) {
-            this.tagOfServers = tagOfServers;
-        }
-
-        public static class TagOfServers {
-            private String id;
-            private Set<String> tags;
-
-            public String getId() {
-                return id;
-            }
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-            public Set<String> getTags() {
-                return tags;
-            }
-
-            public void setTags(Set<String> tags) {
-                this.tags = tags;
-            }
-        }
-
-    }
 
 }

@@ -6,6 +6,8 @@ import com.github.vlmap.spring.tools.context.event.PropertyChangeEvent;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.*;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -22,6 +24,7 @@ import java.util.TreeMap;
         id = "props"
 )
 public class PropertiesEndPoint implements ApplicationEventPublisherAware {
+    Logger logger= LoggerFactory.getLogger(this.getClass());
     private SpringToolsProperties properties;
     protected ApplicationEventPublisher publisher;
     private Map source = Collections.emptyMap();
@@ -73,7 +76,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         value = StringUtils.defaultIfBlank(value, "");
         source.put(name, value);
         if (!StringUtils.equals(oldValue, value)) {
-            this.publisher.publishEvent(new PropertyChangeEvent(this, name, value, ""));
+            publisher(name,value);
 
         }
         return get(name);
@@ -85,18 +88,29 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         String oldValue = (String) source.get(name);
         source.remove(name);
         if (!StringUtils.equals(oldValue, null)) {
-            this.publisher.publishEvent(new PropertyChangeEvent(this, name, null, ""));
+
+            publisher(name,null);
 
         }
 
         return get(name);
     }
+    protected void publisher(String name,String value){
+        try{
+            this.publisher.publishEvent(new PropertyChangeEvent(this, name, value, ""));
+        }catch (Exception e){
+            logger.error("PropertyChangeEvent Error,name="+name+",value="+value,e);
+        }
+    }
 
     @DeleteOperation
     public Response clean() {
-        Map<String, Object> source = this.source;
-        source.clear();
+        Map<String, Object> map = Collections.unmodifiableMap(this.source);
 
+        source.clear();
+        for(String name:map.keySet()){
+            publisher(name,null);
+        }
         return props();
     }
 

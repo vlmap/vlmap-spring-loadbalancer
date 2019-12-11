@@ -2,6 +2,8 @@ package com.github.vlmap.spring.tools.context;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.bind.BindContext;
+import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -27,19 +29,28 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
         Map<String, Object> map = new ConcurrentHashMap<>();
         SpringToolsProperties properties = new SpringToolsProperties();
 
-        Binder.get(environment).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
+        Binder.get(environment).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties), new BindHandler() {
 
-        map.put("spring.tools.zookeeper.enabled", String.valueOf(properties.getZookeeper().isEnabled()));
+            @Override
+            public void onFinish(ConfigurationPropertyName name, Bindable<?> target, BindContext context, Object result) throws Exception {
 
-        map.put("spring.tools.property-source-name", StringUtils.defaultString(properties.getPropertySourceName(), ""));
-        map.put("spring.tools.tag-loadbalancer.enabled", String.valueOf(properties.getTagLoadbalancer().isEnabled()));
-        map.put("spring.tools.tag-loadbalancer.feign.enabled", String.valueOf(properties.getTagLoadbalancer().getFeign().isEnabled()));
-        map.put("spring.tools.tag-loadbalancer.rest-template.enabled", String.valueOf(properties.getTagLoadbalancer().getRestTemplate().isEnabled()));
-        map.put("spring.tools.tag-loadbalancer.web-client.enabled", String.valueOf(properties.getTagLoadbalancer().getWebClient().isEnabled()));
-        map.put("spring.tools.tag-loadbalancer.header", StringUtils.defaultString(properties.getTagLoadbalancer().getHeader(), ""));
+                Class rawClass=target.getType().getRawClass();
+                if (rawClass.isPrimitive()||CharSequence.class.isAssignableFrom( rawClass)){
+                    if(result==null){
+                        Object object=target.getValue().get();
+                        if(object!=null){
+                            map.put(name.toString(),object.toString());
 
-        map.put("spring.tools.tag-loadbalancer.header-name", StringUtils.defaultString(properties.getTagLoadbalancer().getHeaderName(), ""));
+                        }
+                    }else{
+                        map.put(name.toString(),result.toString());
+                    }
 
+
+                }
+
+            }
+        });
         MapPropertySource result = new MapPropertySource(propertySourceName, map);
 
 

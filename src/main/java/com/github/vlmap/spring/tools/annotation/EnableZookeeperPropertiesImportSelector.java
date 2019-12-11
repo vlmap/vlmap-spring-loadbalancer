@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.annotation;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.zookeeper.ZookeeperPropAutoConfiguration;
+import com.github.vlmap.spring.tools.zookeeper.ZookeeperPropertiesAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -20,13 +20,14 @@ import java.util.List;
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 @AutoConfigureBefore(ZookeeperConfigAutoConfiguration.class)
-public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelector<EnableZookeeperProperties> {
+public class EnableZookeeperPropertiesImportSelector extends SpringFactoryImportSelector<EnableZookeeperProperties> {
+    public static final String WATCHER_ENABLED = "spring.cloud.zookeeper.config.watcher.enabled";
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
         String[] imports = super.selectImports(metadata);
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
-        importsList.add(ZookeeperPropAutoConfiguration.class.getName());
+        importsList.add(ZookeeperPropertiesAutoConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);
@@ -37,8 +38,9 @@ public class EnableZookeeperPropImportSelector extends SpringFactoryImportSelect
 
     @Override
     protected boolean isEnabled() {
-
         Environment env = getEnvironment();
+        boolean watchEnable = env.getProperty(WATCHER_ENABLED, Boolean.class, true);
+        if (watchEnable) return false;
         SpringToolsProperties properties = new SpringToolsProperties();
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
