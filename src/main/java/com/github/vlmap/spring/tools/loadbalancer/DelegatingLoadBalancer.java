@@ -78,7 +78,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
     protected String tag() {
         String tag = ContextManager.getRuntimeContext().getTag();
         if (StringUtils.isBlank(tag)) {
-            tag=properties.getTagLoadbalancer().getHeader();
+            tag = properties.getTagLoadbalancer().getHeader();
 
         }
         return tag;
@@ -168,8 +168,6 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
 
     }
-
-
 
 
 }

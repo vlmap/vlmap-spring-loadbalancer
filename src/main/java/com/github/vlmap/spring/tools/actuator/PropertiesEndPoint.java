@@ -24,7 +24,7 @@ import java.util.TreeMap;
         id = "props"
 )
 public class PropertiesEndPoint implements ApplicationEventPublisherAware {
-    Logger logger= LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     private SpringToolsProperties properties;
     protected ApplicationEventPublisher publisher;
     private Map source = Collections.emptyMap();
@@ -76,7 +76,7 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         value = StringUtils.defaultIfBlank(value, "");
         source.put(name, value);
         if (!StringUtils.equals(oldValue, value)) {
-            publisher(name,value);
+            publisher(name, value);
 
         }
         return get(name);
@@ -89,17 +89,18 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         source.remove(name);
         if (!StringUtils.equals(oldValue, null)) {
 
-            publisher(name,null);
+            publisher(name, null);
 
         }
 
         return get(name);
     }
-    protected void publisher(String name,String value){
-        try{
+
+    protected void publisher(String name, String value) {
+        try {
             this.publisher.publishEvent(new PropertyChangeEvent(this, name, value, ""));
-        }catch (Exception e){
-            logger.error("PropertyChangeEvent Error,name="+name+",value="+value,e);
+        } catch (Exception e) {
+            logger.error("PropertyChangeEvent Error,name=" + name + ",value=" + value, e);
         }
     }
 
@@ -108,8 +109,8 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
         Map<String, Object> map = Collections.unmodifiableMap(this.source);
 
         source.clear();
-        for(String name:map.keySet()){
-            publisher(name,null);
+        for (String name : map.keySet()) {
+            publisher(name, null);
         }
         return props();
     }

@@ -1,12 +1,12 @@
 package com.github.vlmap.spring.tools.annotation;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.feign.TagFeignAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagReactiveAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.resttemplate.TagRestTemplateAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.TagSpringmvcAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.webclient.TagWebClientAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagReactiveAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.TagSpringmvcAutoConfiguration;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;

@@ -10,31 +10,32 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DelegatePropertiesChangeListener {
-    private  Map<String, PropertiesListener> listeners = new ConcurrentHashMap<>();
+    private Map<String, PropertiesListener> listeners = new ConcurrentHashMap<>();
     private static Logger logger = LoggerFactory.getLogger(DelegatePropertiesChangeListener.class);
 
     @EventListener(PropertyChangeEvent.class)
     public void listener(PropertyChangeEvent event) {
 
         for (PropertiesListener listener : listeners.values()) {
-            try{
-                if(match(listener,event)){
+            try {
+                if (match(listener, event)) {
                     listener.getCall().propertyChanged(event);
                 }
 
-            }catch (Exception e){
-                if(logger.isErrorEnabled()){
-                    logger.error("",e);
+            } catch (Exception e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("", e);
                 }
 
             }
 
         }
     }
-    protected  boolean match(PropertiesListener listener,PropertyChangeEvent event){
+
+    protected boolean match(PropertiesListener listener, PropertyChangeEvent event) {
         String key = event.getKey();
-        String name=listener.getName();
-        boolean prefix=listener.isPrefix();
+        String name = listener.getName();
+        boolean prefix = listener.isPrefix();
 
         if (prefix) {
             return StringUtils.startsWith(key, name);

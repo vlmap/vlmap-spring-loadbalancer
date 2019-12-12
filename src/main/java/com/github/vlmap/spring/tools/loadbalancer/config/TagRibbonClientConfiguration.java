@@ -46,7 +46,7 @@ public class TagRibbonClientConfiguration {
     public void ribbonChangeListener(IClientConfig clientConfig, DelegatePropertiesChangeListener delegatePropertiesChangeListener) {
 
 
-        delegatePropertiesChangeListener.addListener(new PropertiesListener(clientConfig.getClientName()+".ribbon", true, (PropertyChangeEvent event) -> {
+        delegatePropertiesChangeListener.addListener(new PropertiesListener(clientConfig.getClientName() + ".ribbon", true, (PropertyChangeEvent event) -> {
 
             delegating.tagStateInProgress();
 
@@ -54,12 +54,12 @@ public class TagRibbonClientConfiguration {
         }));
 
 
-
     }
+
     @Autowired
     public void ribbonClientRefresh(IClientConfig clientConfig, DelegatePropertiesChangeListener delegatePropertiesChangeListener, ContextRefresher contextRefresher) {
         String name = clientConfig.getClientName() + ".context.refresh";
-        delegatePropertiesChangeListener.addListener(new PropertiesListener(name,true, new PropertiesListener.ChangeListener() {
+        delegatePropertiesChangeListener.addListener(new PropertiesListener(name, true, new PropertiesListener.ChangeListener() {
             @Override
             public void propertyChanged(PropertyChangeEvent event) {
                 boolean refresh = BooleanUtils.toBoolean(event.getValue());

@@ -1,12 +1,8 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.resttemplate;
 
-import com.github.vlmap.spring.tools.SpringToolsAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
- @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
 public class TagRestTemplateAutoConfiguration {
 
@@ -29,7 +25,7 @@ public class TagRestTemplateAutoConfiguration {
 
 
                 List<ClientHttpRequestInterceptor> list = new ArrayList<>();
-                List<ClientHttpRequestInterceptor>  interceptors=    restTemplate.getInterceptors();
+                List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 
                 if (!interceptors.contains(interceptor)) {
                     list.add(interceptor);
@@ -59,7 +55,7 @@ public class TagRestTemplateAutoConfiguration {
 //
 
             List<ClientHttpRequestInterceptor> list = new ArrayList<>();
-            List<ClientHttpRequestInterceptor>  interceptors=    restTemplate.getInterceptors();
+            List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 
             if (!interceptors.contains(interceptor)) {
                 list.add(interceptor);

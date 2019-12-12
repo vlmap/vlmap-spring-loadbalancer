@@ -4,15 +4,16 @@ import com.github.vlmap.spring.tools.context.SpringToolsPropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
- @Configuration
+
+@Configuration
 
 public class SpringToolsBootstrapConfiguration implements Ordered {
 
 
-     @Bean
-     public SpringToolsPropertySourceLocator springToolsPropertySourceLocator() {
-         return new SpringToolsPropertySourceLocator();
-     }
+    @Bean
+    public SpringToolsPropertySourceLocator springToolsPropertySourceLocator() {
+        return new SpringToolsPropertySourceLocator();
+    }
 
 
     @Override

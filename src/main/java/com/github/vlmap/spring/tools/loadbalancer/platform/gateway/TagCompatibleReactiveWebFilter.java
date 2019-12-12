@@ -2,6 +2,7 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.gateway;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.common.AntPathMatcherUtils;
+import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
@@ -11,8 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public class TagCompatibleReactiveWebFilter implements OrderedWebFilter {
     private SpringToolsProperties properties;
@@ -36,13 +35,14 @@ public class TagCompatibleReactiveWebFilter implements OrderedWebFilter {
          */
         SpringToolsProperties.Compatible compatible = properties.getCompatible();
 
-        if (!compatible.isEnabled() && org.apache.commons.lang3.StringUtils.isNotBlank(serverTag) && !org.apache.commons.lang3.StringUtils.equals(tag, serverTag)) {
-            List<String> ignoreUrls = compatible.ignoreUrls();
+        if (!Platform.getInstnce().isGatewayService() && !compatible.isEnabled() && org.apache.commons.lang3.StringUtils.isNotBlank(serverTag) && !org.apache.commons.lang3.StringUtils.equals(tag, serverTag)) {
             String uri = exchange.getRequest().getURI().toString();
 
-            if (!AntPathMatcherUtils.matcher(ignoreUrls, uri)) {
-
-
+            boolean state = AntPathMatcherUtils.matcher(compatible.ignoreUrls(), uri);
+            if (!state && compatible.isEnableDefaultIgnoreUrl()) {
+                state = AntPathMatcherUtils.matcher(SpringToolsProperties.Compatible.defaultIgnoreUrls(), uri);
+            }
+            if (!state) {
                 if (logger.isInfoEnabled()) {
                     logger.info("The server is compatible model,current request Header[" + headerName + ":" + tag + "] don't match \"" + serverTag + "\",response code:" + compatible.getCode());
 

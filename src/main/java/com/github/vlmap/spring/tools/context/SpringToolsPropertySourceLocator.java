@@ -34,16 +34,16 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
             @Override
             public void onFinish(ConfigurationPropertyName name, Bindable<?> target, BindContext context, Object result) throws Exception {
 
-                Class rawClass=target.getType().getRawClass();
-                if (rawClass.isPrimitive()||CharSequence.class.isAssignableFrom( rawClass)){
-                    if(result==null){
-                        Object object=target.getValue().get();
-                        if(object!=null){
-                            map.put(name.toString(),object.toString());
+                Class rawClass = target.getType().getRawClass();
+                if (rawClass.isPrimitive() || CharSequence.class.isAssignableFrom(rawClass)) {
+                    if (result == null) {
+                        Object object = target.getValue().get();
+                        if (object != null) {
+                            map.put(name.toString(), object.toString());
 
                         }
-                    }else{
-                        map.put(name.toString(),result.toString());
+                    } else {
+                        map.put(name.toString(), result.toString());
                     }
 
 

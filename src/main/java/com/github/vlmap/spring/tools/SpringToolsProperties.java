@@ -110,44 +110,55 @@ public class SpringToolsProperties {
 
     static public class IgnoreUrl {
         List<String> urls;
+
         public IgnoreUrl(String urls) {
 
         }
 
-        public Collection<String> list(){
+        public Collection<String> list() {
             return urls;
         }
     }
+
     /**
      * 兼容模式
      */
     static public class Compatible {
 
-        private boolean enabled = false;
-        private boolean enableDefaultIgnoreUrl=true;
+        private boolean enabled = true;
+        private boolean enableDefaultIgnoreUrl = true;
         private int code = 403;
         private String message = "Forbidden";
-
+        private static List<String> defaultIgnoreUrls;
 
         private List<String> ignoreUrls;
         /**
-         *忽略列表 AntPath格式,多个用“,”隔开
+         * 忽略列表 AntPath格式,多个用“,”隔开
          */
         private String ignoreUrl;
+
         public void setIgnoreUrl(String ignoreUrl) {
-            this.ignoreUrl=ignoreUrl;
-            if(StringUtils.isNotBlank(ignoreUrl)){
-                String[] elements=StringUtils.split(ignoreUrl,",");
-                Set<String> collection=new LinkedHashSet<>();
-                for(String element:elements){
-                    if(StringUtils.isNotBlank(element)){
+            this.ignoreUrl = ignoreUrl;
+            if (StringUtils.isNotBlank(ignoreUrl)) {
+                String[] elements = StringUtils.split(ignoreUrl, ",");
+                Set<String> collection = new LinkedHashSet<>();
+                for (String element : elements) {
+                    if (StringUtils.isNotBlank(element)) {
                         collection.add(element);
                     }
                 }
-                this.ignoreUrls=new ArrayList<>(collection);
-            }else{
-                this.ignoreUrls=null;
+                this.ignoreUrls = new ArrayList<>(collection);
+            } else {
+                this.ignoreUrls = null;
             }
+        }
+
+        public static List<String> defaultIgnoreUrls() {
+            return defaultIgnoreUrls;
+        }
+
+        public static void defaultIgnoreUrls(List<String> ignoreUrls) {
+            defaultIgnoreUrls = ignoreUrls;
         }
 
         public boolean isEnableDefaultIgnoreUrl() {
@@ -162,7 +173,7 @@ public class SpringToolsProperties {
             return ignoreUrl;
         }
 
-        public List<String> ignoreUrls(){
+        public List<String> ignoreUrls() {
             return ignoreUrls;
         }
 

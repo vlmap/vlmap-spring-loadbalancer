@@ -33,9 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RuntimeContext {
     private final ThreadLocal<RuntimeContext> contextThreadLocal;
     private Map context = new ConcurrentHashMap(0);
-    public static final   String REQUEST_TAG_REFERENCE ="REQUEST_TAG_REFERENCE";
+    public static final String REQUEST_TAG_REFERENCE = "REQUEST_TAG_REFERENCE";
 
-      RuntimeContext(ThreadLocal<RuntimeContext> contextThreadLocal) {
+    RuntimeContext(ThreadLocal<RuntimeContext> contextThreadLocal) {
         this.contextThreadLocal = contextThreadLocal;
     }
 
@@ -51,13 +51,15 @@ public class RuntimeContext {
         return (T) context.get(key);
     }
 
-    public String getTag(){
-        return get(REQUEST_TAG_REFERENCE,String.class);
+    public String getTag() {
+        return get(REQUEST_TAG_REFERENCE, String.class);
 
     }
-    public void setTag(String tag){
-        put(REQUEST_TAG_REFERENCE,tag);
+
+    public void setTag(String tag) {
+        put(REQUEST_TAG_REFERENCE, tag);
     }
+
     public void remove(Object key) {
         context.remove(key);
 

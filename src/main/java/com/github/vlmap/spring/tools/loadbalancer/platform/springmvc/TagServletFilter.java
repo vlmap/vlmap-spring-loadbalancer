@@ -3,6 +3,7 @@ package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.common.AntPathMatcherUtils;
 import com.github.vlmap.spring.tools.context.ContextManager;
+import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
@@ -23,7 +24,7 @@ import java.util.*;
 
 
 public class TagServletFilter implements OrderedFilter {
-    Logger logger= LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     SpringToolsProperties properties;
 
@@ -36,19 +37,22 @@ public class TagServletFilter implements OrderedFilter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse=(HttpServletResponse)response;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String name = this.properties.getTagHeaderName();
         String tag = httpServletRequest.getHeader(name);
-       String serverTag= properties.getTagLoadbalancer().getHeader();
+        String serverTag = properties.getTagLoadbalancer().getHeader();
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */
-         SpringToolsProperties.Compatible compatible=properties.getCompatible();
-        if(! compatible.isEnabled()&&StringUtils.isNotBlank(serverTag)&&!StringUtils.equals(tag,serverTag)){
-            List<String> ignoreUrls=compatible.ignoreUrls();
+        SpringToolsProperties.Compatible compatible = properties.getCompatible();
+        if (!Platform.getInstnce().isGatewayService() && !compatible.isEnabled() && StringUtils.isNotBlank(serverTag) && !StringUtils.equals(tag, serverTag)) {
             String uri = ((HttpServletRequest) request).getRequestURI();
 
-            if(!AntPathMatcherUtils.matcher(ignoreUrls,uri)) {
+            boolean state = AntPathMatcherUtils.matcher(compatible.ignoreUrls(), uri);
+            if (!state && compatible.isEnableDefaultIgnoreUrl()) {
+                state = AntPathMatcherUtils.matcher(SpringToolsProperties.Compatible.defaultIgnoreUrls(), uri);
+            }
+            if (!state) {
                 if (logger.isInfoEnabled()) {
                     logger.info("The server isn't compatible model,current request Header[" + name + ":" + tag + "] don't match \"" + serverTag + "\",response code:" + compatible.getCode());
 
@@ -73,8 +77,7 @@ public class TagServletFilter implements OrderedFilter {
 
                     addHeader(headers, name, tag);
 
-                    request    = new HttpServletRequestWrapper(httpServletRequest, headers);
-
+                    request = new HttpServletRequestWrapper(httpServletRequest, headers);
 
 
                 }

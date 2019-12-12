@@ -18,7 +18,6 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     private SpringToolsProperties properties;
 
 
-
     @Override
     public void apply(RequestTemplate template) {
 
@@ -28,11 +27,11 @@ public class FeignRequestInterceptor implements RequestInterceptor {
         String header = headers.getOrDefault(headerName, Collections.emptyList()).stream().findFirst().orElse(null);
         String tag = header;
         if (StringUtils.isBlank(tag)) {
-            tag=ContextManager.getRuntimeContext().getTag();
+            tag = ContextManager.getRuntimeContext().getTag();
 
         }
         if (StringUtils.isBlank(tag)) {
-            tag=properties.getTagLoadbalancer().getHeader();
+            tag = properties.getTagLoadbalancer().getHeader();
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {

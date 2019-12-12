@@ -3,8 +3,6 @@ package com.github.vlmap.spring.tools.loadbalancer.config;
 
 import org.springframework.cloud.netflix.ribbon.RibbonClientSpecification;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 
 
 public class RibbonClientSpecificationAutoConfiguration {
