@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ServerWebExchange;
 
 @Aspect
-public class TagLoadBalancerClientFilterProxy {
+public class GrayLoadBalancerClientFilterProxy {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private SpringToolsProperties properties;
 
-    public TagLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
+    public GrayLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
         this.properties = properties;
     }
 
@@ -42,7 +42,7 @@ public class TagLoadBalancerClientFilterProxy {
         try {
 
             if (StringUtils.isBlank(tag)) {
-                tag = properties.getTagLoadbalancer().getHeader();
+                tag = properties.getGrayLoadbalancer().getHeader();
             }
             exchange.getAttributes().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             ContextManager.getRuntimeContext().setTag(tag);

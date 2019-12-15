@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
-public class TagWebClientInterceptor implements ExchangeFilterFunction {
+public class GrayWebClientInterceptor implements ExchangeFilterFunction {
 
     @Autowired
 
@@ -30,7 +30,7 @@ public class TagWebClientInterceptor implements ExchangeFilterFunction {
 
         }
         if (StringUtils.isBlank(tag)) {
-            tag = properties.getTagLoadbalancer().getHeader();
+            tag = properties.getGrayLoadbalancer().getHeader();
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {

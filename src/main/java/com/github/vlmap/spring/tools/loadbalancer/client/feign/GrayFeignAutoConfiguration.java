@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.feign.enabled", matchIfMissing = true)
 @EnableConfigurationProperties({SpringToolsProperties.class})
 
-public class TagFeignAutoConfiguration {
+public class GrayFeignAutoConfiguration {
     @Bean
-    public FeignRequestInterceptor feignRequestInterceptor() {
-        return new FeignRequestInterceptor();
+    public GrayFeignRequestInterceptor feignRequestInterceptor() {
+        return new GrayFeignRequestInterceptor();
 
     }
 
@@ -27,8 +27,8 @@ public class TagFeignAutoConfiguration {
 
     static class TagFeignClientProxyConfiguration {
         @Bean
-        public TagFeignClientProxy feignClientProxy(SpringToolsProperties properties) {
-            return new TagFeignClientProxy(properties);
+        public GrayFeignClientProxy feignClientProxy(SpringToolsProperties properties) {
+            return new GrayFeignClientProxy(properties);
         }
     }
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public class FeignRequestInterceptor implements RequestInterceptor {
+public class GrayFeignRequestInterceptor implements RequestInterceptor {
 
     @Autowired
 
@@ -31,7 +31,7 @@ public class FeignRequestInterceptor implements RequestInterceptor {
 
         }
         if (StringUtils.isBlank(tag)) {
-            tag = properties.getTagLoadbalancer().getHeader();
+            tag = properties.getGrayLoadbalancer().getHeader();
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {

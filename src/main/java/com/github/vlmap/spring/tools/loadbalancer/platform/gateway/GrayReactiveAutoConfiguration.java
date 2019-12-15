@@ -20,23 +20,23 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({SpringToolsProperties.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 
-public class TagReactiveAutoConfiguration {
+public class GrayReactiveAutoConfiguration {
 
-    public TagReactiveAutoConfiguration() {
+    public GrayReactiveAutoConfiguration() {
         Platform.getInstnce().setPlatform(Platform.REACTIVE);
 
     }
 
     @Bean
-    public TagCompatibleReactiveWebFilter tagCompatibleReactiveWebFilter(SpringToolsProperties properties) {
-        return new TagCompatibleReactiveWebFilter(properties);
+    public GrayCompatibleReactiveWebFilter grayCompatibleReactiveWebFilter(SpringToolsProperties properties) {
+        return new GrayCompatibleReactiveWebFilter(properties);
     }
 
 
     @Bean
-    public TagLoadBalancerClientFilterProxy tagLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
+    public GrayLoadBalancerClientFilterProxy grayLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
 
-        return new TagLoadBalancerClientFilterProxy(properties);
+        return new GrayLoadBalancerClientFilterProxy(properties);
     }
 
     @Configuration

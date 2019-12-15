@@ -10,8 +10,8 @@ public class RibbonClientSpecificationAutoConfiguration {
 
     @Bean
     public RibbonClientSpecification specification() {
-        Class[] classes = new Class[]{TagRibbonClientConfiguration.class};
-        return new RibbonClientSpecification("default." + TagRibbonClientConfiguration.class.getName(), classes);
+        Class[] classes = new Class[]{GrayRibbonClientConfiguration.class};
+        return new RibbonClientSpecification("default." + GrayRibbonClientConfiguration.class.getName(), classes);
     }
 
 

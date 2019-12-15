@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class TagServletFilter implements OrderedFilter {
+public class GrayServletFilter implements OrderedFilter {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     SpringToolsProperties properties;
 
-    public TagServletFilter(SpringToolsProperties properties) {
+    public GrayServletFilter(SpringToolsProperties properties) {
         this.properties = properties;
     }
 
@@ -40,7 +40,7 @@ public class TagServletFilter implements OrderedFilter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String name = this.properties.getTagHeaderName();
         String tag = httpServletRequest.getHeader(name);
-        String serverTag = properties.getTagLoadbalancer().getHeader();
+        String serverTag = properties.getGrayLoadbalancer().getHeader();
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */
@@ -70,7 +70,7 @@ public class TagServletFilter implements OrderedFilter {
         try {
             if (StringUtils.isBlank(tag)) {
 
-                tag = properties.getTagLoadbalancer().getHeader();
+                tag = properties.getGrayLoadbalancer().getHeader();
                 if (StringUtils.isNotBlank(tag)) {
 
                     Map<String, List<String>> headers = getHeaders(httpServletRequest);

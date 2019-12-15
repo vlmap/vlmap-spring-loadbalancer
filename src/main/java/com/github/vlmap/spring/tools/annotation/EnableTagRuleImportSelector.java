@@ -1,12 +1,12 @@
 package com.github.vlmap.spring.tools.annotation;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.loadbalancer.client.feign.TagFeignAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.client.resttemplate.TagRestTemplateAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.client.webclient.TagWebClientAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.client.feign.GrayFeignAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.client.resttemplate.GrayRestTemplateAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.client.webclient.GrayWebClientAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.TagReactiveAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.TagSpringmvcAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.GrayReactiveAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.GraySpringmvcAutoConfiguration;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
@@ -32,12 +32,12 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
 
-        importsList.add(TagReactiveAutoConfiguration.class.getName());
-        importsList.add(TagSpringmvcAutoConfiguration.class.getName());
+        importsList.add(GrayReactiveAutoConfiguration.class.getName());
+        importsList.add(GraySpringmvcAutoConfiguration.class.getName());
 
-        importsList.add(TagFeignAutoConfiguration.class.getName());
-        importsList.add(TagRestTemplateAutoConfiguration.class.getName());
-        importsList.add(TagWebClientAutoConfiguration.class.getName());
+        importsList.add(GrayFeignAutoConfiguration.class.getName());
+        importsList.add(GrayRestTemplateAutoConfiguration.class.getName());
+        importsList.add(GrayWebClientAutoConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);
@@ -53,7 +53,7 @@ public class EnableTagRuleImportSelector extends SpringFactoryImportSelector<Ena
 
         Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
-        return properties.getTagLoadbalancer().isEnabled();
+        return properties.getGrayLoadbalancer().isEnabled();
     }
 
     @Override

@@ -13,11 +13,11 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-public class TagCompatibleReactiveWebFilter implements OrderedWebFilter {
+public class GrayCompatibleReactiveWebFilter implements OrderedWebFilter {
     private SpringToolsProperties properties;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public TagCompatibleReactiveWebFilter(SpringToolsProperties properties) {
+    public GrayCompatibleReactiveWebFilter(SpringToolsProperties properties) {
         this.properties = properties;
     }
 
@@ -29,7 +29,7 @@ public class TagCompatibleReactiveWebFilter implements OrderedWebFilter {
             tag = exchange.getRequest().getHeaders().getFirst(headerName);
         }
 
-        String serverTag = properties.getTagLoadbalancer().getHeader();
+        String serverTag = properties.getGrayLoadbalancer().getHeader();
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */

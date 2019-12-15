@@ -19,7 +19,7 @@ import java.io.IOException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnProperty(value = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
-public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor {
+public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
     @Autowired
 
@@ -37,7 +37,7 @@ public class TagRestTemplateInterceptor implements ClientHttpRequestInterceptor 
 
         }
         if (StringUtils.isBlank(tag)) {
-            tag = properties.getTagLoadbalancer().getHeader();
+            tag = properties.getGrayLoadbalancer().getHeader();
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {

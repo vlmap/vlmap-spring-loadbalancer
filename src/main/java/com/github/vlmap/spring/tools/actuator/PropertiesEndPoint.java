@@ -2,23 +2,20 @@ package com.github.vlmap.spring.tools.actuator;
 
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.common.PropertiesUtils;
-import com.github.vlmap.spring.tools.context.event.PropertyChangeEvent;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.*;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @Endpoint(
         id = "props"
@@ -72,45 +69,63 @@ public class PropertiesEndPoint implements ApplicationEventPublisherAware {
     @WriteOperation
     public Response update(@Selector String name, @Selector String value) {
         Map<String, Object> source = this.source;
-        String oldValue = (String) source.get(name);
+        String oldValue = environment.getProperty(name);
         value = StringUtils.defaultIfBlank(value, "");
         source.put(name, value);
-        if (!StringUtils.equals(oldValue, value)) {
-            publisher(name, value);
-
-        }
+        publisher(name,oldValue, value);
         return get(name);
     }
 
     @DeleteOperation
     public Response delete(@Selector String name) {
         Map<String, Object> source = this.source;
-        String oldValue = (String) source.get(name);
+        String oldValue = environment.getProperty(name);
+
         source.remove(name);
-        if (!StringUtils.equals(oldValue, null)) {
-
-            publisher(name, null);
-
-        }
+        String value = environment.getProperty(name);
+        publisher(name, oldValue, value);
 
         return get(name);
     }
 
-    protected void publisher(String name, String value) {
-        try {
-            this.publisher.publishEvent(new PropertyChangeEvent(this, name, value, ""));
-        } catch (Exception e) {
-            logger.error("PropertyChangeEvent Error,name=" + name + ",value=" + value, e);
+    protected void publisher(String name, String oldValue, String value) {
+        if (!StringUtils.equals(oldValue, value)) {
+            try {
+                Set<String> keys = new HashSet<String>();
+                keys.add(name);
+                this.publisher.publishEvent(new EnvironmentChangeEvent(keys));
+            } catch (Exception e) {
+                logger.error("EnvironmentChangeEvent Error,name=" + name + ",value=" + value, e);
+            }
         }
     }
 
     @DeleteOperation
-    public Response clean() {
+    public Response clear() {
         Map<String, Object> map = Collections.unmodifiableMap(this.source);
 
-        source.clear();
+
+        Map<String, String> oldValues = new HashMap<>();
         for (String name : map.keySet()) {
-            publisher(name, null);
+            oldValues.put(name, environment.getProperty(name));
+        }
+        source.clear();
+        Set<String> keys = new HashSet<>();
+        for (String name : map.keySet()) {
+            String value = environment.getProperty(name);
+            String oldValue = oldValues.get(name);
+            if (!StringUtils.equals(value, oldValue)) {
+                keys.add(name);
+            }
+
+        }
+        if (!keys.isEmpty()) {
+
+            try {
+                this.publisher.publishEvent(new EnvironmentChangeEvent(keys));
+            } catch (Exception e) {
+                logger.error("EnvironmentChangeEvent Error,names=" + StringUtils.join(keys) + "", e);
+            }
         }
         return props();
     }

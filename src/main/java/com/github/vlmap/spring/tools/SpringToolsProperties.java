@@ -3,12 +3,13 @@ package com.github.vlmap.spring.tools;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.util.*;
 
 
 @ConfigurationProperties(prefix = "spring.tools")
-
+@RefreshScope
 public class SpringToolsProperties {
 
     public static final String DEFAULT_TOOLS_PROPERTIES_NAME = "defaultToolsProperties";
@@ -18,9 +19,14 @@ public class SpringToolsProperties {
 
     private Compatible compatible = new Compatible();
 
-    private TagLoadbalancer tagLoadbalancer = new TagLoadbalancer();
+    private GrayLoadbalancer grayLoadbalancer = new GrayLoadbalancer();
 
     private Zookeeper zookeeper = new Zookeeper();
+
+
+    public SpringToolsProperties( ) {
+
+    }
 
     public Zookeeper getZookeeper() {
         return zookeeper;
@@ -39,17 +45,17 @@ public class SpringToolsProperties {
     }
 
 
-    public TagLoadbalancer getTagLoadbalancer() {
-        return tagLoadbalancer;
+    public GrayLoadbalancer getGrayLoadbalancer() {
+        return grayLoadbalancer;
     }
 
-    public void setTagLoadbalancer(TagLoadbalancer tagLoadbalancer) {
-        this.tagLoadbalancer = tagLoadbalancer;
+    public void setGrayLoadbalancer(GrayLoadbalancer grayLoadbalancer) {
+        this.grayLoadbalancer = grayLoadbalancer;
     }
 
 
     public String getTagHeaderName() {
-        return tagLoadbalancer.getHeaderName();
+        return grayLoadbalancer.getHeaderName();
     }
 
     public Compatible getCompatible() {
@@ -202,7 +208,7 @@ public class SpringToolsProperties {
         }
     }
 
-    static public class TagLoadbalancer {
+    static public class GrayLoadbalancer {
         private boolean enabled = true;
         private String headerName = "Loadbalancer-Tag";
 

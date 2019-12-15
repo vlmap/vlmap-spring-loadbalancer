@@ -14,15 +14,15 @@ import java.util.function.Consumer;
 @Configuration
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled", matchIfMissing = true)
 
-public class TagWebClientAutoConfiguration {
+public class GrayWebClientAutoConfiguration {
     @Bean
-    public TagWebClientInterceptor tagWebClientInterceptor() {
-        return new TagWebClientInterceptor();
+    public GrayWebClientInterceptor tagWebClientInterceptor() {
+        return new GrayWebClientInterceptor();
     }
 
     @Bean
-    public WebClientCustomizer tagLoadbalanceClientWebClientCustomizer(
-            TagWebClientInterceptor filterFunction) {
+    public WebClientCustomizer grayLoadbalanceClientWebClientCustomizer(
+            GrayWebClientInterceptor filterFunction) {
         return builder -> builder.filters(new Consumer<List<ExchangeFilterFunction>>() {
             @Override
             public void accept(List<ExchangeFilterFunction> exchangeFilterFunctions) {

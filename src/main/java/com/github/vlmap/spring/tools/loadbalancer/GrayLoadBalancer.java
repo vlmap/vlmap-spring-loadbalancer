@@ -1,39 +1,29 @@
 package com.github.vlmap.spring.tools.loadbalancer;
 
 
-import com.github.vlmap.spring.tools.RibbonTagOfServersProperties;
 import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
-import com.netflix.client.config.IClientConfig;
-import com.netflix.config.ConfigurationManager;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class DelegatingLoadBalancer implements ILoadBalancer {
+public class GrayLoadBalancer implements ILoadBalancer {
 
-    private AtomicReference<Map<String, Set<String>>> tagsInProgress = new AtomicReference(Collections.emptyMap());
-    private IClientConfig clientConfig;
+    private GrayClientServer grayClientServer;
     private ILoadBalancer target;
 
 
     private SpringToolsProperties properties;
 
-    public void setProperties(SpringToolsProperties properties) {
+    public GrayLoadBalancer(GrayClientServer grayClientServer, SpringToolsProperties properties) {
+        this.grayClientServer = grayClientServer;
         this.properties = properties;
     }
 
-    public void setClientConfig(IClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
-    }
+
 
 
     public void setTarget(ILoadBalancer target) {
@@ -78,7 +68,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
     protected String tag() {
         String tag = ContextManager.getRuntimeContext().getTag();
         if (StringUtils.isBlank(tag)) {
-            tag = properties.getTagLoadbalancer().getHeader();
+            tag = properties.getGrayLoadbalancer().getHeader();
 
         }
         return tag;
@@ -86,8 +76,8 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
 
     protected List<Server> processServers(List<Server> servers) {
 
-        Map<String, Set<String>> map = tagsInProgress.get();
-        if (map.isEmpty()) {
+        Map<String, Set<String>> map = grayClientServer.getClientServerTags();
+        if (map==null||map.isEmpty()) {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
         }
@@ -116,7 +106,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
                 }
 
             }
-            //匹配不到则返回，无标签节点
+            //匹配不到则返回无标签节点
             if (list.isEmpty()) {
                 for (Server server : servers) {
                     Set<String> tags = map.get(server.getId());
@@ -133,41 +123,7 @@ public class DelegatingLoadBalancer implements ILoadBalancer {
         return Collections.unmodifiableList(list);
     }
 
-    public void tagStateInProgress() {
 
-
-        Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientConfig.getClientName());
-
-
-        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
-        Iterator<String> iterator = configuration.getKeys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            String value = configuration.getString(key);
-            propertySource.put(key, value);
-        }
-
-        Binder binder = new Binder(propertySource);
-        RibbonTagOfServersProperties ribbon = new RibbonTagOfServersProperties();
-        binder.bind("ribbon", Bindable.ofInstance(ribbon));
-
-        List<RibbonTagOfServersProperties.TagOfServers> tagOfServers = ribbon.getTagOfServers();
-        if (tagOfServers != null) {
-            Map<String, Set<String>> map = new HashMap<>(tagOfServers.size());
-
-            for (RibbonTagOfServersProperties.TagOfServers tagOfServer : tagOfServers) {
-
-                if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && StringUtils.isNotBlank(tagOfServer.getId())) {
-                    map.put(tagOfServer.getId(), tagOfServer.getTags());
-                }
-            }
-            tagsInProgress.set(map);
-
-
-        }
-
-
-    }
 
 
 }

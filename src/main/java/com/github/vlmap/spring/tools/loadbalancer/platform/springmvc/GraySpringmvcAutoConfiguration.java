@@ -18,16 +18,16 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({SpringToolsProperties.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 
-public class TagSpringmvcAutoConfiguration {
-    public TagSpringmvcAutoConfiguration() {
+public class GraySpringmvcAutoConfiguration {
+    public GraySpringmvcAutoConfiguration() {
         Platform.getInstnce().setPlatform(Platform.SERVLET);
     }
 
 
     @Bean
-    public TagServletFilter tagSpringmvcFilter(SpringToolsProperties properties) {
+    public GrayServletFilter graySpringmvcFilter(SpringToolsProperties properties) {
 
-        return new TagServletFilter(properties);
+        return new GrayServletFilter(properties);
     }
 
     @Configuration

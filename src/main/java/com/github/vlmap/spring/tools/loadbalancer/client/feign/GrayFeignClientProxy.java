@@ -13,10 +13,10 @@ import java.util.Collection;
 import java.util.Map;
 
 @Aspect
-public class TagFeignClientProxy {
+public class GrayFeignClientProxy {
     private SpringToolsProperties properties;
 
-    public TagFeignClientProxy(SpringToolsProperties properties) {
+    public GrayFeignClientProxy(SpringToolsProperties properties) {
         this.properties = properties;
     }
 
@@ -46,7 +46,7 @@ public class TagFeignClientProxy {
 
 
             if (StringUtils.isBlank(header)) {
-                header = properties.getTagLoadbalancer().getHeader();
+                header = properties.getGrayLoadbalancer().getHeader();
             }
 
             ContextManager.getRuntimeContext().setTag(header);

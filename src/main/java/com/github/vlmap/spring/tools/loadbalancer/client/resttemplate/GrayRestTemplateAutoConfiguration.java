@@ -16,10 +16,10 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
 
-public class TagRestTemplateAutoConfiguration {
+public class GrayRestTemplateAutoConfiguration {
 
     @Bean
-    public String doInitTagRestTemplateCustomizer(@Autowired(required = false) RestTemplateBuilder builder, TagRestTemplateInterceptor interceptor) {
+    public String doInitTagRestTemplateCustomizer(@Autowired(required = false) RestTemplateBuilder builder, GrayRestTemplateInterceptor interceptor) {
         if (builder != null) {
             RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
@@ -41,14 +41,14 @@ public class TagRestTemplateAutoConfiguration {
     }
 
     @Bean
-    public TagRestTemplateInterceptor tagClientHttpRequestInterceptor() {
-        return new TagRestTemplateInterceptor();
+    public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
+        return new GrayRestTemplateInterceptor();
     }
 
 
     @Bean
     public String doInitTagRestTemplate(@Autowired(required = false) List<RestTemplate> templateList,
-                                        TagRestTemplateInterceptor interceptor) {
+                                        GrayRestTemplateInterceptor interceptor) {
         RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 
