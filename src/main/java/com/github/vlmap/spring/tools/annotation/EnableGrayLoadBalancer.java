@@ -11,5 +11,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(EnableGrayLoadBalancerImportSelector.class)
-public @interface EnableGrayRule {
+public @interface EnableGrayLoadBalancer {
 }

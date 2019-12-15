@@ -23,7 +23,7 @@ import java.util.List;
 
 @Order(Ordered.LOWEST_PRECEDENCE - 100)
 
-public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSelector<EnableGrayRule> {
+public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSelector<EnableGrayLoadBalancer> {
 
 
     @Override
