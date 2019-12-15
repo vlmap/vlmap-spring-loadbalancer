@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -33,36 +34,34 @@ public class GrayRibbonClientConfiguration {
         this.clientName = clientConfig.getClientName();
     }
 
+    @Bean
+    public GrayClientServer grayClientServer() {
+        return new GrayClientServer(clientName);
+    }
 
     @Autowired
     public void delegatingLoadBalancer(ILoadBalancer lb,
                                        IRule rule,
-
+                                       GrayClientServer grayClientServer,
                                        SpringToolsProperties properties) {
-        GrayClientServer tagsProvider = new GrayClientServer(clientName);
-        tagsProvider.refresh();
-        GrayLoadBalancer delegating = new GrayLoadBalancer(tagsProvider, properties);
 
 
-        delegating.setTarget(lb);
-
-
-        rule.setLoadBalancer(delegating);
+        rule.setLoadBalancer(new GrayLoadBalancer(lb, grayClientServer, properties));
 
     }
 
 
     @Autowired
-    public void ribbonClientRefresh(ApplicationContext context,SpringClientFactory clientFactory ) {
-        ApplicationContext parent=  context.getParent();
+    public void ribbonClientRefresh(ApplicationContext context, SpringClientFactory clientFactory) {
+        ApplicationContext parent = context.getParent();
         String name = clientName + ".";
-        if(parent instanceof AbstractApplicationContext){
-            AbstractApplicationContext applicationContext=(AbstractApplicationContext)parent;
-            applicationContext.addApplicationListener((EnvironmentChangeEvent e)->{
-                Set<String> keys=e.getKeys();
-                if(CollectionUtils.isNotEmpty(keys)){
-                    for(String key:keys){
-                        if(StringUtils.startsWith(key,name)){
+        if (parent instanceof AbstractApplicationContext) {
+            AbstractApplicationContext applicationContext = (AbstractApplicationContext) parent;
+            applicationContext.addApplicationListener((EnvironmentChangeEvent e) -> {
+                Set<String> keys = e.getKeys();
+                if (CollectionUtils.isNotEmpty(keys)) {
+                    for (String key : keys) {
+                        if (StringUtils.startsWith(key, name)) {
                             NamedContextFactoryUtils.close(clientFactory, clientName);
 
                             applicationContext.getApplicationListeners().remove(this);

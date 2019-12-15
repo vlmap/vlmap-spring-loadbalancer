@@ -18,17 +18,16 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     private SpringToolsProperties properties;
 
-    public GrayLoadBalancer(GrayClientServer grayClientServer, SpringToolsProperties properties) {
+    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer, SpringToolsProperties properties) {
         this.grayClientServer = grayClientServer;
         this.properties = properties;
-    }
-
-
-
-
-    public void setTarget(ILoadBalancer target) {
         this.target = target;
     }
+
+
+
+
+
 
     @Override
     public void addServers(List<Server> newServers) {

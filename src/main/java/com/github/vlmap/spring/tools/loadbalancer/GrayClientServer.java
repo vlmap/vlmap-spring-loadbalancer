@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 public class GrayClientServer {
@@ -23,8 +24,8 @@ public class GrayClientServer {
         this.clientName = clientName;
     }
 
-
-    public void refresh() {
+    @PostConstruct
+    public void initMethod() {
 
 
         Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientName);
@@ -52,12 +53,11 @@ public class GrayClientServer {
                     map.put(tagOfServer.getId(), tagOfServer.getTags());
                 }
             }
-            this.clientServerTags=Collections.unmodifiableMap(map);
+            this.clientServerTags = Collections.unmodifiableMap(map);
 
 
-
-        }else {
-            this.clientServerTags=null;
+        } else {
+            this.clientServerTags = null;
         }
 
 
