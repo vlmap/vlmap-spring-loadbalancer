@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(EnableTagRuleImportSelector.class)
-public @interface EnableTagRule {
+@Import(EnableGrayLoadBalancerImportSelector.class)
+public @interface EnableGrayRule {
 }
