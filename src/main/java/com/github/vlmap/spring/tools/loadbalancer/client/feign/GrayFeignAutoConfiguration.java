@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.feign;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
-@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.feign.enabled", matchIfMissing = true)
-@EnableConfigurationProperties({SpringToolsProperties.class})
+@ConditionalOnProperty(name = "spring.tools.feign.enabled", matchIfMissing = true)
 
 public class GrayFeignAutoConfiguration {
     @Bean
@@ -24,10 +23,11 @@ public class GrayFeignAutoConfiguration {
     @Configuration
 
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+    @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
     static class TagFeignClientProxyConfiguration {
         @Bean
-        public GrayFeignClientProxy feignClientProxy(SpringToolsProperties properties) {
+        public GrayFeignClientProxy feignClientProxy(GrayLoadBalancerProperties properties) {
             return new GrayFeignClientProxy(properties);
         }
     }

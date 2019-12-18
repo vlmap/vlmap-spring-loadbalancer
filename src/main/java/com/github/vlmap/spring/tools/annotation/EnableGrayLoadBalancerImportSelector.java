@@ -1,15 +1,11 @@
 package com.github.vlmap.spring.tools.annotation;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
 import com.github.vlmap.spring.tools.loadbalancer.client.feign.GrayFeignAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.resttemplate.GrayRestTemplateAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.client.webclient.GrayWebClientAutoConfiguration;
 import com.github.vlmap.spring.tools.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.gateway.GrayReactiveAutoConfiguration;
-import com.github.vlmap.spring.tools.loadbalancer.platform.springmvc.GraySpringmvcAutoConfiguration;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
+import com.github.vlmap.spring.tools.loadbalancer.platform.reactive.GrayReactiveAutoConfiguration;
+import com.github.vlmap.spring.tools.loadbalancer.platform.servlet.GrayServletAutoConfiguration;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -33,7 +29,7 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
 
         importsList.add(GrayReactiveAutoConfiguration.class.getName());
-        importsList.add(GraySpringmvcAutoConfiguration.class.getName());
+        importsList.add(GrayServletAutoConfiguration.class.getName());
 
         importsList.add(GrayFeignAutoConfiguration.class.getName());
         importsList.add(GrayRestTemplateAutoConfiguration.class.getName());
@@ -48,12 +44,12 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
 
     @Override
     protected boolean isEnabled() {
+
         Environment env = getEnvironment();
-        SpringToolsProperties properties = new SpringToolsProperties();
+        return env.getProperty("spring.tools.loadbalancer.enabled", Boolean.class, true);
 
-        Binder.get(env).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties));
 
-        return properties.getGrayLoadbalancer().isEnabled();
+
     }
 
     @Override

@@ -1,6 +1,7 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.gateway;
+package com.github.vlmap.spring.tools.loadbalancer.platform.reactive;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
+
 import com.github.vlmap.spring.tools.context.ContextManager;
 import com.github.vlmap.spring.tools.context.RuntimeContext;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +17,9 @@ import org.springframework.web.server.ServerWebExchange;
 public class GrayLoadBalancerClientFilterProxy {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
-    public GrayLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
+    public GrayLoadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
@@ -32,7 +33,7 @@ public class GrayLoadBalancerClientFilterProxy {
 
         Object[] args = joinPoint.getArgs();
         ServerWebExchange exchange = (ServerWebExchange) args[0];
-        String headerName = this.properties.getTagHeaderName();
+        String headerName = this.properties.getHeaderName();
         String tag = null;
         if (exchange != null) {
             tag = exchange.getRequest().getHeaders().getFirst(headerName);
@@ -42,7 +43,7 @@ public class GrayLoadBalancerClientFilterProxy {
         try {
 
             if (StringUtils.isBlank(tag)) {
-                tag = properties.getGrayLoadbalancer().getHeader();
+                tag = properties.getHeader();
             }
             exchange.getAttributes().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             ContextManager.getRuntimeContext().setTag(tag);

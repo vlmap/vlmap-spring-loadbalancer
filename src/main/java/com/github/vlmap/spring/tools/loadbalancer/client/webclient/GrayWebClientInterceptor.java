@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.webclient;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +15,21 @@ public class GrayWebClientInterceptor implements ExchangeFilterFunction {
 
     @Autowired
 
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 
         HttpHeaders headers = request.headers();
-        String headerName = properties.getTagHeaderName();
+        String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
         if (StringUtils.isBlank(tag)) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }
-        if (StringUtils.isBlank(tag)) {
-            tag = properties.getGrayLoadbalancer().getHeader();
 
-        }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             request = ClientRequest.from(request).header(headerName, tag).build();
 

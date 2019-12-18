@@ -1,6 +1,6 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
+package com.github.vlmap.spring.tools.loadbalancer.platform.servlet;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -15,17 +15,17 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnMissingClass("org.springframework.web.reactive.DispatcherHandler")
-@EnableConfigurationProperties({SpringToolsProperties.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
-public class GraySpringmvcAutoConfiguration {
-    public GraySpringmvcAutoConfiguration() {
+public class GrayServletAutoConfiguration {
+    public GrayServletAutoConfiguration() {
         Platform.getInstnce().setPlatform(Platform.SERVLET);
     }
 
 
     @Bean
-    public GrayServletFilter graySpringmvcFilter(SpringToolsProperties properties) {
+    public GrayServletFilter graySpringmvcFilter(GrayLoadBalancerProperties properties) {
 
         return new GrayServletFilter(properties);
     }

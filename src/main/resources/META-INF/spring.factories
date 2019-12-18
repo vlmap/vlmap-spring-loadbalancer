@@ -1,6 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.vlmap.spring.tools.SpringToolsAutoConfiguration
+com.github.vlmap.spring.tools.GrayLoadBalancerAutoConfiguration
 #
 # Bootstrap Configuration
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-com.github.vlmap.spring.tools.SpringToolsBootstrapConfiguration
+com.github.vlmap.spring.tools.GrayLoadBanacerBootstrapConfiguration

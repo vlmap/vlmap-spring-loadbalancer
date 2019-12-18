@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.resttemplate;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.apache.commons.lang3.StringUtils;
@@ -17,29 +17,26 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnProperty(value = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "spring.tools.rest-template.enabled", matchIfMissing = true)
 
 public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
     @Autowired
 
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
     @Override
     public ClientHttpResponse intercept(
             HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpHeaders headers = request.getHeaders();
-        String headerName = properties.getTagHeaderName();
+        String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
         if (StringUtils.isBlank(tag)) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }
-        if (StringUtils.isBlank(tag)) {
-            tag = properties.getGrayLoadbalancer().getHeader();
 
-        }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             headers.add(headerName, tag);
         }
@@ -53,6 +50,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         } else {
             return execution.execute(request, body);
         }
+
 
     }
 }

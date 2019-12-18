@@ -14,45 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.rest-template.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.rest-template.enabled", matchIfMissing = true)
 
 public class GrayRestTemplateAutoConfiguration {
 
-    @Bean
-    public String doInitTagRestTemplateCustomizer(@Autowired(required = false) RestTemplateBuilder builder, GrayRestTemplateInterceptor interceptor) {
-        if (builder != null) {
-            RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
-
-
-                List<ClientHttpRequestInterceptor> list = new ArrayList<>();
-                List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-
-                if (!interceptors.contains(interceptor)) {
-                    list.add(interceptor);
-
-                }
-                list.addAll(interceptors);
-                restTemplate.setInterceptors(list);
-
-            };
-            builder.additionalCustomizers(customizer);
-        }
-        return "doInitTagRestTemplateCustomizer";
-    }
-
-    @Bean
-    public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
-        return new GrayRestTemplateInterceptor();
-    }
-
-
-    @Bean
-    public String doInitTagRestTemplate(@Autowired(required = false) List<RestTemplate> templateList,
-                                        GrayRestTemplateInterceptor interceptor) {
+    @Autowired
+    public void  initRestTemplate(@Autowired(required = false) RestTemplateBuilder builder,
+                                  @Autowired(required = false) List<RestTemplate> templateList,
+                                  GrayRestTemplateInterceptor interceptor) {
         RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
-
-//
 
             List<ClientHttpRequestInterceptor> list = new ArrayList<>();
             List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
@@ -65,14 +36,27 @@ public class GrayRestTemplateAutoConfiguration {
             restTemplate.setInterceptors(list);
 
         };
+
+        if (builder != null) {
+
+            builder.additionalCustomizers(customizer);
+        }
         if (CollectionUtils.isNotEmpty(templateList)) {
             for (RestTemplate template : templateList) {
                 customizer.customize(template);
 
             }
         }
-        return "doInitTagRestTemplate";
+
     }
+
+    @Bean
+    public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
+        return new GrayRestTemplateInterceptor();
+    }
+
+
+
 
 
 }

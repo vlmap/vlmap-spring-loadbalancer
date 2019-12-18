@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.feign;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -15,14 +15,14 @@ public class GrayFeignRequestInterceptor implements RequestInterceptor {
 
     @Autowired
 
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
 
     @Override
     public void apply(RequestTemplate template) {
 
         Map<String, Collection<String>> headers = template.headers();
-        String headerName = properties.getTagHeaderName();
+        String headerName = properties.getHeaderName();
 
         String header = headers.getOrDefault(headerName, Collections.emptyList()).stream().findFirst().orElse(null);
         String tag = header;
@@ -30,10 +30,7 @@ public class GrayFeignRequestInterceptor implements RequestInterceptor {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }
-        if (StringUtils.isBlank(tag)) {
-            tag = properties.getGrayLoadbalancer().getHeader();
 
-        }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             template.header(headerName, tag);
         }

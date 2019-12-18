@@ -1,8 +1,8 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.springmvc;
+package com.github.vlmap.spring.tools.loadbalancer.platform.servlet;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.common.AntPathMatcherUtils;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
+import com.github.vlmap.spring.tools.loadbalancer.platform.IStrictHandler;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class GrayServletFilter implements OrderedFilter {
+public class GrayServletFilter implements OrderedFilter, IStrictHandler {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    SpringToolsProperties properties;
+    GrayLoadBalancerProperties properties;
 
-    public GrayServletFilter(SpringToolsProperties properties) {
+    public GrayServletFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
@@ -38,49 +38,47 @@ public class GrayServletFilter implements OrderedFilter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String name = this.properties.getTagHeaderName();
+        String name = this.properties.getHeaderName();
         String tag = httpServletRequest.getHeader(name);
-        String serverTag = properties.getGrayLoadbalancer().getHeader();
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */
-        SpringToolsProperties.Compatible compatible = properties.getCompatible();
-        if (!Platform.getInstnce().isGatewayService() && !compatible.isEnabled() && StringUtils.isNotBlank(serverTag) && !StringUtils.equals(tag, serverTag)) {
-            String uri = ((HttpServletRequest) request).getRequestURI();
+        String uri = ((HttpServletRequest) request).getRequestURI();
+        if (should(properties, tag) && !shouldIgnore(properties, uri)) {
+            GrayLoadBalancerProperties.Strict strict = properties.getStrict();
 
-            boolean state = AntPathMatcherUtils.matcher(compatible.ignoreUrls(), uri);
-            if (!state && compatible.isEnableDefaultIgnoreUrl()) {
-                state = AntPathMatcherUtils.matcher(SpringToolsProperties.Compatible.defaultIgnoreUrls(), uri);
+            if (logger.isInfoEnabled()) {
+                logger.info("The server isn't compatible model,current request Header[" + name + ":" + tag + "] don't match \"" + tag + "\",response code:" + strict.getCode());
+
             }
-            if (!state) {
-                if (logger.isInfoEnabled()) {
-                    logger.info("The server isn't compatible model,current request Header[" + name + ":" + tag + "] don't match \"" + serverTag + "\",response code:" + compatible.getCode());
 
-                }
-                String message = compatible.getMessage();
-                if (StringUtils.isBlank(message)) {
-                    httpServletResponse.setStatus(compatible.getCode());
+            String message = strict.getMessage();
+            if (StringUtils.isBlank(message)) {
+                httpServletResponse.setStatus(strict.getCode());
 
-                } else {
-                    httpServletResponse.sendError(compatible.getCode(), message);
-                }
-                return;
+            } else {
+                httpServletResponse.sendError(strict.getCode(), message);
             }
+            return;
         }
+
         try {
-            if (StringUtils.isBlank(tag)) {
 
-                tag = properties.getGrayLoadbalancer().getHeader();
-                if (StringUtils.isNotBlank(tag)) {
+            if (StringUtils.isBlank(tag)&&Platform.getInstnce().isGatewayService()) {
 
-                    Map<String, List<String>> headers = getHeaders(httpServletRequest);
+                    tag = properties.getHeader();
+                    if (StringUtils.isNotBlank(tag)) {
 
-                    addHeader(headers, name, tag);
+                        Map<String, List<String>> headers = getHeaders(httpServletRequest);
 
-                    request = new HttpServletRequestWrapper(httpServletRequest, headers);
+                        addHeader(headers, name, tag);
+
+                        request = new HttpServletRequestWrapper(httpServletRequest, headers);
 
 
-                }
+                    }
+
+
             }
 
             ContextManager.getRuntimeContext().setTag(tag);

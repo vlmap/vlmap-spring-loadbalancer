@@ -20,7 +20,7 @@ package com.github.vlmap.spring.tools.context;
 
 
 public abstract class ContextManager {
-    private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new ThreadLocal<RuntimeContext>();
+    private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new InheritableThreadLocal<>();
 
     public static RuntimeContext getRuntimeContext() {
         RuntimeContext runtimeContext = RUNTIME_CONTEXT.get();

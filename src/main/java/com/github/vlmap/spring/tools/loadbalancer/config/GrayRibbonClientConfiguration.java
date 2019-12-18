@@ -1,8 +1,8 @@
 package com.github.vlmap.spring.tools.loadbalancer.config;
 
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
-import com.github.vlmap.spring.tools.common.NamedContextFactoryUtils;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.tools.context.NamedContextFactoryUtils;
 import com.github.vlmap.spring.tools.loadbalancer.GrayClientServer;
 import com.github.vlmap.spring.tools.loadbalancer.GrayLoadBalancer;
 import com.netflix.client.config.IClientConfig;
@@ -23,7 +23,7 @@ import java.util.Set;
 
 
 @Configuration
-@EnableConfigurationProperties({SpringToolsProperties.class})
+@EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
 public class GrayRibbonClientConfiguration {
 
@@ -43,7 +43,7 @@ public class GrayRibbonClientConfiguration {
     public void delegatingLoadBalancer(ILoadBalancer lb,
                                        IRule rule,
                                        GrayClientServer grayClientServer,
-                                       SpringToolsProperties properties) {
+                                       GrayLoadBalancerProperties properties) {
 
 
         rule.setLoadBalancer(new GrayLoadBalancer(lb, grayClientServer, properties));

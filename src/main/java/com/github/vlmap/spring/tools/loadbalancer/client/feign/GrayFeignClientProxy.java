@@ -1,9 +1,8 @@
 package com.github.vlmap.spring.tools.loadbalancer.client.feign;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import feign.Request;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,9 +13,9 @@ import java.util.Map;
 
 @Aspect
 public class GrayFeignClientProxy {
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
-    public GrayFeignClientProxy(SpringToolsProperties properties) {
+    public GrayFeignClientProxy(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
@@ -31,7 +30,7 @@ public class GrayFeignClientProxy {
             Object[] args = joinPoint.getArgs();
             Request request = (Request) args[0];
             String header = null;
-            String headerName = this.properties.getTagHeaderName();
+            String headerName = this.properties.getHeaderName();
             Map<String, Collection<String>> headers = request.headers();
             if (headers != null) {
                 Collection<String> collection = headers.get(headerName);
@@ -45,9 +44,7 @@ public class GrayFeignClientProxy {
             }
 
 
-            if (StringUtils.isBlank(header)) {
-                header = properties.getGrayLoadbalancer().getHeader();
-            }
+
 
             ContextManager.getRuntimeContext().setTag(header);
 

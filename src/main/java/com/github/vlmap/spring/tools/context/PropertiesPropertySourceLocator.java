@@ -1,13 +1,13 @@
 package com.github.vlmap.spring.tools.context;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.BindContext;
 import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -15,21 +15,34 @@ import org.springframework.core.env.PropertySource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
+public class PropertiesPropertySourceLocator implements PropertySourceLocator {
+
+    private String name;
+    private Object properties;
+
+    public PropertiesPropertySourceLocator(String name, Object properties) {
+        this.name = name;
+        this.properties = properties;
+
+    }
 
 
     @Override
     public PropertySource<?> locate(Environment environment) {
-        String propertySourceName = environment.getProperty("spring.tools.property-source-name");
-        if (StringUtils.isBlank(propertySourceName)) {
-            propertySourceName = SpringToolsProperties.DEFAULT_TOOLS_PROPERTIES_NAME;
+
+        Map<String, Object> map = new ConcurrentHashMap<>();
+
+        String prefix = null;
+
+
+        ConfigurationProperties annotation = AnnotationUtils.findAnnotation(properties.getClass(),ConfigurationProperties.class);
+
+        if (annotation != null) {
+            prefix = annotation.prefix();
         }
 
 
-        Map<String, Object> map = new ConcurrentHashMap<>();
-        SpringToolsProperties properties = new SpringToolsProperties();
-
-        Binder.get(environment).bind(ConfigurationPropertyName.of("spring.tools"), Bindable.ofInstance(properties), new BindHandler() {
+        Binder.get(environment).bind(ConfigurationPropertyName.of(prefix), Bindable.ofInstance(properties), new BindHandler() {
 
             @Override
             public void onFinish(ConfigurationPropertyName name, Bindable<?> target, BindContext context, Object result) throws Exception {
@@ -51,7 +64,7 @@ public class SpringToolsPropertySourceLocator implements PropertySourceLocator {
 
             }
         });
-        MapPropertySource result = new MapPropertySource(propertySourceName, map);
+        MapPropertySource result = new MapPropertySource(name, map);
 
 
         return result;

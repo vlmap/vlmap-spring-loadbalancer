@@ -1,11 +1,12 @@
-package com.github.vlmap.spring.tools.loadbalancer.platform.gateway;
+package com.github.vlmap.spring.tools.loadbalancer.platform.reactive;
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
 import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 
-@EnableConfigurationProperties({SpringToolsProperties.class})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+@EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
 public class GrayReactiveAutoConfiguration {
 
@@ -28,13 +29,13 @@ public class GrayReactiveAutoConfiguration {
     }
 
     @Bean
-    public GrayCompatibleReactiveWebFilter grayCompatibleReactiveWebFilter(SpringToolsProperties properties) {
-        return new GrayCompatibleReactiveWebFilter(properties);
+    public GrayStrictReactiveWebFilter grayCompatibleReactiveWebFilter(GrayLoadBalancerProperties properties) {
+        return new GrayStrictReactiveWebFilter(properties);
     }
 
 
     @Bean
-    public GrayLoadBalancerClientFilterProxy grayLoadBalancerClientFilterProxy(SpringToolsProperties properties) {
+    public GrayLoadBalancerClientFilterProxy grayLoadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
 
         return new GrayLoadBalancerClientFilterProxy(properties);
     }

@@ -9,23 +9,20 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.tools.tag-loadbalancer.web-client.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "spring.tools.web-client.enabled", matchIfMissing = true)
 
 public class GrayWebClientAutoConfiguration {
     @Bean
-    public GrayWebClientInterceptor tagWebClientInterceptor() {
+    public GrayWebClientInterceptor grayWebClientInterceptor() {
         return new GrayWebClientInterceptor();
     }
 
     @Bean
     public WebClientCustomizer grayLoadbalanceClientWebClientCustomizer(
             GrayWebClientInterceptor filterFunction) {
-        return builder -> builder.filters(new Consumer<List<ExchangeFilterFunction>>() {
-            @Override
-            public void accept(List<ExchangeFilterFunction> exchangeFilterFunctions) {
+        return builder -> builder.filters((List<ExchangeFilterFunction> exchangeFilterFunctions) -> {
                 List<ExchangeFilterFunction> list = new ArrayList<>();
                 if (!exchangeFilterFunctions.contains(filterFunction)) {
                     list.add(filterFunction);
@@ -33,7 +30,7 @@ public class GrayWebClientAutoConfiguration {
                 list.addAll(exchangeFilterFunctions);
                 exchangeFilterFunctions.clear();
                 exchangeFilterFunctions.addAll(list);
-            }
+
         });
     }
 

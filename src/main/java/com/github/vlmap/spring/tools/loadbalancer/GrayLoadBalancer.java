@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer;
 
 
-import com.github.vlmap.spring.tools.SpringToolsProperties;
+import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.tools.context.ContextManager;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
@@ -10,15 +10,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
+/**
+ * 不要把这个类实例交给Spring 处理，
+ */
+
 public class GrayLoadBalancer implements ILoadBalancer {
 
     private GrayClientServer grayClientServer;
     private ILoadBalancer target;
 
 
-    private SpringToolsProperties properties;
+    private GrayLoadBalancerProperties properties;
 
-    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer, SpringToolsProperties properties) {
+    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer, GrayLoadBalancerProperties properties) {
         this.grayClientServer = grayClientServer;
         this.properties = properties;
         this.target = target;
@@ -64,14 +68,6 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     }
 
-    protected String tag() {
-        String tag = ContextManager.getRuntimeContext().getTag();
-        if (StringUtils.isBlank(tag)) {
-            tag = properties.getGrayLoadbalancer().getHeader();
-
-        }
-        return tag;
-    }
 
     protected List<Server> processServers(List<Server> servers) {
 
@@ -80,7 +76,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
         }
-        String tagValue = tag();
+        String tagValue =  ContextManager.getRuntimeContext().getTag();
         List<Server> list = new ArrayList<>(servers.size());
 
         if (StringUtils.isBlank(tagValue)) {
