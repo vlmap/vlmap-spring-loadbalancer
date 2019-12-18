@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.servlet;
 
 import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.tools.loadbalancer.StrictHandler;
 import com.github.vlmap.spring.tools.loadbalancer.platform.Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -25,9 +26,9 @@ public class GrayServletAutoConfiguration {
 
 
     @Bean
-    public GrayServletFilter graySpringmvcFilter(GrayLoadBalancerProperties properties) {
+    public GrayServletFilter graySpringmvcFilter(StrictHandler strictHandler, GrayLoadBalancerProperties properties) {
 
-        return new GrayServletFilter(properties);
+        return new GrayServletFilter(properties,strictHandler);
     }
 
     @Configuration

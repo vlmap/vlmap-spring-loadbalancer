@@ -42,9 +42,6 @@ public class GrayLoadBalancerClientFilterProxy {
 
         try {
 
-            if (StringUtils.isBlank(tag)) {
-                tag = properties.getHeader();
-            }
             exchange.getAttributes().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             ContextManager.getRuntimeContext().setTag(tag);
 

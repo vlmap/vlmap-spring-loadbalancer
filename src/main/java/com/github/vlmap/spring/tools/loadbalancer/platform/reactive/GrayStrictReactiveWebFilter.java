@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.tools.loadbalancer.platform.reactive;
 
 import com.github.vlmap.spring.tools.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.tools.loadbalancer.platform.IStrictHandler;
+import com.github.vlmap.spring.tools.loadbalancer.StrictHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +13,15 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-public class GrayStrictReactiveWebFilter implements OrderedWebFilter, IStrictHandler {
+public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
     private GrayLoadBalancerProperties properties;
     Logger logger = LoggerFactory.getLogger(this.getClass());
+    StrictHandler strictHandler;
 
-    public GrayStrictReactiveWebFilter(GrayLoadBalancerProperties properties) {
+    public GrayStrictReactiveWebFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
+
         this.properties = properties;
+        this.strictHandler=strictHandler;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter, IStrictHan
         /**
          * 严格模式,请求标签不匹配拒绝响应
          */
-        if (should(properties, tag) && !shouldIgnore(properties, uri)) {
+        if (!strictHandler.validate(uri, tag) ) {
             GrayLoadBalancerProperties.Strict strict = properties.getStrict();
             if (logger.isInfoEnabled()) {
                 logger.info("The server isn't compatible model,current request Header[" + headerName + ":" + tag + "] don't match \"" + tag + "\",response code:" + strict.getCode());

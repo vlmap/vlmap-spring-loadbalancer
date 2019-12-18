@@ -15,11 +15,7 @@ public class GrayLoadBalancerProperties {
     private boolean enabled = true;
     private String headerName = "Loadbalancer-Tag";
 
-    /**
-     * 只在 gateway,zuul 网关才会用到
-     */
 
-    private String header;
 
 
 
@@ -48,13 +44,7 @@ public class GrayLoadBalancerProperties {
         this.headerName = headerName;
     }
 
-    public String getHeader() {
-        return header;
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
-    }
+ 
 
     public WebClient getWebClient() {
         return webClient;
