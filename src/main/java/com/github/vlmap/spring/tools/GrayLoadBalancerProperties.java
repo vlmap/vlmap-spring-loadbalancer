@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-@ConfigurationProperties(prefix = "spring.tools")
+@ConfigurationProperties(prefix = "spring.tools.loadbalancer")
 @RefreshScope
 public class GrayLoadBalancerProperties {
 

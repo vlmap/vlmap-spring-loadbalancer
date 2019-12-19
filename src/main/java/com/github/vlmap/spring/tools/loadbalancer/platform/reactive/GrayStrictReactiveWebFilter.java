@@ -32,7 +32,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
             tag = exchange.getRequest().getHeaders().getFirst(headerName);
         }
 
-        String uri = exchange.getRequest().getURI().toString();
+        String uri = exchange.getRequest().getPath().value();
 
         /**
          * 严格模式,请求标签不匹配拒绝响应

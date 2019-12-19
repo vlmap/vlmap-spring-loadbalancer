@@ -6,12 +6,15 @@ import com.github.vlmap.spring.tools.context.NamedContextFactoryUtils;
 import com.github.vlmap.spring.tools.loadbalancer.GrayClientServer;
 import com.github.vlmap.spring.tools.loadbalancer.GrayLoadBalancer;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
+import org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -37,6 +41,26 @@ public class GrayRibbonClientConfiguration {
     @Bean
     public GrayClientServer grayClientServer() {
         return new GrayClientServer(clientName);
+    }
+    @Configuration
+    @ConditionalOnClass(NacosDiscoveryProperties.class)
+    static  class NacosServerListConfiguration{
+        @Bean
+        @ConditionalOnMissingBean
+        public ServerList<?> ribbonServerList(IClientConfig config, NacosDiscoveryProperties nacosDiscoveryProperties) {
+            AbstractServerList serverList = new ConfigurationBasedServerList();
+            serverList.initWithNiwsConfig(config);
+            List list= serverList. getInitialListOfServers();
+            if(CollectionUtils.isEmpty(list)){
+
+
+                serverList = new NacosServerList(nacosDiscoveryProperties);
+                serverList.initWithNiwsConfig(config);
+            }
+
+            return serverList;
+        }
+
     }
 
     @Autowired
