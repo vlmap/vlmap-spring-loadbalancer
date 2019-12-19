@@ -20,6 +20,7 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.List;
@@ -46,14 +47,12 @@ public class GrayRibbonClientConfiguration {
     @ConditionalOnClass(NacosDiscoveryProperties.class)
     static  class NacosServerListConfiguration{
         @Bean
-        @ConditionalOnMissingBean
+        @Primary
         public ServerList<?> ribbonServerList(IClientConfig config, NacosDiscoveryProperties nacosDiscoveryProperties) {
             AbstractServerList serverList = new ConfigurationBasedServerList();
             serverList.initWithNiwsConfig(config);
             List list= serverList. getInitialListOfServers();
             if(CollectionUtils.isEmpty(list)){
-
-
                 serverList = new NacosServerList(nacosDiscoveryProperties);
                 serverList.initWithNiwsConfig(config);
             }
