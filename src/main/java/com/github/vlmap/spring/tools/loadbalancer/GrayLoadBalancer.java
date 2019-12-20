@@ -20,11 +20,10 @@ public class GrayLoadBalancer implements ILoadBalancer {
     private ILoadBalancer target;
 
 
-    private GrayLoadBalancerProperties properties;
 
-    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer, GrayLoadBalancerProperties properties) {
+
+    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer) {
         this.grayClientServer = grayClientServer;
-        this.properties = properties;
         this.target = target;
     }
 

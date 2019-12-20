@@ -40,8 +40,19 @@ public class GrayRibbonClientConfiguration {
     }
 
     @Bean
-    public GrayClientServer grayClientServer() {
-        return new GrayClientServer(clientName);
+    public GrayClientServer grayClientServer(ApplicationContext context) {
+
+        GrayClientServer  bean= new GrayClientServer(clientName);
+        if(context.getParent()!=null){
+           context=context.getParent();
+        }
+        if(context instanceof AbstractApplicationContext){
+            AbstractApplicationContext root=(AbstractApplicationContext) context;
+            root.addApplicationListener((EnvironmentChangeEvent event) -> {
+                bean.listener(event);
+            });
+        }
+        return bean;
     }
     @Configuration
     @ConditionalOnClass(NacosDiscoveryProperties.class)
@@ -65,11 +76,10 @@ public class GrayRibbonClientConfiguration {
     @Autowired
     public void delegatingLoadBalancer(ILoadBalancer lb,
                                        IRule rule,
-                                       GrayClientServer grayClientServer,
-                                       GrayLoadBalancerProperties properties) {
+                                       GrayClientServer grayClientServer) {
 
 
-        rule.setLoadBalancer(new GrayLoadBalancer(lb, grayClientServer, properties));
+        rule.setLoadBalancer(new GrayLoadBalancer(lb, grayClientServer));
 
     }
 

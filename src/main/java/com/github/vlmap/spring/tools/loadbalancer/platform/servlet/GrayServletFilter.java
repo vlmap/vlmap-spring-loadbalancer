@@ -34,8 +34,8 @@ public class GrayServletFilter implements OrderedFilter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String name = this.properties.getHeaderName();
-        String tag = httpServletRequest.getHeader(name);
+        String headerName = this.properties.getHeaderName();
+        String tag = httpServletRequest.getHeader(headerName);
         /**
          * 非兼容模式,请求标签不匹配拒绝响应
          */
@@ -44,7 +44,8 @@ public class GrayServletFilter implements OrderedFilter {
             GrayLoadBalancerProperties.Strict strict = properties.getStrict();
 
             if (logger.isInfoEnabled()) {
-                logger.info("The server isn't compatible model,current request Header[" + name + ":" + tag + "] don't match \"" + tag + "\",response code:" + strict.getCode());
+
+                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags()) + "]\",response code:" + strict.getCode());
 
             }
 

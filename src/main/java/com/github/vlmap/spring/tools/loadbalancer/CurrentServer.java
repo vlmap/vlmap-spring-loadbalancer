@@ -7,24 +7,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
-
 import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 
 public class CurrentServer {
    Logger logger= LoggerFactory.getLogger(this.getClass());
-    private Set<String> clientServerTags;
+    private Set<String> grayTags;
     String id = null;
     String appName = null;
-    private CountDownLatch latch=new CountDownLatch(1);
+
     public CurrentServer(Environment environment, InetUtils inetUtils) {
         String port=environment.getProperty("server.port","8080");
         String ip="127.0.0.1";
@@ -39,22 +40,16 @@ public class CurrentServer {
     }
     @PostConstruct
     public void initMethod(){
-        try{
-            Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(appName);
-            if(tagOfServer!=null){
-                clientServerTags = tagOfServer.get(id);
 
-            }
+        bind();
 
-        }finally {
-            latch.countDown();
-        }
+
+
     }
 
     @EventListener(InstanceRegisteredEvent.class)
     public void listener(InstanceRegisteredEvent event) {
-        try{
-            latch.await();
+
 
             Object config = event.getConfig();
 
@@ -63,35 +58,60 @@ public class CurrentServer {
                 NacosDiscoveryProperties properties = (NacosDiscoveryProperties) config;
                 id = properties.getIp() + ":" + properties.getPort();
                 appName = properties.getService();
-            }else if(StringUtils.equals(clazzName,"org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig")){
+            } else if (StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig")
+                    || StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean")) {
+
                 CloudEurekaInstanceConfig properties=(CloudEurekaInstanceConfig)config;
                 id = properties.getIpAddress() + ":" + properties.getNonSecurePort();
                 appName = properties.getAppname();
             }
-            Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(appName);
-            if(tagOfServer!=null){
-                clientServerTags = tagOfServer.get(id);
 
-            }
-        }catch (Exception e){
+        bind();
+
+
+    }
+
+    private void bind() {
+        Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(appName);
+        Set<String> result = null;
+        if (tagOfServer != null) {
+            result = tagOfServer.get(id);
 
         }
+        grayTags = result == null ? Collections.emptySet() : Collections.unmodifiableSet(result);
+    }
 
+    @EventListener(EnvironmentChangeEvent.class)
 
+    protected void listener(EnvironmentChangeEvent event) {
+        Set<String> keys = event.getKeys();
+        if (CollectionUtils.isNotEmpty(keys)) {
+            String prefix = StringUtils.upperCase(appName);
+            for (String key : keys) {
+                if (StringUtils.startsWith(key, prefix)) {
+                    bind();
+                    break;
+                }
+            }
+        }
 
     }
 
 
 
     public boolean isGrayServer() {
-        return CollectionUtils.isNotEmpty(clientServerTags);
+        return CollectionUtils.isNotEmpty(grayTags);
     }
 
     public boolean container(String tag) {
-        if (clientServerTags != null) {
-            return clientServerTags.contains(tag);
+        if (grayTags != null) {
+            return grayTags.contains(tag);
         }
         return false;
+    }
+
+    public Collection<String> getGrayTags() {
+        return grayTags;
     }
 
 

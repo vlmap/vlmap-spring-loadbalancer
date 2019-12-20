@@ -40,7 +40,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
         if (!strictHandler.validate(uri, tag) ) {
             GrayLoadBalancerProperties.Strict strict = properties.getStrict();
             if (logger.isInfoEnabled()) {
-                logger.info("The server isn't compatible model,current request Header[" + headerName + ":" + tag + "] don't match \"" + tag + "\",response code:" + strict.getCode());
+                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags()) + "]\",response code:" + strict.getCode());
 
             }
             String message = strict.getMessage();

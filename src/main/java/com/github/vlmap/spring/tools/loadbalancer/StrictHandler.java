@@ -41,6 +41,9 @@ public class StrictHandler {
 
 
     }
+    public Collection<String> getGrayTags(){
+        return clientServer.getGrayTags();
+    }
 
     private boolean matcher(Collection<String> list, String uri) {
         if (CollectionUtils.isNotEmpty(list)) {
