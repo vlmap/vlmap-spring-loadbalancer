@@ -9,7 +9,7 @@ public class RibbonClientSpecificationAutoConfiguration {
 
 
     @Bean
-    public RibbonClientSpecification specification() {
+    public RibbonClientSpecification ribbonClientSpecification() {
         Class[] classes = new Class[]{GrayRibbonClientConfiguration.class};
         return new RibbonClientSpecification("default." + GrayRibbonClientConfiguration.class.getName(), classes);
     }

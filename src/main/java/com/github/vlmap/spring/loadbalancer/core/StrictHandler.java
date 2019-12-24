@@ -26,11 +26,17 @@ public class StrictHandler {
         if (!strict.isEnabled()) {
             return true;
         }
-        boolean ignore = matcher(strict.getIgnore().getPath(), uri);
+        boolean ignore = false;
+
+        if (strict.getIgnore().getDefault().isEnabled()) {
+            ignore = matcher(GrayLoadBalancerProperties.StrictDefaultIgnore.DEFAULT_IGNORE_PATH.get(), uri);
+        }
         if (ignore) {
             return true;
         }
-        ignore = matcher(GrayLoadBalancerProperties.CompatibleIgnore.DEFAULT_IGNORE_PATH.get(), uri);
+
+        ignore = matcher(strict.getIgnore().getPath(), uri);
+
         if (ignore) {
             return true;
         }
@@ -62,5 +68,18 @@ public class StrictHandler {
         return false;
     }
 
+    public int getCode() {
+        GrayLoadBalancerProperties.Strict strict = properties.getStrict();
+
+
+        return strict.getCode();
+    }
+
+
+    public String getMessage() {
+        GrayLoadBalancerProperties.Strict strict = properties.getStrict();
+
+        return strict.getMessage();
+    }
 
 }

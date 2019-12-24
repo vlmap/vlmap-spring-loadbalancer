@@ -4,11 +4,12 @@ package com.github.vlmap.spring.loadbalancer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-@ConfigurationProperties(prefix = "spring.tools.loadbalancer")
+@ConfigurationProperties(prefix = "vlmap.spring.loadbalancer")
 @RefreshScope
 public class GrayLoadBalancerProperties {
 
@@ -129,7 +130,7 @@ public class GrayLoadBalancerProperties {
         private int code = 403;
         private String message = "Forbidden";
 
-        private CompatibleIgnore ignore=new CompatibleIgnore();
+        private StrictIgnore ignore = new StrictIgnore();
 
 
 
@@ -158,50 +159,30 @@ public class GrayLoadBalancerProperties {
         }
 
 
-        public CompatibleIgnore getIgnore() {
+        public StrictIgnore getIgnore() {
             return ignore;
         }
 
-        public void setIgnore(CompatibleIgnore ignore) {
+        public void setIgnore(StrictIgnore ignore) {
             this.ignore = ignore;
         }
     }
 
-    static public class CompatibleIgnore {
+    static public class StrictIgnore {
 
-        public final static AtomicReference<Collection<String>> DEFAULT_IGNORE_PATH =new AtomicReference<>();
+
+        private StrictDefaultIgnore Default = new StrictDefaultIgnore();
+
+
+        public StrictDefaultIgnore getDefault() {
+            return Default;
+        }
+
+        public void setDefault(StrictDefaultIgnore aDefault) {
+            Default = aDefault;
+        }
 
         private List<String> path;
-//        /**
-//         * 忽略列表 AntPath格式,多个用“,”隔开
-//         */
-//        private String ignoreUrl;
-//
-//        public void setIgnoreUrl(String ignoreUrl) {
-//            this.ignoreUrl = ignoreUrl;
-//            if (StringUtils.isNotBlank(ignoreUrl)) {
-//                String[] elements = StringUtils.split(ignoreUrl, ",");
-//                Set<String> collection = new LinkedHashSet<>();
-//                for (String element : elements) {
-//                    if (StringUtils.isNotBlank(element)) {
-//                        collection.add(element);
-//                    }
-//                }
-//                this.ignoreUrls = new ArrayList<>(collection);
-//            } else {
-//                this.ignoreUrls = null;
-//            }
-//        }
-//
-//
-//
-//        public String getIgnoreUrl() {
-//            return ignoreUrl;
-//        }
-//
-//        public List<String> ignoreUrls() {
-//            return ignoreUrls;
-//        }
 
 
         public List<String> getPath() {
@@ -210,6 +191,19 @@ public class GrayLoadBalancerProperties {
 
         public void setPath(List<String> path) {
             this.path = path;
+        }
+    }
+
+    static public class StrictDefaultIgnore {
+        public final static AtomicReference<Collection<String>> DEFAULT_IGNORE_PATH = new AtomicReference<>();
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

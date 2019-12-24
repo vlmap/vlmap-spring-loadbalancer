@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.platform;
+package com.github.vlmap.spring.loadbalancer.core.platform;
 
 public class Platform {
     public static final String SERVLET = "servlet";

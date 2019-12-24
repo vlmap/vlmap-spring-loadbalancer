@@ -45,7 +45,7 @@ public class GrayLoadBalancerAutoConfiguration {
         if (StringUtils.isNotBlank(antPath)) {
             urls.add(antPath);
         }
-        GrayLoadBalancerProperties.CompatibleIgnore.DEFAULT_IGNORE_PATH.set(new ArrayList<>(urls));
+        GrayLoadBalancerProperties.StrictDefaultIgnore.DEFAULT_IGNORE_PATH.set(new ArrayList<>(urls));
     }
 
 

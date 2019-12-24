@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.platform.reactive;
+package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;

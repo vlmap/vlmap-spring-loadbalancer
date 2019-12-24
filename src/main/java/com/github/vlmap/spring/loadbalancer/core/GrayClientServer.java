@@ -6,7 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 public class GrayClientServer {
     private String clientName;

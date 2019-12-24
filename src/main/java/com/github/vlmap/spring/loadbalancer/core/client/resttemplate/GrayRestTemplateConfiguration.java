@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.client.resttemplate;
+package com.github.vlmap.spring.loadbalancer.core.client.resttemplate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.tools.loadbalancer.rest-template.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "vlmap.spring.loadbalancer.rest-template.enabled", matchIfMissing = true)
 
-public class GrayRestTemplateAutoConfiguration {
+public class GrayRestTemplateConfiguration {
 
     @Autowired
     public void  initRestTemplate(@Autowired(required = false) RestTemplateBuilder builder,

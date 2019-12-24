@@ -1,8 +1,8 @@
-package com.github.vlmap.spring.loadbalancer.platform.servlet;
+package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
+import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,20 +41,19 @@ public class GrayServletFilter implements OrderedFilter {
          */
         String uri = ((HttpServletRequest) request).getRequestURI();
         if (!strictHandler.validate(uri, tag) ) {
-            GrayLoadBalancerProperties.Strict strict = properties.getStrict();
-
+            String message = strictHandler.getMessage();
+            int code = strictHandler.getCode();
             if (logger.isInfoEnabled()) {
 
-                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags()) + "]\",response code:" + strict.getCode());
+                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags(), ",") + "]\",response code:" + code);
 
             }
 
-            String message = strict.getMessage();
             if (StringUtils.isBlank(message)) {
-                httpServletResponse.setStatus(strict.getCode());
+                httpServletResponse.setStatus(code);
 
             } else {
-                httpServletResponse.sendError(strict.getCode(), message);
+                httpServletResponse.sendError(code, message);
             }
             return;
         }

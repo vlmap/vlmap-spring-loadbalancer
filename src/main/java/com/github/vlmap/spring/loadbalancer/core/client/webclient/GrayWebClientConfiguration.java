@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.client.webclient;
+package com.github.vlmap.spring.loadbalancer.core.client.webclient;
 
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@ConditionalOnProperty(name = "spring.tools.loadbalancer.web-client.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "vlmap.spring.loadbalancer.web-client.enabled", matchIfMissing = true)
 
-public class GrayWebClientAutoConfiguration {
+public class GrayWebClientConfiguration {
     @Bean
     public GrayWebClientInterceptor grayWebClientInterceptor() {
         return new GrayWebClientInterceptor();

@@ -1,6 +1,5 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
-import com.github.vlmap.spring.loadbalancer.GrayTagOfServersProperties;
 import com.netflix.config.ConfigurationManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.Configuration;
@@ -34,11 +33,11 @@ public class GrayUtils {
         GrayTagOfServersProperties ribbon = new GrayTagOfServersProperties();
         binder.bind("ribbon", Bindable.ofInstance(ribbon));
 
-        List<GrayTagOfServersProperties.TagOfServers> tagOfServers = ribbon.getTagOfServers();
+        List<TagOfServers> tagOfServers = ribbon.getTagOfServers();
         if (tagOfServers != null) {
             Map<String, Set<String>> map = new HashMap<>(tagOfServers.size());
 
-            for (GrayTagOfServersProperties.TagOfServers tagOfServer : tagOfServers) {
+            for (TagOfServers tagOfServer : tagOfServers) {
 
                 if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && StringUtils.isNotBlank(tagOfServer.getId())) {
                     map.put(tagOfServer.getId(), tagOfServer.getTags());
@@ -82,5 +81,47 @@ public class GrayUtils {
 
         }
         return ip;
+    }
+
+
+    /**
+     * 灰度路由，服务配置
+     */
+//@ConfigurationProperties(prefix = "MICRO-CLOUD-SERVER.ribbon")
+    public static class GrayTagOfServersProperties {
+
+
+        List<TagOfServers> tagOfServers;
+
+        public List<TagOfServers> getTagOfServers() {
+            return tagOfServers;
+        }
+
+        public void setTagOfServers(List<TagOfServers> tagOfServers) {
+            this.tagOfServers = tagOfServers;
+        }
+
+
+    }
+
+    public static class TagOfServers {
+        private String id;
+        private Set<String> tags;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Set<String> getTags() {
+            return tags;
+        }
+
+        public void setTags(Set<String> tags) {
+            this.tags = tags;
+        }
     }
 }

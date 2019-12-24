@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.client.feign;
+package com.github.vlmap.spring.loadbalancer.core.client.feign;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;

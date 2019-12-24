@@ -3,9 +3,9 @@ package com.github.vlmap.spring.loadbalancer.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
-import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
 import com.github.vlmap.spring.loadbalancer.core.GrayClientServer;
+import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
+import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -103,9 +103,15 @@ public class GrayRibbonClientConfiguration {
         @Autowired
         private ConsulClient client;
 
+        /**
+         * 先从Environment 读取ServerList，Consul 默认不读取静态ServerList
+         *
+         * @param config
+         * @param properties
+         * @return
+         */
         @Bean
         @ConditionalOnMissingBean
-
         public ServerList<?> ribbonServerList(IClientConfig config, ConsulDiscoveryProperties properties) {
             AbstractServerList serverList = new ConfigurationBasedServerList();
             serverList.initWithNiwsConfig(config);
@@ -125,9 +131,15 @@ public class GrayRibbonClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.service-registry.auto-registration.enabled", matchIfMissing = true)
 
     static class NacosServerListConfiguration {
+        /**
+         * 先从Environment 读取ServerList，Nacos 默认不读取静态ServerList
+         *
+         * @param config
+         * @param properties
+         * @return
+         */
         @Bean
         @ConditionalOnMissingBean
-
         public ServerList<?> ribbonServerList(IClientConfig config, NacosDiscoveryProperties properties) {
             AbstractServerList serverList = new ConfigurationBasedServerList();
             serverList.initWithNiwsConfig(config);

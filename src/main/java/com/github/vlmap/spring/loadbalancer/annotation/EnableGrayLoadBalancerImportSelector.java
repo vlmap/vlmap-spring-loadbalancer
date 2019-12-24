@@ -1,11 +1,11 @@
 package com.github.vlmap.spring.loadbalancer.annotation;
 
-import com.github.vlmap.spring.loadbalancer.client.feign.GrayFeignAutoConfiguration;
-import com.github.vlmap.spring.loadbalancer.client.resttemplate.GrayRestTemplateAutoConfiguration;
-import com.github.vlmap.spring.loadbalancer.client.webclient.GrayWebClientAutoConfiguration;
 import com.github.vlmap.spring.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
-import com.github.vlmap.spring.loadbalancer.platform.reactive.GrayReactiveAutoConfiguration;
-import com.github.vlmap.spring.loadbalancer.platform.servlet.GrayServletAutoConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.client.feign.GrayFeignConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.client.resttemplate.GrayRestTemplateConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.client.webclient.GrayWebClientConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.platform.reactive.GrayReactiveConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.platform.servlet.GrayServletConfiguration;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -28,12 +28,12 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
 
-        importsList.add(GrayReactiveAutoConfiguration.class.getName());
-        importsList.add(GrayServletAutoConfiguration.class.getName());
+        importsList.add(GrayReactiveConfiguration.class.getName());
+        importsList.add(GrayServletConfiguration.class.getName());
 
-        importsList.add(GrayFeignAutoConfiguration.class.getName());
-        importsList.add(GrayRestTemplateAutoConfiguration.class.getName());
-        importsList.add(GrayWebClientAutoConfiguration.class.getName());
+        importsList.add(GrayFeignConfiguration.class.getName());
+        importsList.add(GrayRestTemplateConfiguration.class.getName());
+        importsList.add(GrayWebClientConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);
@@ -46,7 +46,7 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
     protected boolean isEnabled() {
 
         Environment env = getEnvironment();
-        return env.getProperty("spring.tools.loadbalancer.enabled", Boolean.class, true);
+        return env.getProperty("vlmap.spring.loadbalancer.enabled", Boolean.class, true);
 
 
 

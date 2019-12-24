@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.client.webclient;
+package com.github.vlmap.spring.loadbalancer.core.client.webclient;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;

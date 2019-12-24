@@ -1,8 +1,8 @@
-package com.github.vlmap.spring.loadbalancer.client.resttemplate;
+package com.github.vlmap.spring.loadbalancer.core.client.resttemplate;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
-import com.github.vlmap.spring.loadbalancer.platform.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,7 +17,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@ConditionalOnProperty(value = "spring.tools.loadbalancer.rest-template.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = "vlmap.spring.loadbalancer.rest-template.enabled", matchIfMissing = true)
 
 public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor {
 

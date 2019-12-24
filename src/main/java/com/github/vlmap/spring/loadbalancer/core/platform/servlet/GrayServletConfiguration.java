@@ -1,16 +1,11 @@
-package com.github.vlmap.spring.loadbalancer.platform.servlet;
+package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
-import com.github.vlmap.spring.loadbalancer.platform.Platform;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.zuul.ZuulServerAutoConfiguration;
-import org.springframework.cloud.netflix.zuul.filters.CompositeRouteLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
-public class GrayServletAutoConfiguration {
-    public GrayServletAutoConfiguration() {
+public class GrayServletConfiguration {
+    public GrayServletConfiguration() {
         Platform.getInstnce().setPlatform(Platform.SERVLET);
     }
 
@@ -31,18 +26,6 @@ public class GrayServletAutoConfiguration {
         return new GrayServletFilter(properties,strictHandler);
     }
 
-    @Configuration
-    @AutoConfigureAfter(ZuulServerAutoConfiguration.class)
-    @ConditionalOnClass(CompositeRouteLocator.class)
-    static class ZuulPlatformConfiguration {
-        @Autowired(required = false)
-        public void platform(CompositeRouteLocator routeLocator) {
-
-            if (routeLocator != null) {
-                Platform.getInstnce().setGatewayService(true);
-            }
-        }
-    }
 
 
 }

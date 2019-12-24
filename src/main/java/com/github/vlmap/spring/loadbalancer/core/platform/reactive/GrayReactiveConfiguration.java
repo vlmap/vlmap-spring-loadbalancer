@@ -1,16 +1,10 @@
-package com.github.vlmap.spring.loadbalancer.platform.reactive;
+package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
-import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,9 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
-public class GrayReactiveAutoConfiguration {
+public class GrayReactiveConfiguration {
 
-    public GrayReactiveAutoConfiguration() {
+    public GrayReactiveConfiguration() {
         Platform.getInstnce().setPlatform(Platform.REACTIVE);
 
     }
@@ -41,21 +35,6 @@ public class GrayReactiveAutoConfiguration {
         return new GrayLoadBalancerClientFilterProxy(properties);
     }
 
-    @Configuration
-    @ConditionalOnClass(LoadBalancerClientFilter.class)
-    @AutoConfigureAfter(GatewayAutoConfiguration.class)
 
-    static public class GatewayPlatformConfiguration {
-
-        @Autowired(required = false)
-
-        public void platform(LoadBalancerClientFilter loadBalancerClientFilter) {
-            if (loadBalancerClientFilter != null) {
-                Platform.getInstnce().setGatewayService(true);
-            }
-
-
-        }
-    }
 
 }

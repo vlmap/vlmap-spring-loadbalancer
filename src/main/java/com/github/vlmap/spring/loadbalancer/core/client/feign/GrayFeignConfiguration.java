@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.client.feign;
+package com.github.vlmap.spring.loadbalancer.core.client.feign;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
-@ConditionalOnProperty(name = "spring.tools.loadbalancer.feign.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "vlmap.spring.loadbalancer.feign.enabled", matchIfMissing = true)
 
-public class GrayFeignAutoConfiguration {
+public class GrayFeignConfiguration {
     @Bean
     public GrayFeignRequestInterceptor feignRequestInterceptor() {
         return new GrayFeignRequestInterceptor();

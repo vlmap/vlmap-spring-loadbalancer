@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.platform.reactive;
+package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
@@ -38,13 +38,14 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
          * 严格模式,请求标签不匹配拒绝响应
          */
         if (!strictHandler.validate(uri, tag) ) {
-            GrayLoadBalancerProperties.Strict strict = properties.getStrict();
+            String message = strictHandler.getMessage();
+            int code = strictHandler.getCode();
             if (logger.isInfoEnabled()) {
-                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags()) + "]\",response code:" + strict.getCode());
+
+                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags(), ",") + "]\",response code:" + code);
 
             }
-            String message = strict.getMessage();
-            HttpStatus status = HttpStatus.valueOf(strict.getCode());
+            HttpStatus status = HttpStatus.valueOf(code);
             if (StringUtils.isBlank(message)) {
                 throw new ResponseStatusException(status);
 
