@@ -15,6 +15,24 @@
 >  Zuul, Gateway
 
 4.MVN坐标
+>Step 1. Add the JitPack repository to your build file
+ ```xml
+ 
+    <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+>  Step 2. Add the dependency
+```xml
+    <dependency>
+	    <groupId>com.github.vlmap</groupId>
+	    <artifactId>vlmap-spring-loadbalancer</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
+```
 
 
 4.使用实例
