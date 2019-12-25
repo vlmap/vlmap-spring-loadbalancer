@@ -15,14 +15,12 @@ import java.util.*;
 
 public class GrayLoadBalancer implements ILoadBalancer {
 
-    private GrayClientServer grayClientServer;
+    private GrayClientServer clientServer;
     private ILoadBalancer target;
 
 
-
-
-    public GrayLoadBalancer( ILoadBalancer target, GrayClientServer grayClientServer) {
-        this.grayClientServer = grayClientServer;
+    public GrayLoadBalancer(ILoadBalancer target, GrayClientServer clientServer) {
+        this.clientServer = clientServer;
         this.target = target;
     }
 
@@ -69,7 +67,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     protected List<Server> processServers(List<Server> servers) {
 
-        Map<String, Set<String>> map = grayClientServer.getClientServerTags();
+        Map<String, Set<String>> map = clientServer.getClientServerTags();
         if (map==null||map.isEmpty()) {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 

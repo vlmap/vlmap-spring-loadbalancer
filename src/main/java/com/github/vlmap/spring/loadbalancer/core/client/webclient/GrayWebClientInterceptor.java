@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.client.webclient;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GrayWebClientInterceptor implements ExchangeFilterFunction {
         String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
-        if (StringUtils.isBlank(tag)) {
+        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }

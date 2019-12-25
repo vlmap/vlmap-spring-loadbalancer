@@ -43,7 +43,7 @@ public class GrayRibbonClientConfiguration {
     }
 
     @Bean
-    public GrayClientServer grayClientServer(ApplicationContext context) {
+    public GrayClientServer clientServer(ApplicationContext context) {
 
         GrayClientServer  bean= new GrayClientServer(clientName);
         if(context.getParent()!=null){
@@ -60,12 +60,12 @@ public class GrayRibbonClientConfiguration {
 
 
     @Autowired
-    public void delegatingLoadBalancer(ILoadBalancer lb,
+    public void initLoadBalancer(ILoadBalancer lb,
                                        IRule rule,
-                                       GrayClientServer grayClientServer) {
+                                       GrayClientServer clientServer) {
 
 
-        rule.setLoadBalancer(new GrayLoadBalancer(lb, grayClientServer));
+        rule.setLoadBalancer(new GrayLoadBalancer(lb, clientServer));
 
     }
 

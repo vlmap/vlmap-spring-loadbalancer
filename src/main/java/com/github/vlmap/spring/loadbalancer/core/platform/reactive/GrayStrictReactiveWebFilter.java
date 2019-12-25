@@ -27,10 +27,9 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String headerName = this.properties.getHeaderName();
-        String tag = null;
-        if (exchange != null) {
-            tag = exchange.getRequest().getHeaders().getFirst(headerName);
-        }
+
+        String tag = exchange.getRequest().getHeaders().getFirst(headerName);
+
 
         String uri = exchange.getRequest().getPath().value();
 

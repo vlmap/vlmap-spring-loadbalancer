@@ -30,11 +30,11 @@ public class GrayLoadBalancerClientFilterProxy {
 
         Object[] args = joinPoint.getArgs();
         ServerWebExchange exchange = (ServerWebExchange) args[0];
-        String headerName = this.properties.getHeaderName();
-        String tag = null;
-        if (exchange != null) {
-            tag = exchange.getRequest().getHeaders().getFirst(headerName);
-        }
+
+        String headerName = properties.getHeaderName();
+
+        String tag = exchange.getRequest().getHeaders().getFirst(headerName);
+
 
         try {
 

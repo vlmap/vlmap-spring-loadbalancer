@@ -1,15 +1,16 @@
 package com.github.vlmap.spring.loadbalancer.core.client.feign;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import feign.Request;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 @Aspect
 public class GrayFeignClientProxy {
@@ -25,38 +26,56 @@ public class GrayFeignClientProxy {
 
     @Around("feignClient()")
     public Object loadBalancerClientAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        try {
 
-            Object[] args = joinPoint.getArgs();
-            Request request = (Request) args[0];
-            String header = null;
-            String headerName = this.properties.getHeaderName();
-            Map<String, Collection<String>> headers = request.headers();
-            if (headers != null) {
-                Collection<String> collection = headers.get(headerName);
-                if (collection != null) {
-                    for (String value : collection) {
-                        header = value;
-                        break;
-                    }
 
-                }
+        Object[] args = joinPoint.getArgs();
+        Request request = (Request) args[0];
+        String header = getGrayHeader(request);
+        String tag = header;
+        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
+            tag = ContextManager.getRuntimeContext().getTag();
+
+        }
+        if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
+            String headerName = properties.getHeaderName();
+            Map<String, Collection<String>> headerMap = request.headers();
+            if (headerMap == null) {
+                headerMap = new LinkedHashMap<>();
+            } else {
+                headerMap = new LinkedHashMap<>(headerMap);
             }
+            headerMap.put(headerName, Collections.unmodifiableCollection(Arrays.asList(tag)));
+            request = Request.create(request.httpMethod(), request.url(), Collections.unmodifiableMap(headerMap), request.requestBody());
+            args[0] = request;
 
-
-
-
-            ContextManager.getRuntimeContext().setTag(header);
-
+        }
+        try {
+            ContextManager.getRuntimeContext().setTag(tag);
             return joinPoint.proceed();
-
-
         } finally {
             ContextManager.getRuntimeContext().onComplete();
 
         }
 
 
+    }
+
+    protected String getGrayHeader(Request request) {
+        String header = null;
+        String headerName = this.properties.getHeaderName();
+
+        Map<String, Collection<String>> headers = request.headers();
+        if (headers != null) {
+            Collection<String> collection = headers.get(headerName);
+            if (collection != null) {
+                for (String value : collection) {
+                    header = value;
+                    break;
+                }
+
+            }
+        }
+        return header;
     }
 
 

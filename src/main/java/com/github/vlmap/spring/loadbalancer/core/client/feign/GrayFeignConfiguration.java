@@ -14,11 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.feign.enabled", matchIfMissing = true)
 
 public class GrayFeignConfiguration {
-    @Bean
-    public GrayFeignRequestInterceptor feignRequestInterceptor() {
-        return new GrayFeignRequestInterceptor();
-
-    }
 
     @Configuration
 

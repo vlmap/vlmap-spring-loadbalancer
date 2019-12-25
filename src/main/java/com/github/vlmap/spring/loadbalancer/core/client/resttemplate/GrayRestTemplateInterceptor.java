@@ -32,7 +32,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
-        if (StringUtils.isBlank(tag)) {
+        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }
@@ -40,15 +40,12 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             headers.add(headerName, tag);
         }
-        if (Platform.getInstnce().isReactive()) {
-            try {
-                ContextManager.getRuntimeContext().setTag(tag);
-                return execution.execute(request, body);
-            } finally {
-                ContextManager.getRuntimeContext().onComplete();
-            }
-        } else {
+
+        try {
+            ContextManager.getRuntimeContext().setTag(tag);
             return execution.execute(request, body);
+        } finally {
+            ContextManager.getRuntimeContext().onComplete();
         }
 
 

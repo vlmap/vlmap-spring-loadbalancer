@@ -1,7 +1,21 @@
 # vlmap-spring-loadbalancer
 
+ #### spring cloud 灰度路由
  
+
+ ###路由规则说明
  
+ >1.被调用的所有节点都没配灰度标签（没有灰度服务），使用所有服务节点进行负载，
+ 
+ >2.当前请求为无标签请求时，排除所有包含灰度环境的服务节点，然后进行负载
+ 
+ >3.当前请求为有标签请求时,仅使用灰度环境标签一致的服务节点进行负载
+ 
+ >4.匹配不到灰度环境标签,则使用无标签服务节点（排除是灰度的服务）进行负载
+ 
+  注意：
+  >  对于reactive(WebFlux) 环境，因为传值是依靠ThredLocal实现，reactive 里的业务方法不能确定在哪个线程里运行，所以再reactive环境中对 resttemplate、feign、 weblcient 客户端调用时负载均衡时需要手动传递请求的灰度值，网关服务 (Zuul,Gateway) 和Servlet环境服务不用考虑该问题
+  
 1.支持的SpringBoot 版本
 
 >  spring-boot 2
@@ -14,7 +28,14 @@
 
 >  Zuul, Gateway
 
-4.MVN坐标
+4.注册的客户端类型
+> Feign,RestTemplate,WebClient.  响应式环境需要手动实现灰度值传递
+
+5.灰度调用示例
+```text
+ curl -H "LoadBalancer-Tag:debug" http://localhost:8080/demo/test
+```
+6.MVN坐标
 >Step 1. Add the JitPack repository to your build file
  ```xml
  
@@ -31,11 +52,11 @@
 	    <groupId>com.github.vlmap</groupId>
 	    <artifactId>vlmap-spring-loadbalancer</artifactId>
 	    <version>1.0.0</version>
-	</dependency>
+    </dependency>
 ```
 
 
-4.使用实例
+7.使用实例
   >@EnableGrayLoadBalancer  开启灰度路由
   
  ```java
@@ -64,7 +85,7 @@ public class WebApplication {
 ```
 
 
-4.标签负载均衡配置
+8.标签负载均衡配置
 
  
    
@@ -98,10 +119,10 @@ vlmap:
 #（服务灰度值） 配置
 MICRO-CLOUD-SERVICE: # 大写  , 这里是 ribbon 要请求的服务的 service-id 值
   ribbon:
-    tagOfServers:
-      - id:  172.18.70.27:7004   #  远程服务具体节点的ID(注册中心中注册的 IP:PORT ，)，支持动态配置
-        tags: debug1,qqq,debug3  # 指定节点灰度路由匹配的值，多个用“,”分割，支持动态配置
+    gray:
+      - id:  172.18.70.27:7004   #  远程服务具体节点的ID(注册中心中注册的 IP:PORT ，静态服务使用listOfServers值)，支持动态配置
+        tags: debug,debug1,debug2  # 指定节点灰度路由匹配的值，多个用“,”分割，支持动态配置
       - id:    172.18.70.27:7005
-        tags: ddd,qqq,debug
+        tags: debug,debug1,debug2
 
 ```

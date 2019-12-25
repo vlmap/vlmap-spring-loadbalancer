@@ -6,7 +6,7 @@
     <version>1.0.0.RELEASE</version>
     <description>
 
-        this for spring cloud gray loadbalance
+        springboot2  灰度路由。 支持 zuul,gateway
 
     </description>
     <parent>

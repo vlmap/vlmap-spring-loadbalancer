@@ -16,6 +16,8 @@ import java.net.SocketException;
 import java.util.*;
 
 public class GrayUtils {
+
+
     public static   Map<String, Set<String>> tagOfServer(String clientName){
         clientName=StringUtils.upperCase(clientName);
         Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientName);
@@ -33,7 +35,7 @@ public class GrayUtils {
         GrayTagOfServersProperties ribbon = new GrayTagOfServersProperties();
         binder.bind("ribbon", Bindable.ofInstance(ribbon));
 
-        List<TagOfServers> tagOfServers = ribbon.getTagOfServers();
+        List<TagOfServers> tagOfServers = ribbon.getGray();
         if (tagOfServers != null) {
             Map<String, Set<String>> map = new HashMap<>(tagOfServers.size());
 
@@ -91,17 +93,15 @@ public class GrayUtils {
     public static class GrayTagOfServersProperties {
 
 
-        List<TagOfServers> tagOfServers;
+        List<TagOfServers> gray;
 
-        public List<TagOfServers> getTagOfServers() {
-            return tagOfServers;
+        public List<TagOfServers> getGray() {
+            return gray;
         }
 
-        public void setTagOfServers(List<TagOfServers> tagOfServers) {
-            this.tagOfServers = tagOfServers;
+        public void setGray(List<TagOfServers> gray) {
+            this.gray = gray;
         }
-
-
     }
 
     public static class TagOfServers {
