@@ -50,7 +50,8 @@ public class StrictHandler {
 
 
     }
-    public Collection<String> getGrayTags(){
+
+    public Collection<String> getGrayTags() {
         return clientServer.getGrayTags();
     }
 

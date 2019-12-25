@@ -2,6 +2,7 @@ package com.github.vlmap.spring.loadbalancer.core;
 
 
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
+import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
@@ -23,10 +24,6 @@ public class GrayLoadBalancer implements ILoadBalancer {
         this.clientServer = clientServer;
         this.target = target;
     }
-
-
-
-
 
 
     @Override
@@ -68,11 +65,11 @@ public class GrayLoadBalancer implements ILoadBalancer {
     protected List<Server> processServers(List<Server> servers) {
 
         Map<String, Set<String>> map = clientServer.getClientServerTags();
-        if (map==null||map.isEmpty()) {
+        if (map == null || map.isEmpty()) {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
         }
-        String tagValue =  ContextManager.getRuntimeContext().getTag();
+        String tagValue = (String) ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE);
         List<Server> list = new ArrayList<>(servers.size());
 
         if (StringUtils.isBlank(tagValue)) {
@@ -113,8 +110,6 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
         return Collections.unmodifiableList(list);
     }
-
-
 
 
 }

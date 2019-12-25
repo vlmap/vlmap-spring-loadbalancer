@@ -49,7 +49,6 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
         return env.getProperty("vlmap.spring.loadbalancer.enabled", Boolean.class, true);
 
 
-
     }
 
     @Override

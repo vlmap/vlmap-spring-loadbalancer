@@ -23,9 +23,8 @@ public class GrayServletConfiguration {
     @Bean
     public GrayServletFilter graySpringmvcFilter(StrictHandler strictHandler, GrayLoadBalancerProperties properties) {
 
-        return new GrayServletFilter(properties,strictHandler);
+        return new GrayServletFilter(properties, strictHandler);
     }
-
 
 
 }

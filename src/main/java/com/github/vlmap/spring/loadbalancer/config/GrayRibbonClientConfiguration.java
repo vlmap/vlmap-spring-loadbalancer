@@ -45,12 +45,12 @@ public class GrayRibbonClientConfiguration {
     @Bean
     public GrayClientServer clientServer(ApplicationContext context) {
 
-        GrayClientServer  bean= new GrayClientServer(clientName);
-        if(context.getParent()!=null){
-           context=context.getParent();
+        GrayClientServer bean = new GrayClientServer(clientName);
+        if (context.getParent() != null) {
+            context = context.getParent();
         }
-        if(context instanceof AbstractApplicationContext){
-            AbstractApplicationContext root=(AbstractApplicationContext) context;
+        if (context instanceof AbstractApplicationContext) {
+            AbstractApplicationContext root = (AbstractApplicationContext) context;
             root.addApplicationListener((EnvironmentChangeEvent event) -> {
                 bean.listener(event);
             });
@@ -61,8 +61,8 @@ public class GrayRibbonClientConfiguration {
 
     @Autowired
     public void initLoadBalancer(ILoadBalancer lb,
-                                       IRule rule,
-                                       GrayClientServer clientServer) {
+                                 IRule rule,
+                                 GrayClientServer clientServer) {
 
 
         rule.setLoadBalancer(new GrayLoadBalancer(lb, clientServer));

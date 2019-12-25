@@ -3,11 +3,12 @@ package com.github.vlmap.spring.loadbalancer.core.platform;
 public class Platform {
     public static final String SERVLET = "servlet";
     public static final String REACTIVE = "reactive";
-
     private static final Platform instnce = new Platform();
     private String platform;
     private boolean isServlet;
     private boolean isReactive;
+    private boolean isHystrix;
+
 
     /**
      * 当前是否就网关服务
@@ -22,6 +23,14 @@ public class Platform {
         this.platform = platform;
         isServlet = SERVLET.equals(platform);
         isReactive = REACTIVE.equals(platform);
+    }
+
+    public boolean isHystrix() {
+        return isHystrix;
+    }
+
+    public void setHystrix(boolean hystrix) {
+        isHystrix = hystrix;
     }
 
     public boolean isGatewayService() {

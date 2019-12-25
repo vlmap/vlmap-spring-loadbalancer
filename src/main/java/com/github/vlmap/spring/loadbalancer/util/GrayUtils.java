@@ -18,8 +18,8 @@ import java.util.*;
 public class GrayUtils {
 
 
-    public static   Map<String, Set<String>> tagOfServer(String clientName){
-        clientName=StringUtils.upperCase(clientName);
+    public static Map<String, Set<String>> tagOfServer(String clientName) {
+        clientName = StringUtils.upperCase(clientName);
         Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientName);
 
 
@@ -45,7 +45,7 @@ public class GrayUtils {
                     map.put(tagOfServer.getId(), tagOfServer.getTags());
                 }
             }
-           return  Collections.unmodifiableMap(map);
+            return Collections.unmodifiableMap(map);
 
 
         }
@@ -54,11 +54,10 @@ public class GrayUtils {
     }
 
     public static String ip(InetUtils inetUtils, String networkInterface) throws SocketException {
-        String ip=null;
+        String ip = null;
         if (org.springframework.util.StringUtils.isEmpty(networkInterface)) {
             ip = inetUtils.findFirstNonLoopbackHostInfo().getIpAddress();
-        }
-        else {
+        } else {
             NetworkInterface netInterface = NetworkInterface
                     .getByName(networkInterface);
             if (null == netInterface) {

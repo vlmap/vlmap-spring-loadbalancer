@@ -50,7 +50,11 @@
             <artifactId>spring-boot-starter</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

@@ -24,28 +24,28 @@ import java.util.Set;
  * 从集群中获取当前服务的灰度配置
  */
 public class CurrentServer {
-   Logger logger= LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
     private Set<String> grayTags;
     String id = null;
     String appName = null;
 
     public CurrentServer(Environment environment, InetUtils inetUtils) {
-        String port=environment.getProperty("server.port","8080");
-        String ip="127.0.0.1";
+        String port = environment.getProperty("server.port", "8080");
+        String ip = "127.0.0.1";
         try {
-            ip=  GrayUtils.ip(inetUtils,"");
-        }catch (Exception e){
-            logger.info("GrayUtils.ip(inetUtils,\"\") error",e);
+            ip = GrayUtils.ip(inetUtils, "");
+        } catch (Exception e) {
+            logger.info("GrayUtils.ip(inetUtils,\"\") error", e);
         }
-        this.id=ip+":"+port;
-        this.appName=environment.getProperty("spring.application.name","application");
+        this.id = ip + ":" + port;
+        this.appName = environment.getProperty("spring.application.name", "application");
 
     }
+
     @PostConstruct
-    public void initMethod(){
+    public void initMethod() {
 
         bind();
-
 
 
     }
@@ -54,25 +54,25 @@ public class CurrentServer {
     public void listener(InstanceRegisteredEvent event) {
 
 
-            Object config = event.getConfig();
+        Object config = event.getConfig();
 
-            String clazzName=config.getClass().getName();
-            if (clazzName.equals("org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties")) {
-                NacosDiscoveryProperties properties = (NacosDiscoveryProperties) config;
-                id = properties.getIp() + ":" + properties.getPort();
-                appName = properties.getService();
-            } else if (StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean")) {
+        String clazzName = config.getClass().getName();
+        if (clazzName.equals("org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties")) {
+            NacosDiscoveryProperties properties = (NacosDiscoveryProperties) config;
+            id = properties.getIp() + ":" + properties.getPort();
+            appName = properties.getService();
+        } else if (StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean")) {
 
-                CloudEurekaInstanceConfig properties=(CloudEurekaInstanceConfig)config;
-                id = properties.getIpAddress() + ":" + properties.getNonSecurePort();
-                appName = properties.getAppname();
-            } else if (StringUtils.equals(clazzName, "org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties")) {
+            CloudEurekaInstanceConfig properties = (CloudEurekaInstanceConfig) config;
+            id = properties.getIpAddress() + ":" + properties.getNonSecurePort();
+            appName = properties.getAppname();
+        } else if (StringUtils.equals(clazzName, "org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties")) {
 
-                ConsulDiscoveryProperties properties = (ConsulDiscoveryProperties) config;
+            ConsulDiscoveryProperties properties = (ConsulDiscoveryProperties) config;
 
-                id = properties.getIpAddress() + ":" + properties.getPort();
-                appName = properties.getServiceName();
-            }
+            id = properties.getIpAddress() + ":" + properties.getPort();
+            appName = properties.getServiceName();
+        }
 
         bind();
 
@@ -104,7 +104,6 @@ public class CurrentServer {
         }
 
     }
-
 
 
     public boolean isGrayServer() {

@@ -2,8 +2,11 @@ package com.github.vlmap.spring.loadbalancer;
 
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.archaius.ConfigurableEnvironmentConfiguration;
@@ -31,7 +34,7 @@ public class GrayLoadBalancerAutoConfiguration {
 
     public CurrentServer currentService(ConfigurableEnvironmentConfiguration configuration, Environment environment, InetUtils inetUtils) {
 
-        return new CurrentServer(environment,inetUtils);
+        return new CurrentServer(environment, inetUtils);
     }
 
     @Autowired
@@ -63,5 +66,12 @@ public class GrayLoadBalancerAutoConfiguration {
         return uri + "/**";
     }
 
+    @Configuration
+    @ConditionalOnClass(HystrixRequestVariable.class)
+    static class HystrixConfiguration {
+        public HystrixConfiguration() {
+            Platform.getInstnce().setHystrix(true);
+        }
+    }
 
 }

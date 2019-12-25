@@ -17,10 +17,6 @@ public class GrayLoadBalancerProperties {
     private String headerName = "Loadbalancer-Tag";
 
 
-
-
-
-
     private Strict strict = new Strict();
 
 
@@ -45,7 +41,6 @@ public class GrayLoadBalancerProperties {
         this.headerName = headerName;
     }
 
- 
 
     public WebClient getWebClient() {
         return webClient;
@@ -79,7 +74,6 @@ public class GrayLoadBalancerProperties {
     public void setStrict(Strict strict) {
         this.strict = strict;
     }
-
 
 
     static public class Feign {
@@ -131,7 +125,6 @@ public class GrayLoadBalancerProperties {
         private String message = "Forbidden";
 
         private StrictIgnore ignore = new StrictIgnore();
-
 
 
         public boolean isEnabled() {

@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.client.resttemplate;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
+import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,7 +34,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         String header = headers.getFirst(headerName);
         String tag = header;
         if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
-            tag = ContextManager.getRuntimeContext().getTag();
+            tag = (String) ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE);
 
         }
 
@@ -42,7 +43,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         }
 
         try {
-            ContextManager.getRuntimeContext().setTag(tag);
+            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             return execution.execute(request, body);
         } finally {
             ContextManager.getRuntimeContext().onComplete();

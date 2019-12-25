@@ -23,13 +23,13 @@ public class GrayWebClientConfiguration {
     public WebClientCustomizer grayLoadbalanceClientWebClientCustomizer(
             GrayWebClientInterceptor filterFunction) {
         return builder -> builder.filters((List<ExchangeFilterFunction> exchangeFilterFunctions) -> {
-                List<ExchangeFilterFunction> list = new ArrayList<>();
-                if (!exchangeFilterFunctions.contains(filterFunction)) {
-                    list.add(filterFunction);
-                }
-                list.addAll(exchangeFilterFunctions);
-                exchangeFilterFunctions.clear();
-                exchangeFilterFunctions.addAll(list);
+            List<ExchangeFilterFunction> list = new ArrayList<>();
+            if (!exchangeFilterFunctions.contains(filterFunction)) {
+                list.add(filterFunction);
+            }
+            list.addAll(exchangeFilterFunctions);
+            exchangeFilterFunctions.clear();
+            exchangeFilterFunctions.addAll(list);
 
         });
     }
