@@ -64,7 +64,7 @@ public class GrayRibbonClientConfiguration {
                                  IRule rule,
                                  GrayClientServer clientServer) {
 
-
+        //替换默认ILoadBalancer为GrayLoadBalancer
         rule.setLoadBalancer(new GrayLoadBalancer(lb, clientServer));
 
     }
