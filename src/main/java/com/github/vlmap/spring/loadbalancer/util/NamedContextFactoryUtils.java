@@ -15,11 +15,13 @@ public class NamedContextFactoryUtils {
         try {
 
             Map<String, AnnotationConfigApplicationContext> contexts = (Map) FieldUtils.readField(factory, "contexts", true);
+
             for (Map.Entry<String, AnnotationConfigApplicationContext> entry : contexts.entrySet()) {
                 if (entry.getKey().equals(contextName)) {
                     AnnotationConfigApplicationContext context = entry.getValue();
-                    context.close();
+
                     contexts.remove(entry.getKey());
+                    context.close();
                     break;
                 }
             }
