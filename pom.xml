@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.vlmap</groupId>
     <artifactId>vlmap-spring-loadbalancer</artifactId>
-    <version>1.0.0.RELEASE</version>
+    <version>1.0.1.RELEASE</version>
     <description>
 
         springboot2  灰度路由。 支持 zuul,gateway
