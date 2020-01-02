@@ -14,7 +14,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
-import org.springframework.web.reactive.result.method.TraditionalHandlerMethodArgumentResolverComposite;
+import org.springframework.web.reactive.result.method.GrayHandlerMethodArgumentResolverComposite;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class TraditionalInvocableHandlerMethod extends org.springframework.web.reactive.result.method.InvocableHandlerMethod {
+public class GrayInvocableHandlerMethod extends org.springframework.web.reactive.result.method.InvocableHandlerMethod {
     private static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
     private ReactiveAdapterRegistry reactiveAdapterRegistry = ReactiveAdapterRegistry.getSharedInstance();
-    private TraditionalHandlerMethodArgumentResolverComposite resolvers = new TraditionalHandlerMethodArgumentResolverComposite();
+    private GrayHandlerMethodArgumentResolverComposite resolvers = new GrayHandlerMethodArgumentResolverComposite();
     private GrayLoadBalancerProperties properties;
 
     public void setProperties(GrayLoadBalancerProperties properties) {
@@ -37,7 +37,7 @@ public class TraditionalInvocableHandlerMethod extends org.springframework.web.r
 
     private static final Object NO_ARG_VALUE = new Object();
 
-    public TraditionalInvocableHandlerMethod(HandlerMethod handlerMethod) {
+    public GrayInvocableHandlerMethod(HandlerMethod handlerMethod) {
         super(handlerMethod);
     }
 

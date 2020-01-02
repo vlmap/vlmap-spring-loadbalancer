@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class TraditionalRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
+public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
 
     private static final Log logger = LogFactory.getLog(RequestMappingHandlerAdapter.class);
 
@@ -176,7 +176,7 @@ public class TraditionalRequestMappingHandlerAdapter extends RequestMappingHandl
                 .onErrorResume(exceptionHandler);
     }
     protected InvocableHandlerMethod invocableMethod( InvocableHandlerMethod invocable,HandlerMethod handlerMethod){
-        TraditionalInvocableHandlerMethod result = new TraditionalInvocableHandlerMethod(handlerMethod);
+        GrayInvocableHandlerMethod result = new GrayInvocableHandlerMethod(handlerMethod);
         result.setProperties(this.properties);
         result.setArgumentResolvers(invocable.getResolvers());
         result.setReactiveAdapterRegistry(this.reactiveAdapterRegistry);

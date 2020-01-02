@@ -32,7 +32,7 @@ public class GrayFeignClientProxy {
         Request request = (Request) args[0];
         String header = getGrayHeader(request);
         String tag = header;
-        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
+        if (StringUtils.isBlank(tag) ) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }

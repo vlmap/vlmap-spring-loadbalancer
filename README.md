@@ -104,6 +104,8 @@ vlmap:
         enabled: true #RestTemplate客户端是否启用灰度路由，默认值： true
       web-client:
         enabled: true #WebClient客户端是否启用灰度路由，默认值： true
+      controller:  
+        enabled: true #reactive(WebFlux) 环境 controller 否启用灰度路由，默认值： true
       strict:
         enabled: true #是否启用严格模式(如果启用，Loadbalancer-Tag的值必匹配当前服务说配置的灰度值，不匹配返回 HTTP code)，默认值： true
         code: 403     #严格模式验证不通过返回的状态码

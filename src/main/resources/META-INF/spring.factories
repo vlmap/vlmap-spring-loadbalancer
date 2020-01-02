@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.vlmap.spring.loadbalancer.GrayLoadBalancerAutoConfiguration,\
-com.github.vlmap.spring.loadbalancer.core.platform.reactive.traditional.GrayTraditionalConfiguration
+com.github.vlmap.spring.loadbalancer.GrayLoadBalancerAutoConfiguration

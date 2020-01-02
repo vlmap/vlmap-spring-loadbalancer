@@ -26,7 +26,7 @@ public class GrayWebClientInterceptor implements ExchangeFilterFunction {
         String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
-        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
+        if (StringUtils.isBlank(tag) ) {
             tag = ContextManager.getRuntimeContext().getTag();
 
         }

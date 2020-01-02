@@ -27,7 +27,7 @@ public class GrayLoadBalancerProperties {
     private Feign feign = new Feign();
     private RestTemplate restTemplate = new RestTemplate();
     private WebClient webClient = new WebClient();
-
+    private Controller controller=new Controller();
 
     public boolean isEnabled() {
         return enabled;
@@ -45,7 +45,13 @@ public class GrayLoadBalancerProperties {
         this.headerName = headerName;
     }
 
- 
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
 
     public WebClient getWebClient() {
         return webClient;
@@ -196,6 +202,17 @@ public class GrayLoadBalancerProperties {
 
     static public class StrictDefaultIgnore {
         public final static AtomicReference<Collection<String>> DEFAULT_IGNORE_PATH = new AtomicReference<>();
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+    static  public class Controller{
         private boolean enabled = true;
 
         public boolean isEnabled() {
