@@ -14,7 +14,7 @@
  >4.匹配不到灰度环境标签,则使用无标签服务节点（排除是灰度的服务）进行负载
  
   注意：
-  >  对于reactive(WebFlux) 环境，因为传值是依靠ThredLocal实现，reactive 里的业务方法不能确定在哪个线程里运行，所以再reactive环境中对 resttemplate、feign、 weblcient 客户端调用时负载均衡时需要手动传递请求的灰度值，网关服务 (Zuul,Gateway) 和Servlet环境服务不用考虑该问题
+  >  对于reactive(WebFlux) 环境，因为传值是依靠ThredLocal和HystrixRequestVariable实现，reactive 里的业务方法不能确定在哪个线程里运行，所以再reactive环境中对 resttemplate、feign、 weblcient 客户端调用时负载均衡时需要手动传递请求的灰度值，网关服务 (Zuul,Gateway) 和Servlet环境服务不用考虑该问题
   
 1.支持的SpringBoot 版本
 

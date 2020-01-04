@@ -21,7 +21,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
     public GrayStrictReactiveWebFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
 
         this.properties = properties;
-        this.strictHandler=strictHandler;
+        this.strictHandler = strictHandler;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
         /**
          * 严格模式,请求标签不匹配拒绝响应
          */
-        if (!strictHandler.validate(uri, tag) ) {
+        if (!strictHandler.validate(uri, tag)) {
             String message = strictHandler.getMessage();
             int code = strictHandler.getCode();
             if (logger.isInfoEnabled()) {

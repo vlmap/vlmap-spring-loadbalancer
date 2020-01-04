@@ -17,17 +17,13 @@ public class GrayLoadBalancerProperties {
     private String headerName = "Loadbalancer-Tag";
 
 
-
-
-
-
     private Strict strict = new Strict();
 
 
     private Feign feign = new Feign();
     private RestTemplate restTemplate = new RestTemplate();
     private WebClient webClient = new WebClient();
-    private Controller controller=new Controller();
+    private Controller controller = new Controller();
 
     public boolean isEnabled() {
         return enabled;
@@ -87,7 +83,6 @@ public class GrayLoadBalancerProperties {
     }
 
 
-
     static public class Feign {
         private boolean enabled = true;
 
@@ -137,7 +132,6 @@ public class GrayLoadBalancerProperties {
         private String message = "Forbidden";
 
         private StrictIgnore ignore = new StrictIgnore();
-
 
 
         public boolean isEnabled() {
@@ -212,7 +206,8 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
     }
-    static  public class Controller{
+
+    static public class Controller {
         private boolean enabled = true;
 
         public boolean isEnabled() {

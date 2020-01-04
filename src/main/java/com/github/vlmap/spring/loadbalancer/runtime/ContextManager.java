@@ -19,14 +19,14 @@
 package com.github.vlmap.spring.loadbalancer.runtime;
 
 
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
+
 public abstract class ContextManager {
-    private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new InheritableThreadLocal<>();
+    private static RuntimeContext runtimeContext = null;
 
     public static RuntimeContext getRuntimeContext() {
-        RuntimeContext runtimeContext = RUNTIME_CONTEXT.get();
         if (runtimeContext == null) {
-            runtimeContext = new RuntimeContext(RUNTIME_CONTEXT);
-            RUNTIME_CONTEXT.set(runtimeContext);
+            runtimeContext = Platform.getInstnce().isHystrix() ? new HystrixRuntimeContext() : new JdkRuntimeContext();
         }
 
         return runtimeContext;

@@ -1,7 +1,8 @@
-package org.springframework.web.reactive.result.method.annotation;
+package org.springframework.web.reactive.result.method;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
+import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -13,8 +14,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerResult;
-import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolver;
-import org.springframework.web.reactive.result.method.GrayHandlerMethodArgumentResolverComposite;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -25,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class GrayInvocableHandlerMethod extends org.springframework.web.reactive.result.method.InvocableHandlerMethod {
+public class GrayInvocableHandlerMethod extends InvocableHandlerMethod {
     private static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
     private ReactiveAdapterRegistry reactiveAdapterRegistry = ReactiveAdapterRegistry.getSharedInstance();
-    private GrayHandlerMethodArgumentResolverComposite resolvers = new GrayHandlerMethodArgumentResolverComposite();
+    private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
     private GrayLoadBalancerProperties properties;
 
     public void setProperties(GrayLoadBalancerProperties properties) {
@@ -52,7 +51,9 @@ public class GrayInvocableHandlerMethod extends org.springframework.web.reactive
                     String headerName = properties.getHeaderName();
 
                     String tag = exchange.getRequest().getHeaders().getFirst(headerName);
-                    ContextManager.getRuntimeContext().setTag(tag);
+                    ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE,tag);
+                    ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
+
 
                 }
 
@@ -165,7 +166,7 @@ public class GrayInvocableHandlerMethod extends org.springframework.web.reactive
 
     /**
      * Configure the argument resolvers to use to use for resolving method
-     * argument values against a {@code ServerWebExchange}.
+     * argument values against a {@code SERVER_WEB_EXCHANGE}.
      */
     public void setArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         super.setArgumentResolvers(resolvers);

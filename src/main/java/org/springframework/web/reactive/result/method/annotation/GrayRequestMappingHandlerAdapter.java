@@ -16,6 +16,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.HandlerResult;
+import org.springframework.web.reactive.result.method.GrayInvocableHandlerMethod;
 import org.springframework.web.reactive.result.method.InvocableHandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -164,7 +165,7 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
         InitBinderBindingContext bindingContext = new InitBinderBindingContext(
                 getWebBindingInitializer(), this.methodResolver.getInitBinderMethods(handlerMethod));
 
-        InvocableHandlerMethod invocableMethod=   invocableMethod( this.methodResolver.getRequestMappingMethod(handlerMethod),handlerMethod);
+        InvocableHandlerMethod invocableMethod = invocableMethod(this.methodResolver.getRequestMappingMethod(handlerMethod), handlerMethod);
         Function<Throwable, Mono<HandlerResult>> exceptionHandler =
                 ex -> handleException(ex, handlerMethod, bindingContext, exchange);
 
@@ -175,7 +176,8 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
                 .doOnNext(result -> bindingContext.saveModel())
                 .onErrorResume(exceptionHandler);
     }
-    protected InvocableHandlerMethod invocableMethod( InvocableHandlerMethod invocable,HandlerMethod handlerMethod){
+
+    protected InvocableHandlerMethod invocableMethod(InvocableHandlerMethod invocable, HandlerMethod handlerMethod) {
         GrayInvocableHandlerMethod result = new GrayInvocableHandlerMethod(handlerMethod);
         result.setProperties(this.properties);
         result.setArgumentResolvers(invocable.getResolvers());
@@ -201,12 +203,10 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
                 Throwable cause = exception.getCause();
                 if (cause != null) {
                     return invocable.invoke(exchange, bindingContext, exception, cause, handlerMethod);
-                }
-                else {
+                } else {
                     return invocable.invoke(exchange, bindingContext, exception, handlerMethod);
                 }
-            }
-            catch (Throwable invocationEx) {
+            } catch (Throwable invocationEx) {
                 if (logger.isWarnEnabled()) {
                     logger.warn(exchange.getLogPrefix() + "Failure in @ExceptionHandler " + invocable, invocationEx);
                 }

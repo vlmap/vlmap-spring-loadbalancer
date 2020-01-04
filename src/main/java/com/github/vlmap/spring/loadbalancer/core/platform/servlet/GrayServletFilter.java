@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
+import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,10 @@ public class GrayServletFilter implements OrderedFilter {
 
     GrayLoadBalancerProperties properties;
     StrictHandler strictHandler;
-    public GrayServletFilter(GrayLoadBalancerProperties properties,  StrictHandler strictHandler) {
+
+    public GrayServletFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
         this.properties = properties;
-        this.strictHandler=strictHandler;
+        this.strictHandler = strictHandler;
     }
 
 
@@ -40,7 +42,7 @@ public class GrayServletFilter implements OrderedFilter {
          * 非兼容模式,请求标签不匹配拒绝响应
          */
         String uri = ((HttpServletRequest) request).getRequestURI();
-        if (!strictHandler.validate(uri, tag) ) {
+        if (!strictHandler.validate(uri, tag)) {
             String message = strictHandler.getMessage();
             int code = strictHandler.getCode();
             if (logger.isInfoEnabled()) {
@@ -60,8 +62,10 @@ public class GrayServletFilter implements OrderedFilter {
 
         try {
 
+            ContextManager.getRuntimeContext().put(RuntimeContext.SERVLET_REQUEST, request);
+            ContextManager.getRuntimeContext().put(RuntimeContext.SERVLET_RESPONSE, response);
 
-            ContextManager.getRuntimeContext().setTag(tag);
+            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             chain.doFilter(request, response);
 
         } finally {

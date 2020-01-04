@@ -20,6 +20,7 @@ public class GrayRequestMappingHandlerAdapterConfiguration {
     public WebFluxRegistrations webFluxRegistrations(GrayLoadBalancerProperties properties) {
         return new GrayWebFluxRegistrations(properties);
     }
+
     public static class GrayWebFluxRegistrations implements WebFluxRegistrations {
         private GrayLoadBalancerProperties properties;
 
@@ -29,7 +30,7 @@ public class GrayRequestMappingHandlerAdapterConfiguration {
 
         @Override
         public GrayRequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-            GrayRequestMappingHandlerAdapter handlerAdapter= new GrayRequestMappingHandlerAdapter();
+            GrayRequestMappingHandlerAdapter handlerAdapter = new GrayRequestMappingHandlerAdapter();
             handlerAdapter.setProperties(properties);
 
             return handlerAdapter;

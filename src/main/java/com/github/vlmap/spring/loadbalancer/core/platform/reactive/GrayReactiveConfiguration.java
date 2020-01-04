@@ -25,7 +25,7 @@ public class GrayReactiveConfiguration {
 
     @Bean
     public GrayStrictReactiveWebFilter grayCompatibleReactiveWebFilter(StrictHandler strictHandler, GrayLoadBalancerProperties properties) {
-        return new GrayStrictReactiveWebFilter(properties,strictHandler);
+        return new GrayStrictReactiveWebFilter(properties, strictHandler);
     }
 
 
@@ -34,7 +34,6 @@ public class GrayReactiveConfiguration {
 
         return new GrayLoadBalancerClientFilterProxy(properties);
     }
-
 
 
 }

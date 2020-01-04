@@ -27,12 +27,12 @@ public class GrayClientServer {
     }
 
 
-    public void listener(EnvironmentChangeEvent event){
-        Set<String> keys=event.getKeys();
-        if(CollectionUtils.isNotEmpty(keys)){
-            String  prefix= StringUtils.upperCase(clientName);
-            for(String key:keys){
-                if(StringUtils.startsWith(key,prefix)){
+    public void listener(EnvironmentChangeEvent event) {
+        Set<String> keys = event.getKeys();
+        if (CollectionUtils.isNotEmpty(keys)) {
+            String prefix = StringUtils.upperCase(clientName);
+            for (String key : keys) {
+                if (StringUtils.startsWith(key, prefix)) {
                     this.clientServerTags = GrayUtils.tagOfServer(clientName);
 
                     break;

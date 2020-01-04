@@ -9,21 +9,24 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.Map;
 
 public class NamedContextFactoryUtils {
-    private static Logger logger= LoggerFactory.getLogger(NamedContextFactoryUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(NamedContextFactoryUtils.class);
+
     public static void close(NamedContextFactory factory, String contextName) {
         try {
 
             Map<String, AnnotationConfigApplicationContext> contexts = (Map) FieldUtils.readField(factory, "contexts", true);
+
             for (Map.Entry<String, AnnotationConfigApplicationContext> entry : contexts.entrySet()) {
                 if (entry.getKey().equals(contextName)) {
-                    AnnotationConfigApplicationContext context=    entry.getValue();
-                    context.close();
+                    AnnotationConfigApplicationContext context = entry.getValue();
+
                     contexts.remove(entry.getKey());
+                    context.close();
                     break;
                 }
             }
         } catch (Exception e) {
-            logger.error(" close context name:"+contextName+" error",e);
+            logger.error(" close context name:" + contextName + " error", e);
 
         }
 

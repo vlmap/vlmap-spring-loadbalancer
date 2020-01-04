@@ -19,9 +19,9 @@ import java.util.List;
 public class GrayRestTemplateConfiguration {
 
     @Autowired
-    public void  initRestTemplate(@Autowired(required = false) RestTemplateBuilder builder,
-                                  @Autowired(required = false) List<RestTemplate> templateList,
-                                  GrayRestTemplateInterceptor interceptor) {
+    public void initRestTemplate(@Autowired(required = false) RestTemplateBuilder builder,
+                                 @Autowired(required = false) List<RestTemplate> templateList,
+                                 GrayRestTemplateInterceptor interceptor) {
         RestTemplateCustomizer customizer = (RestTemplate restTemplate) -> {
 
 
@@ -54,9 +54,6 @@ public class GrayRestTemplateConfiguration {
     public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
         return new GrayRestTemplateInterceptor();
     }
-
-
-
 
 
 }
