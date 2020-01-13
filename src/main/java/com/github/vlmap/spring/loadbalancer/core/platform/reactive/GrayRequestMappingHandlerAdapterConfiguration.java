@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations;
@@ -17,21 +18,21 @@ import org.springframework.web.reactive.result.method.annotation.GrayRequestMapp
 public class GrayRequestMappingHandlerAdapterConfiguration {
 
     @Bean
-    public WebFluxRegistrations webFluxRegistrations(GrayLoadBalancerProperties properties) {
-        return new GrayWebFluxRegistrations(properties);
+    public WebFluxRegistrations webFluxRegistrations(RequestMappingInvoker requestMappingInvoker  ) {
+        return new GrayWebFluxRegistrations(requestMappingInvoker);
     }
 
     public static class GrayWebFluxRegistrations implements WebFluxRegistrations {
-        private GrayLoadBalancerProperties properties;
+        private RequestMappingInvoker requestMappingInvoker;
 
-        public GrayWebFluxRegistrations(GrayLoadBalancerProperties properties) {
-            this.properties = properties;
+        public GrayWebFluxRegistrations(RequestMappingInvoker requestMappingInvoker) {
+            this.requestMappingInvoker = requestMappingInvoker;
         }
 
         @Override
         public GrayRequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
             GrayRequestMappingHandlerAdapter handlerAdapter = new GrayRequestMappingHandlerAdapter();
-            handlerAdapter.setProperties(properties);
+            handlerAdapter.setRequestMappingInvoker(requestMappingInvoker);
 
             return handlerAdapter;
         }

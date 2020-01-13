@@ -1,6 +1,6 @@
 package org.springframework.web.reactive.result.method.annotation;
 
-import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +16,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.HandlerResult;
-import org.springframework.web.reactive.result.method.GrayInvocableHandlerMethod;
 import org.springframework.web.reactive.result.method.InvocableHandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -50,8 +49,8 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
     @Nullable
     private ModelInitializer modelInitializer;
 
-    private GrayLoadBalancerProperties properties;
 
+    private RequestMappingInvoker requestMappingInvoker;
 
     /**
      * Configure HTTP message readers to de-serialize the request body with.
@@ -165,7 +164,7 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
         InitBinderBindingContext bindingContext = new InitBinderBindingContext(
                 getWebBindingInitializer(), this.methodResolver.getInitBinderMethods(handlerMethod));
 
-        InvocableHandlerMethod invocableMethod = invocableMethod(this.methodResolver.getRequestMappingMethod(handlerMethod), handlerMethod);
+        InvocableHandlerMethod invocableMethod = requestMappingInvoker.invocableMethod(this.reactiveAdapterRegistry,this.methodResolver.getRequestMappingMethod(handlerMethod), handlerMethod);
         Function<Throwable, Mono<HandlerResult>> exceptionHandler =
                 ex -> handleException(ex, handlerMethod, bindingContext, exchange);
 
@@ -177,13 +176,6 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
                 .onErrorResume(exceptionHandler);
     }
 
-    protected InvocableHandlerMethod invocableMethod(InvocableHandlerMethod invocable, HandlerMethod handlerMethod) {
-        GrayInvocableHandlerMethod result = new GrayInvocableHandlerMethod(handlerMethod);
-        result.setProperties(this.properties);
-        result.setArgumentResolvers(invocable.getResolvers());
-        result.setReactiveAdapterRegistry(this.reactiveAdapterRegistry);
-        return result;
-    }
 
     private Mono<HandlerResult> handleException(Throwable exception, HandlerMethod handlerMethod,
                                                 BindingContext bindingContext, ServerWebExchange exchange) {
@@ -215,7 +207,7 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
         return Mono.error(exception);
     }
 
-    public void setProperties(GrayLoadBalancerProperties properties) {
-        this.properties = properties;
+    public void setRequestMappingInvoker(RequestMappingInvoker requestMappingInvoker) {
+        this.requestMappingInvoker = requestMappingInvoker;
     }
 }
