@@ -64,9 +64,11 @@ public class GrayServletFilter implements OrderedFilter {
 
             ContextManager.getRuntimeContext().put(RuntimeContext.SERVLET_REQUEST, request);
             ContextManager.getRuntimeContext().put(RuntimeContext.SERVLET_RESPONSE, response);
+            if(StringUtils.isNotBlank(tag)){
+                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
-            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
-            chain.doFilter(request, response);
+            }
+             chain.doFilter(request, response);
 
         } finally {
             ContextManager.getRuntimeContext().onComplete();

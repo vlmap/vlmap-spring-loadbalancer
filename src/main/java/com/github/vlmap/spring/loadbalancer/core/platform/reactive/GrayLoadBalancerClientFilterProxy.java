@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -38,9 +39,11 @@ public class GrayLoadBalancerClientFilterProxy {
 
 
         try {
-            exchange.getAttributes().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
-            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+            if(StringUtils.isNotBlank(tag)){
+                 ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+            }
+
 
             return joinPoint.proceed();
 

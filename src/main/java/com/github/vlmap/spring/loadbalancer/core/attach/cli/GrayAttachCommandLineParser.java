@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.core.cli;
+package com.github.vlmap.spring.loadbalancer.core.attach.cli;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
@@ -6,9 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -21,12 +19,11 @@ public class GrayAttachCommandLineParser {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final String HEADER = "header";
-    public static final String URI = "uri";
+    public static final String PATH = "path";
     public static final String COOKIE = "cookie";
     public static final String PARAM = "param";
     public static final String JSON_PATH = "json-path";
     public static final String METHOD = "method";
-    public static final String STRICT = "strict";
 
     public static final String VALUE = "value";
 
@@ -43,7 +40,7 @@ public class GrayAttachCommandLineParser {
         options.addOption(builder.build());
 
 
-        builder = Option.builder("U").longOpt(URI).hasArg(true).desc("URI匹配，支持ANT格式URI. 示例：--uri=/test/** ");
+        builder = Option.builder().longOpt(PATH).hasArg(true).desc("URI匹配，支持ANT格式URI. 示例：--uri=/test/** ");
         options.addOption(builder.build());
 
         builder = Option.builder("C").longOpt(COOKIE).argName("name:value").hasArg(true).desc("COOKIE匹配. 示例：--cookie=a:1\n--cookie b:2");
@@ -57,9 +54,6 @@ public class GrayAttachCommandLineParser {
         options.addOption(builder.build());
 
         builder = Option.builder("M").longOpt(METHOD).hasArg(true).desc("Method匹配. 示例：--method=POST \n--method  GET ");
-        options.addOption(builder.build());
-
-        builder = Option.builder("S").longOpt(STRICT).hasArg(false).desc("启用严格模式.默认不启用.\n启用时请求必须匹配全部条件，不启用只需匹配其中一个条件  ");
         options.addOption(builder.build());
 
         builder = Option.builder("V").longOpt(VALUE).required().hasArg(true).desc("条件匹配配返回的值");
@@ -92,54 +86,35 @@ public class GrayAttachCommandLineParser {
         addAll(map, values, ":");
 
 
-        map = new LinkedMultiValueMap();
+        map = new LinkedHashMap();
         result.setCookies(map);
         values = commandLine.getOptionValues(COOKIE);
         addAll(map, values, ":");
 
 
-        map = new LinkedMultiValueMap();
+        map = new LinkedHashMap();
         result.setParams(map);
         values = commandLine.getOptionValues(PARAM);
         addAll(map, values, ":");
 
 
-        map = new LinkedMultiValueMap();
+        map = new LinkedHashMap();
         result.setJsonpath(map);
         values = commandLine.getOptionValues(JSON_PATH);
         addAll(map, values, ":");
 
-        List<String> list = new ArrayList<>();
-        result.setUris(list);
-        values = commandLine.getOptionValues(URI);
-        if (ArrayUtils.isNotEmpty(values)) {
-            for (String value : values) {
-                if (StringUtils.isNotBlank(value)) {
-                    list.add(value);
-                }
-            }
-        }
+         result.setPath(commandLine.getOptionValue(PATH));
 
-        list = new ArrayList<>();
-        result.setUris(list);
-        values = commandLine.getOptionValues(METHOD);
-        if (ArrayUtils.isNotEmpty(values)) {
-            for (String value : values) {
-                HttpMethod method = HttpMethod.resolve(value);
-                if (method != null) {
-                    list.add(method.name());
-                }
 
-            }
-        }
+
+        result.setMethod( commandLine.getOptionValue(METHOD));
+
         String value = commandLine.getOptionValue(VALUE);
-        if (StringUtils.isBlank(value)) {
-            return null;
-        }
+
         result.setValue(value);
 
 
-        result.setStrict(commandLine.hasOption(STRICT));
+
 
         return result;
 

@@ -24,6 +24,8 @@ public class GrayLoadBalancerProperties {
     private RestTemplate restTemplate = new RestTemplate();
     private WebClient webClient = new WebClient();
     private Controller controller = new Controller();
+    private Attach attach = new Attach();
+
 
     public boolean isEnabled() {
         return enabled;
@@ -82,6 +84,13 @@ public class GrayLoadBalancerProperties {
         this.strict = strict;
     }
 
+    public Attach getAttach() {
+        return attach;
+    }
+
+    public void setAttach(Attach attach) {
+        this.attach = attach;
+    }
 
     static public class Feign {
         private boolean enabled = true;
@@ -216,6 +225,37 @@ public class GrayLoadBalancerProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    static public class Attach{
+        private boolean enabled = true;
+        private boolean readBody=true;
+        List<String> commands;
+
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isReadBody() {
+            return readBody;
+        }
+
+        public void setReadBody(boolean readBody) {
+            this.readBody = readBody;
+        }
+
+        public List<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(List<String> commands) {
+            this.commands = commands;
         }
     }
 }

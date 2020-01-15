@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.core.cli;
+package com.github.vlmap.spring.loadbalancer.core.attach.cli;
 //package com.intellij.execution.configurations;
 
 import java.util.ArrayList;

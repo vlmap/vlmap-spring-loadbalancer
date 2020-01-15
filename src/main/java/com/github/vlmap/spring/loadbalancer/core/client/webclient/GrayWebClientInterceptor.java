@@ -37,8 +37,11 @@ public class GrayWebClientInterceptor implements ExchangeFilterFunction {
         }
 
         try {
-            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
-            return next.exchange(request);
+            if(StringUtils.isNotBlank(tag)){
+                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+
+            }
+             return next.exchange(request);
 
         } finally {
             ContextManager.getRuntimeContext().onComplete();

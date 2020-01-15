@@ -1,8 +1,9 @@
 package com.github.vlmap.spring.loadbalancer;
 
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
+ import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
+import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import org.apache.commons.lang3.StringUtils;
@@ -30,11 +31,21 @@ public class GrayLoadBalancerAutoConfiguration {
     public StrictHandler strictHandler(CurrentServer currentService, GrayLoadBalancerProperties properties) {
         return new StrictHandler(properties, currentService);
     }
+
+
     @Bean
     public RequestMappingInvoker requestMappingInvoker(GrayLoadBalancerProperties properties){
         return new RequestMappingInvoker(properties);
     }
 
+
+    /**
+     * configuration在这个作为依赖， configuration初始化后再构造  CurrentServer对象
+     * @param configuration
+     * @param environment
+     * @param inetUtils
+     * @return
+     */
     @Bean
 
     public CurrentServer currentService(ConfigurableEnvironmentConfiguration configuration, Environment environment, InetUtils inetUtils) {

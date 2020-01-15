@@ -1,8 +1,9 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.AttachHandler;
-import com.github.vlmap.spring.loadbalancer.core.cli.GaryAttachParamater;
+import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
+import com.github.vlmap.spring.loadbalancer.core.attach.ReactiveAttachHandler;
+import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
@@ -22,9 +24,9 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
     private GrayLoadBalancerProperties properties;
 
 
-    AttachHandler attachHandler;
+    private ReactiveAttachHandler attachHandler;
 
-    public GrayAttachReactiveWebFilter(GrayLoadBalancerProperties properties, AttachHandler attachHandler) {
+    public GrayAttachReactiveWebFilter(GrayLoadBalancerProperties properties, ReactiveAttachHandler attachHandler) {
 
         this.properties = properties;
         this.attachHandler = attachHandler;
@@ -38,14 +40,21 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
         if (CollectionUtils.isNotEmpty(paramaters)) {
 
-          return  Mono.from( AttachHandler.parser(paramaters, new AttachHandler.SimpleRequestData(), exchange)).flatMap(data -> {
-                ServerHttpRequest.Builder builder=  exchange.getRequest().mutate();
-                for (GaryAttachParamater paramater : paramaters) {
-                    String value = attachHandler.attach(paramater, data);
-                    if (StringUtils.isNotBlank(value)) {
-                        builder.header(properties.getHeaderName(), value);
+            return attachHandler.parser(paramaters, new AttachHandler.SimpleRequestData(), exchange).flatMap(data -> {
 
+                ServerHttpRequest.Builder builder=  exchange.getRequest().mutate();
+                List<GaryAttachParamater> list = new ArrayList<>(paramaters);
+                attachHandler.sort(list, data.getPath());
+                for (GaryAttachParamater paramater : list) {
+                    if (attachHandler.match(paramater, data)) {
+                        String value = paramater.getValue();
+                        if (StringUtils.isNotBlank(value)) {
+                            builder.header(properties.getHeaderName(), value);
+
+                        }
                     }
+
+
                 }
                 ServerWebExchange object= exchange.mutate().request( builder.build()).build() ;
                 return chain.filter(object);

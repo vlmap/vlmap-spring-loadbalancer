@@ -3,6 +3,7 @@ package org.springframework.web.reactive.result.method;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -41,9 +42,11 @@ public class GrayInvocableHandlerMethod extends InvocableHandlerMethod {
                     String headerName = properties.getHeaderName();
 
                     String tag = exchange.getRequest().getHeaders().getFirst(headerName);
-                    ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE,tag);
-                    ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
+                     ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
+                    if(StringUtils.isNotBlank(tag)){
+                        ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
+                    }
 
                 }
 

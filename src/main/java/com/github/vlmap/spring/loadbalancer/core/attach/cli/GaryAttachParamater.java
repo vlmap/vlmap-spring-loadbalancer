@@ -1,10 +1,8 @@
-package com.github.vlmap.spring.loadbalancer.core.cli;
+package com.github.vlmap.spring.loadbalancer.core.attach.cli;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class GaryAttachParamater {
@@ -15,13 +13,15 @@ public class GaryAttachParamater {
     private  Map<String, String> cookies = new LinkedMultiValueMap();
 
     private  Map<String, String> params = new LinkedMultiValueMap();
-
+    /**
+     * key  : jsonpath
+     * value :  string value
+     */
     private  Map<String, String> jsonpath = new LinkedMultiValueMap();
-    private List<String> methods = new ArrayList<>();
-    private List<String> uris = new ArrayList<>();
+    private String method ;
+    private String path ;
 
     private String value;
-    private boolean strict = false;
 
 
     public Map<String, String> getHeaders() {
@@ -56,28 +56,20 @@ public class GaryAttachParamater {
         this.jsonpath = jsonpath;
     }
 
-    public List<String> getMethods() {
-        return methods;
+    public String getMethod() {
+        return method;
     }
 
-    public void setMethods(List<String> methods) {
-        this.methods = methods;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
-    public List<String> getUris() {
-        return uris;
+    public String getPath() {
+        return path;
     }
 
-    public void setUris(List<String> uris) {
-        this.uris = uris;
-    }
-
-    public boolean isStrict() {
-        return strict;
-    }
-
-    public void setStrict(boolean strict) {
-        this.strict = strict;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getValue() {
@@ -86,5 +78,18 @@ public class GaryAttachParamater {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public static class Comparator implements java.util.Comparator<GaryAttachParamater>{
+        java.util.Comparator<String> comparator;
+
+        public Comparator(java.util.Comparator<String> comparator) {
+            this.comparator = comparator;
+        }
+
+        @Override
+        public int compare(GaryAttachParamater o1, GaryAttachParamater o2) {
+            return comparator.compare( ObjectUtils.toString(o1.getPath()), ObjectUtils.toString(o2.getPath()));
+        }
     }
 }
