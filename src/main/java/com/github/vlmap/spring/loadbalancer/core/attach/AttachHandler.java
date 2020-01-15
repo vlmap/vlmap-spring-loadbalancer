@@ -16,6 +16,8 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.MultiValueMap;
@@ -45,7 +47,9 @@ public abstract class AttachHandler {
         return attachParamaters;
     }
 
+    @Order(Ordered.LOWEST_PRECEDENCE)
     @EventListener(EnvironmentChangeEvent.class)
+
     public void listener(EnvironmentChangeEvent event) {
         Set<String> keys = event.getKeys();
         boolean state = false;
@@ -62,8 +66,6 @@ public abstract class AttachHandler {
             List<String> commands = properties.getAttach().getCommands();
 
             List<GaryAttachParamater> list = new ArrayList<>();
-            BindResult<List<String>> result = Binder.get(environment).bind(ATTACH_COMMANDS_PREFIX, Bindable.listOf(String.class));
-            commands = result.orElse(null);
 
             if (CollectionUtils.isNotEmpty(commands)) {
                 for (String expression : commands) {

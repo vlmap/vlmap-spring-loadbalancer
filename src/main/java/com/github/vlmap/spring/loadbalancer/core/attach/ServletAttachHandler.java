@@ -71,7 +71,7 @@ public class ServletAttachHandler extends AttachHandler {
         if (isReadBody(attachs) && MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
 
             Charset charset = contentType.getCharset();
-            charset=charset==null?DEFAULT_CHARSET:charset;
+            charset=charset==null?AttachHandler.DEFAULT_CHARSET:charset;
 
             ServletInputStream input = null;
             try {

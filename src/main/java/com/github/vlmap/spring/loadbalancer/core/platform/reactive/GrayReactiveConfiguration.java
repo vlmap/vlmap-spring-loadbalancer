@@ -2,7 +2,6 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
-import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.ReactiveAttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;

@@ -78,7 +78,7 @@ public class ReactiveAttachHandler extends AttachHandler {
                 return Mono.from(request.getBody().flatMap(dataBuffer -> {
 
                     Charset charset = contentType.getCharset();
-                    charset=charset==null?DEFAULT_CHARSET:charset;
+                    charset=charset==null?AttachHandler.DEFAULT_CHARSET:charset;
 
                     CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
                     DataBufferUtils.release(dataBuffer);
