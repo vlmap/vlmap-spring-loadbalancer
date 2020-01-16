@@ -206,22 +206,6 @@ public abstract class AttachHandler {
     }
 
 
-    public static Charset getCharset(String charset) {
-
-        Charset object = null;
-        if (StringUtils.isNotBlank(charset)) {
-            try {
-                object = Charset.forName(charset);
-            } catch (Exception e) {
-                logger.error("Charset.forName(charsetType) error,charsetType=" + charset, e);
-            }
-        }
-        if (object == null) {
-            object = DEFAULT_CHARSET;
-
-        }
-        return object;
-    }
 
     public static class SimpleRequestData {
 
