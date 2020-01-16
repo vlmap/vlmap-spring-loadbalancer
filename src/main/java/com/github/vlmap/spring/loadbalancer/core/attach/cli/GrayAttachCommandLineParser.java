@@ -153,7 +153,7 @@ public class GrayAttachCommandLineParser {
         if (ArrayUtils.isNotEmpty(values)) {
             for (String value : values) {
                 String key = StringUtils.substringBefore(value, separator);
-                String val = StringUtils.substringBefore(value, separator);
+                String val = StringUtils.substringAfter(value, separator);
                 map.put(key, val);
             }
         }

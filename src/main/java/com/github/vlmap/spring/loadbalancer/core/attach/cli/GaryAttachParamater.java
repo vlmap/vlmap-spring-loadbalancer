@@ -4,6 +4,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class GaryAttachParamater {
 
@@ -23,6 +24,24 @@ public class GaryAttachParamater {
 
     private String value;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GaryAttachParamater that = (GaryAttachParamater) o;
+        return Objects.equals(headers, that.headers) &&
+                Objects.equals(cookies, that.cookies) &&
+                Objects.equals(params, that.params) &&
+                Objects.equals(jsonpath, that.jsonpath) &&
+                Objects.equals(method, that.method) &&
+                Objects.equals(path, that.path) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(headers, cookies, params, jsonpath, method, path, value);
+    }
 
     public Map<String, String> getHeaders() {
         return headers;

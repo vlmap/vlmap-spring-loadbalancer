@@ -31,11 +31,9 @@ public class ReactiveAttachHandler extends AttachHandler {
         data.path = request.getPath().value();
         data.method = request.getMethod().name();
         MediaType contentType = request.getHeaders().getContentType();
-        if(contentType!=null){
-            data.contentType = contentType.getType()+"/"+contentType.getSubtype();
+        if (contentType != null) {
+            data.contentType = contentType.getType() + "/" + contentType.getSubtype();
         }
-
-
 
 
         data.headers = new LinkedMultiValueMap<>();
@@ -55,42 +53,36 @@ public class ReactiveAttachHandler extends AttachHandler {
         }
 
 
-        Mono<SimpleRequestData> mono=Mono.just(data);
+        Mono<SimpleRequestData> mono = Mono.just(data);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        data.params = params;
         params.addAll(request.getQueryParams());
-
-        if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
-            mono = mono.flatMap(object -> {
-                return   exchange.getFormData().map(formData -> {
+        return Mono.just(data).flatMap((object) -> {
+            if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
+                return exchange.getFormData().map(formData -> {
                     params.addAll(formData);
                     return data;
                 });
-
-            });
-
-
-        }
-
-        if (isReadBody(attachs) && MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
-
-            mono = mono.flatMap(object -> {
+            }
+            return Mono.just(data);
+        }).flatMap(object -> {
+            if (isReadBody(attachs) && MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
                 return Mono.from(request.getBody().flatMap(dataBuffer -> {
 
                     Charset charset = contentType.getCharset();
-                    charset=charset==null?AttachHandler.DEFAULT_CHARSET:charset;
+                    charset = charset == null ? AttachHandler.DEFAULT_CHARSET : charset;
 
                     CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
                     DataBufferUtils.release(dataBuffer);
                     String json = charBuffer.toString();
                     data.body = json;
-                    return Mono.just(data);
+                    return  Mono.just(data);
                 }));
-            });
+            }
+            return Mono.just(data);
 
-        }
-        return mono;
-
+        }).map(object -> object).thenReturn(data);
 
 
     }

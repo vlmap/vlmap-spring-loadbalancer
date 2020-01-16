@@ -44,27 +44,41 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
         if (CollectionUtils.isNotEmpty(paramaters)) {
             List<String> headers = new ArrayList<>();
             MediaType contentType = exchange.getRequest().getHeaders().getContentType();
-            if (!HttpMethod.GET.equals(exchange.getRequest().getMethod())) {
+            HttpMethod method = exchange.getRequest().getMethod();
+            Mono<ServerWebExchange> mono = null;
+
+            if (!(HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))) {
                 if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
-                    return ServerWebExchangeBodyUtil
-                            .cache(exchange)
-                            .doOnNext(object -> paramaters(object, data, paramaters))
-                            .doOnNext((o) -> match(data, paramaters, headers))
-                            .flatMap(object -> {
-                                if (CollectionUtils.isNotEmpty(headers)) {
-                                    ServerHttpRequest.Builder builder = object.getRequest().mutate();
-                                    for (String header : headers) {
-                                        builder.header(properties.getHeaderName(), header);
-                                    }
-                                    object = object.mutate().request(builder.build()).build();
-                                }
-                                return chain.filter(object);
-                            });
+
+                    if (attachHandler.isReadBody(paramaters)) {
+                        //缓存body
+                        mono = ServerWebExchangeBodyUtil.cache(exchange);
+                    }
+
                 }
             }
+            if (mono == null) {
+
+                mono = Mono.just(exchange);
+
+            }
+            return mono
+                    .flatMap(object -> paramaters(object, data, paramaters).thenReturn(object))
+
+                    .doOnNext((o) -> match(data, paramaters, headers))
+                    .flatMap(object -> {
+                        if (CollectionUtils.isNotEmpty(headers)) {
+                            ServerHttpRequest.Builder builder = object.getRequest().mutate();
+                            for (String header : headers) {
+                                builder.header(properties.getHeaderName(), header);
+                            }
+                            object = object.mutate().request(builder.build()).build();
+                        }
+                        return chain.filter(object);
+                    });
 
         }
-            return chain.filter(exchange);
+        return chain.filter(exchange);
 
 
     }
@@ -76,8 +90,8 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
      * @param paramaters
      * @return
      */
-    protected void paramaters(ServerWebExchange exchange, AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters) {
-        attachHandler.parser(paramaters, data, exchange);
+    protected Mono<AttachHandler.SimpleRequestData> paramaters(ServerWebExchange exchange, AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters) {
+        return attachHandler.parser(paramaters, data, exchange);
     }
 
     /**

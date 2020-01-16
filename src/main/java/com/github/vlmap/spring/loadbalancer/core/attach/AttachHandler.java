@@ -47,7 +47,7 @@ public abstract class AttachHandler {
         return attachParamaters;
     }
 
-    @Order(Ordered.LOWEST_PRECEDENCE)
+    @Order
     @EventListener(EnvironmentChangeEvent.class)
 
     public void listener(EnvironmentChangeEvent event) {
@@ -65,7 +65,7 @@ public abstract class AttachHandler {
         if (state) {
             List<String> commands = properties.getAttach().getCommands();
 
-            List<GaryAttachParamater> list = new ArrayList<>();
+            Set<GaryAttachParamater> list = new LinkedHashSet<>();
 
             if (CollectionUtils.isNotEmpty(commands)) {
                 for (String expression : commands) {
@@ -80,7 +80,7 @@ public abstract class AttachHandler {
             }
 
 
-            this.attachParamaters = list;
+            this.attachParamaters = Collections.unmodifiableList(new ArrayList<>(list));
         }
 
 
@@ -176,11 +176,12 @@ public abstract class AttachHandler {
             if (MapUtils.isNotEmpty(parent)) {
                 for (Map.Entry<String, String> entry : child.entrySet()) {
                     List<String> list = parent.get(entry.getKey());
-                    if (!CollectionUtils.isEmpty(list) || !list.contains(entry.getValue())) {
-                        return false;
+                    if (CollectionUtils.isNotEmpty(list)&&list.contains(entry.getValue())) {
+                        return true;
                     }
 
                 }
+                return false;
             } else {
                 return false;
             }
@@ -190,7 +191,7 @@ public abstract class AttachHandler {
         return true;
     }
 
-    protected boolean isReadBody(List<GaryAttachParamater> attachs) {
+    public  boolean isReadBody(List<GaryAttachParamater> attachs) {
 
 
         if (this.properties.getAttach().isReadBody()) {
@@ -237,10 +238,10 @@ public abstract class AttachHandler {
                         this.document = Configuration.defaultConfiguration().jsonProvider().parse(body);
                     }
                 } catch (Exception e) {
-
+                logger.error("parse json error,json:"+body);
                 }
             }
-            return false;
+            return  this.document;
         }
 
         public MultiValueMap<String, String> getParams() {
