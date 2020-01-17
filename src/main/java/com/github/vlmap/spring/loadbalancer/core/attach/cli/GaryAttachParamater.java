@@ -43,6 +43,19 @@ public class GaryAttachParamater {
         return Objects.hash(headers, cookies, params, jsonpath, method, path, value);
     }
 
+    @Override
+    public String toString() {
+        return "GaryAttachParamater{" +
+                "headers=" + headers +
+                ", cookies=" + cookies +
+                ", params=" + params +
+                ", jsonpath=" + jsonpath +
+                ", method='" + method + '\'' +
+                ", path='" + path + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
+
     public Map<String, String> getHeaders() {
         return headers;
     }

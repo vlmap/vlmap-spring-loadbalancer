@@ -36,11 +36,11 @@ public class GrayAttachCommandLineParser {
 
 
     public void initOptions() {
-        Option.Builder builder = Option.builder("H").longOpt(HEADER).argName("name:value").hasArg(true).desc("匹配HEADER信息。示例：\n--header=referer:https://www.baidu.com\n--header \"referer:https://www.baidu.com\"");
+        Option.Builder builder = Option.builder("H").longOpt(HEADER).argName("name:value").hasArg(true).desc("HEADER匹配。示例：\n--header=referer:https://www.github.com");
         options.addOption(builder.build());
 
 
-        builder = Option.builder().longOpt(PATH).hasArg(true).desc("URI匹配，支持ANT格式URI. 示例：--uri=/test/** ");
+        builder = Option.builder().longOpt(PATH).hasArg(true).desc("PATH匹配，支持ANT格式的PATH. 示例：--path=/test/** ");
         options.addOption(builder.build());
 
         builder = Option.builder("C").longOpt(COOKIE).argName("name:value").hasArg(true).desc("COOKIE匹配. 示例：--cookie=a:1\n--cookie b:2");

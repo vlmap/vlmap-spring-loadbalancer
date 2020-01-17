@@ -4,12 +4,11 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.ReactiveAttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
+import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -20,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
+public class GrayAttachWebFilter implements OrderedWebFilter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GrayLoadBalancerProperties properties;
@@ -28,7 +27,7 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
 
     private ReactiveAttachHandler attachHandler;
 
-    public GrayAttachReactiveWebFilter(GrayLoadBalancerProperties properties, ReactiveAttachHandler attachHandler) {
+    public GrayAttachWebFilter(GrayLoadBalancerProperties properties, ReactiveAttachHandler attachHandler) {
 
         this.properties = properties;
         this.attachHandler = attachHandler;
@@ -38,7 +37,9 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-
+        if(!this.properties.getAttach().isEnabled()){
+            return chain.filter(exchange);
+        }
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
         AttachHandler.SimpleRequestData data = new AttachHandler.SimpleRequestData();
         if (CollectionUtils.isNotEmpty(paramaters)) {
@@ -47,15 +48,10 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
             HttpMethod method = exchange.getRequest().getMethod();
             Mono<ServerWebExchange> mono = null;
 
-            if (!(HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))) {
-                if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
 
-                    if (attachHandler.isReadBody(paramaters)) {
-                        //缓存body
-                        mono = ServerWebExchangeBodyUtil.cache(exchange);
-                    }
-
-                }
+            if (attachHandler.isReadBody(paramaters, contentType, method)) {
+                //缓存body
+                mono = ServerWebExchangeBodyUtil.cache(exchange);
             }
             if (mono == null) {
 
@@ -65,7 +61,7 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
             return mono
                     .flatMap(object -> paramaters(object, data, paramaters).thenReturn(object))
 
-                    .doOnNext((o) -> match(data, paramaters, headers))
+                    .doOnNext((o) -> attachHandler.match(data, paramaters, headers))
                     .flatMap(object -> {
                         if (CollectionUtils.isNotEmpty(headers)) {
                             ServerHttpRequest.Builder builder = object.getRequest().mutate();
@@ -94,30 +90,9 @@ public class GrayAttachReactiveWebFilter implements OrderedWebFilter {
         return attachHandler.parser(paramaters, data, exchange);
     }
 
-    /**
-     * 匹配标签
-     *
-     * @param data
-     * @param paramaters
-     * @return
-     */
-    protected void match(AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters, List<String> result) {
-        List<GaryAttachParamater> list = new ArrayList<>(paramaters);
-        attachHandler.sort(list, data.getPath());
-        for (GaryAttachParamater paramater : list) {
-            if (attachHandler.match(paramater, data)) {
-                String value = paramater.getValue();
-                if (StringUtils.isNotBlank(value)) {
-                    result.add(value);
 
-                }
-            }
-        }
-
-    }
-
-    @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return FilterOrder.ORDER_ATTACH_FILTER;
     }
+
 }

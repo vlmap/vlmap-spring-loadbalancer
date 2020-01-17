@@ -11,14 +11,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.bind.BindResult;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.MultiValueMap;
 
@@ -68,9 +66,15 @@ public abstract class AttachHandler {
             Set<GaryAttachParamater> list = new LinkedHashSet<>();
 
             if (CollectionUtils.isNotEmpty(commands)) {
-                for (String expression : commands) {
+                for(int i=0,length=commands.size();i<length;i++){
+                    String expression=commands.get(i);
 
                     GaryAttachParamater paramater = parser.parser(expression);
+                    if(logger.isInfoEnabled()){
+                        logger.info("command:"+expression+" , GaryAttachParamater:"+paramater.toString());
+                    }
+
+
                     if (paramater != null && StringUtils.isNotBlank(paramater.getValue())) {
                         list.add(paramater);
                     }
@@ -79,14 +83,36 @@ public abstract class AttachHandler {
                 }
             }
 
-
             this.attachParamaters = Collections.unmodifiableList(new ArrayList<>(list));
+            if(logger.isInfoEnabled()){
+                logger.info("List  GaryAttachParamater :"+attachParamaters);
+            }
         }
 
 
     }
 
+    /**
+     * 匹配标签 返回到 result
+     *
+     * @param data
+     * @param paramaters
+     * @return
+     */
+    public void match(AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters, List<String> result) {
+        List<GaryAttachParamater> list = new ArrayList<>(paramaters);
+        this.sort(list, data.getPath());
+        for (GaryAttachParamater paramater : list) {
+            if (this.match(paramater, data)) {
+                String value = paramater.getValue();
+                if (StringUtils.isNotBlank(value)) {
+                    result.add(value);
 
+                }
+            }
+        }
+
+    }
     public void sort(List<GaryAttachParamater> list, String path) {
         Comparator<String> comparator = pathMatcher.getPatternComparator(path);
 
@@ -191,18 +217,21 @@ public abstract class AttachHandler {
         return true;
     }
 
-    public  boolean isReadBody(List<GaryAttachParamater> attachs) {
+    public boolean isReadBody(List<GaryAttachParamater> attachs, MediaType contentType, HttpMethod method) {
 
 
-        if (this.properties.getAttach().isReadBody()) {
-            for (GaryAttachParamater attach : attachs) {
-                if (MapUtils.isNotEmpty(attach.getJsonpath())) {
-                    return true;
+        if (!(HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))) {
+            if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
+                if (this.properties.getAttach().isReadBody()) {
+                    for (GaryAttachParamater attach : attachs) {
+                        if (MapUtils.isNotEmpty(attach.getJsonpath())) {
+                            return true;
+                        }
+                    }
                 }
-
-
             }
         }
+
         return false;
     }
 

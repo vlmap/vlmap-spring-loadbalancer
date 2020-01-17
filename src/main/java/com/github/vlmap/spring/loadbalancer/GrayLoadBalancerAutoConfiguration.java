@@ -52,34 +52,7 @@ public class GrayLoadBalancerAutoConfiguration {
         return new CurrentServer(environment, inetUtils);
     }
 
-    @Autowired
-    public void initDefaultIgnorePath(Environment environment) {
-        Set<String> urls = new LinkedHashSet<>(Arrays.asList("/webjars/**", "/favicon.ico"));
 
-
-        String uri = environment.getProperty("management.endpoints.web.base-path", "/actuator");
-        String antPath = toAntPath(uri);
-
-        if (StringUtils.isNotBlank(antPath)) {
-            urls.add(antPath);
-        }
-        GrayLoadBalancerProperties.StrictDefaultIgnore.DEFAULT_IGNORE_PATH.set(new ArrayList<>(urls));
-    }
-
-
-    private static String toAntPath(String uri) {
-
-        if (StringUtils.isBlank(uri)) {
-            return null;
-        }
-        if (StringUtils.endsWith(uri, "/**")) {
-            return uri;
-        }
-        if (uri.endsWith("/")) {
-            return uri + "**";
-        }
-        return uri + "/**";
-    }
 
     @Configuration
     @ConditionalOnClass(HystrixRequestVariable.class)

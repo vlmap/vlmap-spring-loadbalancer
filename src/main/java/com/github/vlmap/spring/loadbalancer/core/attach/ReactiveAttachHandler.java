@@ -53,7 +53,6 @@ public class ReactiveAttachHandler extends AttachHandler {
         }
 
 
-        Mono<SimpleRequestData> mono = Mono.just(data);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         data.params = params;
@@ -67,7 +66,7 @@ public class ReactiveAttachHandler extends AttachHandler {
             }
             return Mono.just(data);
         }).flatMap(object -> {
-            if (isReadBody(attachs) && MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
+            if (isReadBody(attachs, contentType, request.getMethod())) {
                 return Mono.from(request.getBody().flatMap(dataBuffer -> {
 
                     Charset charset = contentType.getCharset();

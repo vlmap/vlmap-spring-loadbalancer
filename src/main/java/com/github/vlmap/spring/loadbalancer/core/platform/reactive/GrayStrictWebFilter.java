@@ -2,23 +2,23 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
+import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
+public class GrayStrictWebFilter implements OrderedWebFilter {
     private GrayLoadBalancerProperties properties;
     Logger logger = LoggerFactory.getLogger(this.getClass());
     StrictHandler strictHandler;
 
-    public GrayStrictReactiveWebFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
+    public GrayStrictWebFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
 
         this.properties = properties;
         this.strictHandler = strictHandler;
@@ -26,6 +26,9 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        if(!properties.getStrict().isEnabled()){
+            return chain.filter(exchange);
+        }
         String headerName = this.properties.getHeaderName();
 
         String tag = exchange.getRequest().getHeaders().getFirst(headerName);
@@ -60,6 +63,7 @@ public class GrayStrictReactiveWebFilter implements OrderedWebFilter {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return FilterOrder.ORDER_STRICT_FILTER;
     }
+
 }

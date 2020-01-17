@@ -2,6 +2,10 @@
 
  #### spring cloud 灰度路由
  
+ ###更新说明
+ > 增加Hystrix 支持
+ > 请求入口增加根据HTTP参数动态添加添加灰度值
+ 
 
  ###路由规则说明
  
@@ -51,12 +55,40 @@
     <dependency>
 	    <groupId>com.github.vlmap</groupId>
 	    <artifactId>vlmap-spring-loadbalancer</artifactId>
-	    <version>1.0.0</version>
+	    <version>1.0.1.RELEASE</version>
     </dependency>
 ```
+7.命令式匹配(新增)
 
+ 根据HTTP请求参数匹配条件，如果匹配则添加value的值到HTTP头信息(Loadbalancer-Tag:${value})
+```yaml
+vlmap:
+ spring: 
+   loadbalancer: 
+     attach: 
+      commands:
+       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+```
 
-7.使用实例
+>参数说明
+```text
+ -C,--cookie <name:value>      COOKIE匹配. 示例：--cookie=a:1
+                               --cookie b:2
+ -H,--header <name:value>      HEADER匹配。示例：
+                               --header=referer:https://www.github.com
+ -J,--json-path <name:value>   JsonPath匹配. 示例：--json-path=$.data.el[0]:abc
+                               --json-path "$.data.el[0]:abc"
+ -M,--method <arg>             Method匹配. 示例：--method=POST
+                               --method  GET
+ -P,--param <name:value>       参数匹配. 示例：--param=a:1
+                               --param "b:2"
+    --path <arg>               PATH匹配，支持ANT格式的PATH. 示例：--path=/test/**
+ -V,--value <arg>              条件匹配配返回的值
+```
+
+8.使用实例
   >@EnableGrayLoadBalancer  开启灰度路由
   
  ```java
@@ -116,6 +148,12 @@ vlmap:
           path:            #忽略列表，匹配列表的请求将不启用严格模式
             - /antpath/**   # ANT-PATH
             - /antpath2/**
+      attach:
+       enabled: true       
+       commands:
+        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
 
 
 #（服务灰度值） 配置

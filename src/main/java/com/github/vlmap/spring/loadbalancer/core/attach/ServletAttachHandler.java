@@ -3,26 +3,20 @@ package com.github.vlmap.spring.loadbalancer.core.attach;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import org.apache.commons.collections.EnumerationUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
 public class ServletAttachHandler extends AttachHandler {
 
@@ -68,24 +62,15 @@ public class ServletAttachHandler extends AttachHandler {
             data.headers.put(headerName, list);
         }
 
-        if (isReadBody(attachs) && MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
+        if (isReadBody(attachs, contentType, HttpMethod.resolve(request.getMethod()))) {
+            if (request instanceof ContentCachingRequestWrapper) {
+                ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
+                Charset charset = contentType.getCharset();
+                charset = charset == null ? AttachHandler.DEFAULT_CHARSET : charset;
+                byte[] bytes = wrapper.getContentAsByteArray();
 
-            Charset charset = contentType.getCharset();
-            charset=charset==null?AttachHandler.DEFAULT_CHARSET:charset;
-
-            ServletInputStream input = null;
-            try {
-
-                input = request.getInputStream();
-                data.body = IOUtils.toString(input, charset);
-
-            } catch (Exception e) {
-
-            } finally {
-                IOUtils.closeQuietly(input);
+                data.body = new String(bytes, charset);
             }
-
-
         }
 
         return null;

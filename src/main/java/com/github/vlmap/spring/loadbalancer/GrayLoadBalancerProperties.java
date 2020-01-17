@@ -204,7 +204,6 @@ public class GrayLoadBalancerProperties {
     }
 
     static public class StrictDefaultIgnore {
-        public final static AtomicReference<Collection<String>> DEFAULT_IGNORE_PATH = new AtomicReference<>();
         private boolean enabled = true;
 
         public boolean isEnabled() {

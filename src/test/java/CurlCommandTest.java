@@ -8,7 +8,7 @@ import java.util.List;
 public class CurlCommandTest {
     @Test
     public void test() {
-        String commandLine = "-V debug --header 'aaa:1' -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2  ";
+        String commandLine = "-V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2  ";
         CommandLineTokenizer tokenizer = new CommandLineTokenizer(commandLine);
         List<String> args=new ArrayList<>();
         while (tokenizer.hasMoreTokens()) {
