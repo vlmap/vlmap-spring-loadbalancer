@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
@@ -19,7 +18,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.adapter.HttpWebHandlerAdapter;
-import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
@@ -36,24 +34,26 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
 
     @Autowired
     HttpHandler httpHandler;
-    ServerCodecConfigurer serverCodecConfigurer=ServerCodecConfigurer.create();
+    ServerCodecConfigurer serverCodecConfigurer = ServerCodecConfigurer.create();
+
     public GrayAttachWebFilter(GrayLoadBalancerProperties properties, ReactiveAttachHandler attachHandler) {
 
         this.properties = properties;
         this.attachHandler = attachHandler;
 
     }
+
     @PostConstruct
-    public void initMethod(){
-        if(httpHandler instanceof HttpWebHandlerAdapter){
-            HttpWebHandlerAdapter httpWebHandler=(HttpWebHandlerAdapter)httpHandler;
-            serverCodecConfigurer=   httpWebHandler.getCodecConfigurer();
+    public void initMethod() {
+        if (httpHandler instanceof HttpWebHandlerAdapter) {
+            HttpWebHandlerAdapter httpWebHandler = (HttpWebHandlerAdapter) httpHandler;
+            serverCodecConfigurer = httpWebHandler.getCodecConfigurer();
         }
-     }
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if(!this.properties.getAttach().isEnabled()){
+        if (!this.properties.getAttach().isEnabled()) {
             return chain.filter(exchange);
         }
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
@@ -65,9 +65,9 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
             Mono<ServerWebExchange> mono = null;
 
 
-            if (attachHandler.isReadBody(paramaters, contentType, method)) {
+            if (attachHandler.useCache(paramaters, contentType, method)) {
                 //缓存body
-                mono = ServerWebExchangeBodyUtil.cache(exchange,serverCodecConfigurer);
+                mono = ServerWebExchangeBodyUtil.cache(exchange, serverCodecConfigurer);
             }
             if (mono == null) {
 

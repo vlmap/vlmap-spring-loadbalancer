@@ -14,7 +14,7 @@ public class RequestMappingInvoker {
         this.properties = properties;
     }
 
-    public InvocableHandlerMethod invocableMethod(ReactiveAdapterRegistry reactiveAdapterRegistry,InvocableHandlerMethod invocable, HandlerMethod handlerMethod) {
+    public InvocableHandlerMethod invocableMethod(ReactiveAdapterRegistry reactiveAdapterRegistry, InvocableHandlerMethod invocable, HandlerMethod handlerMethod) {
         GrayInvocableHandlerMethod result = new GrayInvocableHandlerMethod(handlerMethod);
         result.setProperties(this.properties);
         result.setArgumentResolvers(invocable.getResolvers());

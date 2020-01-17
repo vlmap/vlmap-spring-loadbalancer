@@ -30,8 +30,8 @@ public class ServletAttachHandler extends AttachHandler {
 
         MediaType contentType = MediaType.valueOf(data.contentType);
 
-         if(contentType!=null){
-            data.contentType = contentType.getType()+"/"+contentType.getSubtype();
+        if (contentType != null) {
+            data.contentType = contentType.getType() + "/" + contentType.getSubtype();
         }
 
         Cookie[] cookies = request.getCookies();
@@ -62,7 +62,7 @@ public class ServletAttachHandler extends AttachHandler {
             data.headers.put(headerName, list);
         }
 
-        if (isReadBody(attachs, contentType, HttpMethod.resolve(request.getMethod()))) {
+        if (useCache(attachs, contentType, HttpMethod.resolve(request.getMethod()))) {
             if (request instanceof ContentCachingRequestWrapper) {
                 ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
                 Charset charset = contentType.getCharset();
@@ -75,7 +75,6 @@ public class ServletAttachHandler extends AttachHandler {
 
         return null;
     }
-
 
 
 }

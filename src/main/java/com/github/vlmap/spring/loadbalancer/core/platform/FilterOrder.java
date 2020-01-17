@@ -4,7 +4,7 @@ import org.springframework.core.Ordered;
 
 public interface FilterOrder {
 
-    int ORDER_ATTACH_FILTER =  Ordered.HIGHEST_PRECEDENCE;
+    int ORDER_ATTACH_FILTER = Ordered.HIGHEST_PRECEDENCE;
 
     int ORDER_STRICT_FILTER = ORDER_ATTACH_FILTER + 10;
 

@@ -11,6 +11,7 @@ public class HystrixRuntimeContext implements RuntimeContext {
 
     HystrixRuntimeContext() {
     }
+
     private Map<String, Object> getContext() {
         if (!HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext.initializeContext();

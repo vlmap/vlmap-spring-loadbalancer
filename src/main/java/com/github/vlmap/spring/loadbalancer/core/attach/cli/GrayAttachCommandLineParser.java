@@ -7,7 +7,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -103,17 +102,14 @@ public class GrayAttachCommandLineParser {
         values = commandLine.getOptionValues(JSON_PATH);
         addAll(map, values, ":");
 
-         result.setPath(commandLine.getOptionValue(PATH));
+        result.setPath(commandLine.getOptionValue(PATH));
 
 
-
-        result.setMethod( commandLine.getOptionValue(METHOD));
+        result.setMethod(commandLine.getOptionValue(METHOD));
 
         String value = commandLine.getOptionValue(VALUE);
 
         result.setValue(value);
-
-
 
 
         return result;

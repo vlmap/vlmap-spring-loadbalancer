@@ -48,9 +48,9 @@ public class GrayAttachServletFilter implements OrderedFilter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        if(!this.properties.getAttach().isEnabled()){
-            chain.doFilter(request,response);
-            return ;
+        if (!this.properties.getAttach().isEnabled()) {
+            chain.doFilter(request, response);
+            return;
         }
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
@@ -63,7 +63,7 @@ public class GrayAttachServletFilter implements OrderedFilter {
             MediaType contentType = MediaType.valueOf(request.getContentType());
             HttpMethod method = HttpMethod.resolve(httpServletRequest.getMethod());
 
-            if (attachHandler.isReadBody(paramaters, contentType, method)) {
+            if (attachHandler.useCache(paramaters, contentType, method)) {
                 httpServletRequest = new ContentCachingRequestWrapper(httpServletRequest);
             }
 

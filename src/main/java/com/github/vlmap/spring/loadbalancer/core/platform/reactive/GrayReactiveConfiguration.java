@@ -29,10 +29,12 @@ public class GrayReactiveConfiguration {
     public GrayStrictWebFilter strictFilter(StrictHandler strictHandler, GrayLoadBalancerProperties properties) {
         return new GrayStrictWebFilter(properties, strictHandler);
     }
+
     @Bean
     public ReactiveAttachHandler attachHandler(Environment environment, GrayLoadBalancerProperties properties) {
-        return new ReactiveAttachHandler(  properties,environment);
+        return new ReactiveAttachHandler(properties, environment);
     }
+
     @Bean
     public GrayAttachWebFilter attachFilter(ReactiveAttachHandler attachHandler, GrayLoadBalancerProperties properties) {
         return new GrayAttachWebFilter(properties, attachHandler);

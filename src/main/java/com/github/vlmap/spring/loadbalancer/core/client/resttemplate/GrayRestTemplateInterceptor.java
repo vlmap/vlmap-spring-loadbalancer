@@ -42,7 +42,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         }
 
         try {
-            if(StringUtils.isNotBlank(tag)){
+            if (StringUtils.isNotBlank(tag)) {
                 ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
             }

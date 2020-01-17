@@ -26,7 +26,7 @@ public class GrayStrictWebFilter implements OrderedWebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if(!properties.getStrict().isEnabled()){
+        if (!properties.getStrict().isEnabled()) {
             return chain.filter(exchange);
         }
         String headerName = this.properties.getHeaderName();

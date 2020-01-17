@@ -66,12 +66,12 @@ public abstract class AttachHandler {
             Set<GaryAttachParamater> list = new LinkedHashSet<>();
 
             if (CollectionUtils.isNotEmpty(commands)) {
-                for(int i=0,length=commands.size();i<length;i++){
-                    String expression=commands.get(i);
+                for (int i = 0, length = commands.size(); i < length; i++) {
+                    String expression = commands.get(i);
 
                     GaryAttachParamater paramater = parser.parser(expression);
-                    if(logger.isInfoEnabled()){
-                        logger.info("command:"+expression+" , GaryAttachParamater:"+paramater.toString());
+                    if (logger.isInfoEnabled()) {
+                        logger.info("command:" + expression + " , GaryAttachParamater:" + paramater.toString());
                     }
 
 
@@ -84,8 +84,8 @@ public abstract class AttachHandler {
             }
 
             this.attachParamaters = Collections.unmodifiableList(new ArrayList<>(list));
-            if(logger.isInfoEnabled()){
-                logger.info("List  GaryAttachParamater :"+attachParamaters);
+            if (logger.isInfoEnabled()) {
+                logger.info("List  GaryAttachParamater :" + attachParamaters);
             }
         }
 
@@ -113,6 +113,7 @@ public abstract class AttachHandler {
         }
 
     }
+
     public void sort(List<GaryAttachParamater> list, String path) {
         Comparator<String> comparator = pathMatcher.getPatternComparator(path);
 
@@ -202,7 +203,7 @@ public abstract class AttachHandler {
             if (MapUtils.isNotEmpty(parent)) {
                 for (Map.Entry<String, String> entry : child.entrySet()) {
                     List<String> list = parent.get(entry.getKey());
-                    if (CollectionUtils.isNotEmpty(list)&&list.contains(entry.getValue())) {
+                    if (CollectionUtils.isNotEmpty(list) && list.contains(entry.getValue())) {
                         return true;
                     }
 
@@ -217,11 +218,12 @@ public abstract class AttachHandler {
         return true;
     }
 
-    public boolean isReadBody(List<GaryAttachParamater> attachs, MediaType contentType, HttpMethod method) {
+    public boolean useCache(List<GaryAttachParamater> attachs, MediaType contentType, HttpMethod method) {
 
 
         if (!(HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))) {
-            if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
+            if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)
+                    || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
                 if (this.properties.getAttach().isReadBody()) {
                     for (GaryAttachParamater attach : attachs) {
                         if (MapUtils.isNotEmpty(attach.getJsonpath())) {
@@ -234,7 +236,6 @@ public abstract class AttachHandler {
 
         return false;
     }
-
 
 
     public static class SimpleRequestData {
@@ -267,10 +268,10 @@ public abstract class AttachHandler {
                         this.document = Configuration.defaultConfiguration().jsonProvider().parse(body);
                     }
                 } catch (Exception e) {
-                logger.error("parse json error,json:"+body);
+                    logger.error("parse json error,json:" + body);
                 }
             }
-            return  this.document;
+            return this.document;
         }
 
         public MultiValueMap<String, String> getParams() {

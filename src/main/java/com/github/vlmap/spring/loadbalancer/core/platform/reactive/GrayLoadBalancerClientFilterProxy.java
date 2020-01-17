@@ -40,8 +40,8 @@ public class GrayLoadBalancerClientFilterProxy {
 
         try {
             ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
-            if(StringUtils.isNotBlank(tag)){
-                 ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+            if (StringUtils.isNotBlank(tag)) {
+                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
             }
 
 

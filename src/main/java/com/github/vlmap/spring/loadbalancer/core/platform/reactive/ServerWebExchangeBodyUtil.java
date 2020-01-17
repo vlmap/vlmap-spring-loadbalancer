@@ -30,19 +30,18 @@ public class ServerWebExchangeBodyUtil {
     private static final Mono<MultiValueMap<String, String>> EMPTY_FORM_DATA =
             Mono.just(CollectionUtils.unmodifiableMultiValueMap(new LinkedMultiValueMap<String, String>(0)))
                     .cache();
-
     public static final String CACHE_REQUEST_BODY_OBJECT_KEY = "__cached_request_body_object__";
 
     private static DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
 
-    public static Mono<ServerWebExchange> set(ServerWebExchange exchange, byte[] bytes,ServerCodecConfigurer codecConfigurer) {
+    public static Mono<ServerWebExchange> set(ServerWebExchange exchange, byte[] bytes, ServerCodecConfigurer codecConfigurer) {
         DataBuffer buffer = dataBufferFactory.wrap(bytes);
-        return set(exchange, buffer,codecConfigurer);
+        return set(exchange, buffer, codecConfigurer);
     }
 
-    public static Mono<ServerWebExchange> set(ServerWebExchange exchange, DataBuffer buffer,ServerCodecConfigurer codecConfigurer) {
+    public static Mono<ServerWebExchange> set(ServerWebExchange exchange, DataBuffer buffer, ServerCodecConfigurer codecConfigurer) {
         exchange.getAttributes().put(CACHE_REQUEST_BODY_OBJECT_KEY, buffer);
-        return cache(exchange,codecConfigurer);
+        return cache(exchange, codecConfigurer);
     }
 
 
@@ -62,7 +61,6 @@ public class ServerWebExchangeBodyUtil {
     }
 
 
-
     private static Mono<ServerWebExchange> body(ServerWebExchange exchange, ServerCodecConfigurer codecConfigurer) {
 
         return Mono.from(exchange.getRequest().getBody().flatMap(dataBuffer -> {
@@ -71,6 +69,7 @@ public class ServerWebExchangeBodyUtil {
             return parser(exchange, dataBuffer, codecConfigurer);
         }));
     }
+
     @SuppressWarnings("unchecked")
     private static Mono<MultiValueMap<String, String>> initFormData(ServerHttpRequest request,
                                                                     ServerCodecConfigurer configurer, String logPrefix) {
@@ -115,11 +114,11 @@ public class ServerWebExchangeBodyUtil {
 
 
         };
-        Mono<MultiValueMap<String, String>> formDataMono = codecConfigurer==null?null:initFormData(mutatedRequest, codecConfigurer, exchange.getLogPrefix());
+
+        Mono<MultiValueMap<String, String>> formDataMono = codecConfigurer == null ? null : initFormData(mutatedRequest, codecConfigurer, exchange.getLogPrefix());
 
 
-
-        ServerWebExchange  instance = new DelegateServerWebExchangeDecorator(exchange.mutate().request(mutatedRequest).build(), formDataMono);
+        ServerWebExchange instance = new DelegateServerWebExchangeDecorator(exchange.mutate().request(mutatedRequest).build(), formDataMono);
         return Mono.just(instance);
     }
 

@@ -18,7 +18,7 @@ import org.springframework.web.reactive.result.method.annotation.GrayRequestMapp
 public class GrayRequestMappingHandlerAdapterConfiguration {
 
     @Bean
-    public WebFluxRegistrations webFluxRegistrations(RequestMappingInvoker requestMappingInvoker  ) {
+    public WebFluxRegistrations webFluxRegistrations(RequestMappingInvoker requestMappingInvoker) {
         return new GrayWebFluxRegistrations(requestMappingInvoker);
     }
 

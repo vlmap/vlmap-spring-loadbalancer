@@ -50,10 +50,10 @@ public class GrayFeignClientProxy {
 
         }
         try {
-             if(StringUtils.isNotBlank(tag)){
-                 ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+            if (StringUtils.isNotBlank(tag)) {
+                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
-             }
+            }
             return joinPoint.proceed();
         } finally {
             ContextManager.getRuntimeContext().onComplete();

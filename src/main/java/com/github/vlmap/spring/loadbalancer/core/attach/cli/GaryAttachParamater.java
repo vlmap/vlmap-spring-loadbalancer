@@ -11,16 +11,16 @@ public class GaryAttachParamater {
     private Map<String, String> headers = new LinkedMultiValueMap();
 
 
-    private  Map<String, String> cookies = new LinkedMultiValueMap();
+    private Map<String, String> cookies = new LinkedMultiValueMap();
 
-    private  Map<String, String> params = new LinkedMultiValueMap();
+    private Map<String, String> params = new LinkedMultiValueMap();
     /**
      * key  : jsonpath
      * value :  string value
      */
-    private  Map<String, String> jsonpath = new LinkedMultiValueMap();
-    private String method ;
-    private String path ;
+    private Map<String, String> jsonpath = new LinkedMultiValueMap();
+    private String method;
+    private String path;
 
     private String value;
 
@@ -112,7 +112,7 @@ public class GaryAttachParamater {
         this.value = value;
     }
 
-    public static class Comparator implements java.util.Comparator<GaryAttachParamater>{
+    public static class Comparator implements java.util.Comparator<GaryAttachParamater> {
         java.util.Comparator<String> comparator;
 
         public Comparator(java.util.Comparator<String> comparator) {
@@ -121,7 +121,7 @@ public class GaryAttachParamater {
 
         @Override
         public int compare(GaryAttachParamater o1, GaryAttachParamater o2) {
-            return comparator.compare( ObjectUtils.toString(o1.getPath()), ObjectUtils.toString(o2.getPath()));
+            return comparator.compare(ObjectUtils.toString(o1.getPath()), ObjectUtils.toString(o2.getPath()));
         }
     }
 }

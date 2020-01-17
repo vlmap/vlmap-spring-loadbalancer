@@ -4,9 +4,7 @@ package com.github.vlmap.spring.loadbalancer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @ConfigurationProperties(prefix = "vlmap.spring.loadbalancer")
@@ -227,9 +225,9 @@ public class GrayLoadBalancerProperties {
         }
     }
 
-    static public class Attach{
+    static public class Attach {
         private boolean enabled = true;
-        private boolean readBody=true;
+        private boolean readBody = true;
         List<String> commands;
 
 
