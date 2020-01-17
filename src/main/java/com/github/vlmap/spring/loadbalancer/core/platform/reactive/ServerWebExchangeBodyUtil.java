@@ -34,15 +34,31 @@ public class ServerWebExchangeBodyUtil {
      * @param exchange
      * @return
      */
+//    public static Mono<ServerWebExchange> cache(ServerWebExchange exchange) {
+//
+//        DataBuffer buffer = exchange.getAttribute(CACHE_REQUEST_BODY_OBJECT_KEY);
+//        if (buffer == null) {
+//            return DataBufferUtils.join(exchange.getRequest().getBody())
+//                    .flatMap(dataBuffer -> {
+//                        dataBuffer = DataBufferUtils.retain(dataBuffer);
+//                        return parser(exchange, dataBuffer);
+//                    });
+//        } else {
+//            buffer = DataBufferUtils.retain(buffer);
+//            return parser(exchange, buffer);
+//
+//
+//        }
+//
+//    }
     public static Mono<ServerWebExchange> cache(ServerWebExchange exchange) {
 
         DataBuffer buffer = exchange.getAttribute(CACHE_REQUEST_BODY_OBJECT_KEY);
         if (buffer == null) {
-            return DataBufferUtils.join(exchange.getRequest().getBody())
-                    .flatMap(dataBuffer -> {
+            return Mono.from(exchange.getRequest().getBody().flatMap(dataBuffer -> {
                         dataBuffer = DataBufferUtils.retain(dataBuffer);
                         return parser(exchange, dataBuffer);
-                    });
+            }));
         } else {
             buffer = DataBufferUtils.retain(buffer);
             return parser(exchange, buffer);
@@ -51,7 +67,6 @@ public class ServerWebExchangeBodyUtil {
         }
 
     }
-
     private static Mono<ServerWebExchange> parser(ServerWebExchange exchange, DataBuffer buffer) {
 
         int length = buffer.readableByteCount();
@@ -71,10 +86,20 @@ public class ServerWebExchangeBodyUtil {
                 return resultHeaders;
             }
         };
+//        ServerWebExchangeDecorator d= new ServerWebExchangeDecorator(exchange);
 
         ServerWebExchange instance = exchange.mutate().request(mutatedRequest).build();
         return Mono.just(instance);
     }
-
+//    class DelegateServerWebExchangeDecorator  extends  ServerWebExchangeDecorator{
+//
+//
+//        public  DelegateServerWebExchangeDecorator(ServerWebExchange delegate) {
+//            super(delegate);
+//
+//        }
+//        		this.formDataMono = initFormData(request, codecConfigurer, getLogPrefix());
+//
+//    }
 
 }

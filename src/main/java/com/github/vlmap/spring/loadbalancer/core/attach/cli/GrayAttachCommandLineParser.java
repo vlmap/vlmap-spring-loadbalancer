@@ -56,7 +56,7 @@ public class GrayAttachCommandLineParser {
         builder = Option.builder("M").longOpt(METHOD).hasArg(true).desc("Method匹配. 示例：--method=POST \n--method  GET ");
         options.addOption(builder.build());
 
-        builder = Option.builder("V").longOpt(VALUE).required().hasArg(true).desc("条件匹配配返回的值");
+        builder = Option.builder("V").longOpt(VALUE).required().hasArg(true).desc("条件匹配时返回的灰度值");
         options.addOption(builder.build());
     }
 
