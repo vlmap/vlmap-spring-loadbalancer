@@ -8,14 +8,21 @@ import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.server.adapter.HttpWebHandlerAdapter;
+import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +34,22 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
 
     private ReactiveAttachHandler attachHandler;
 
+    @Autowired
+    HttpHandler httpHandler;
+    ServerCodecConfigurer serverCodecConfigurer=ServerCodecConfigurer.create();
     public GrayAttachWebFilter(GrayLoadBalancerProperties properties, ReactiveAttachHandler attachHandler) {
 
         this.properties = properties;
         this.attachHandler = attachHandler;
 
     }
-
+    @PostConstruct
+    public void initMethod(){
+        if(httpHandler instanceof HttpWebHandlerAdapter){
+            HttpWebHandlerAdapter httpWebHandler=(HttpWebHandlerAdapter)httpHandler;
+            serverCodecConfigurer=   httpWebHandler.getCodecConfigurer();
+        }
+     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -51,7 +67,7 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
 
             if (attachHandler.isReadBody(paramaters, contentType, method)) {
                 //缓存body
-                mono = ServerWebExchangeBodyUtil.cache(exchange);
+                mono = ServerWebExchangeBodyUtil.cache(exchange,serverCodecConfigurer);
             }
             if (mono == null) {
 
