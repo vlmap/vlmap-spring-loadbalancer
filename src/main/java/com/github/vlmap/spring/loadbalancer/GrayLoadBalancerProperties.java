@@ -3,7 +3,9 @@ package com.github.vlmap.spring.loadbalancer;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.MediaType;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -227,9 +229,11 @@ public class GrayLoadBalancerProperties {
 
     static public class Attach {
         private boolean enabled = true;
-        private boolean readBody = true;
         List<String> commands;
-
+        List<MediaType> cacheBodyContentType = Arrays.asList(
+                MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_FORM_URLENCODED
+        );
 
         public boolean isEnabled() {
             return enabled;
@@ -239,12 +243,12 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
 
-        public boolean isReadBody() {
-            return readBody;
+        public List<MediaType> getCacheBodyContentType() {
+            return cacheBodyContentType;
         }
 
-        public void setReadBody(boolean readBody) {
-            this.readBody = readBody;
+        public void setCacheBodyContentType(List<MediaType> cacheBodyContentType) {
+            this.cacheBodyContentType = cacheBodyContentType;
         }
 
         public List<String> getCommands() {

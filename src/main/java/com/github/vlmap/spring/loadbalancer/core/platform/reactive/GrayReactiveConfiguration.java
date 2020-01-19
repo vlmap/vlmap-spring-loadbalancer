@@ -36,7 +36,12 @@ public class GrayReactiveConfiguration {
     }
 
     @Bean
-    public GrayAttachWebFilter attachFilter(ReactiveAttachHandler attachHandler, GrayLoadBalancerProperties properties) {
+    public GrayReadBodyWebFilter readBodyWebFilter() {
+        return new GrayReadBodyWebFilter();
+    }
+
+    @Bean
+    public GrayAttachWebFilter attachWebFilter(ReactiveAttachHandler attachHandler, GrayLoadBalancerProperties properties) {
         return new GrayAttachWebFilter(properties, attachHandler);
     }
 

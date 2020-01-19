@@ -1,9 +1,10 @@
 package com.github.vlmap.spring.loadbalancer.core.attach;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
+import com.github.vlmap.spring.loadbalancer.core.platform.ReadBodyFilter;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -13,10 +14,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ServletAttachHandler extends AttachHandler {
 
@@ -24,7 +22,7 @@ public class ServletAttachHandler extends AttachHandler {
         super(properties, environment);
     }
 
-    public SimpleRequestData parser(List<GaryAttachParamater> attachs, SimpleRequestData data, HttpServletRequest request) {
+    public SimpleRequestData parser(SimpleRequestData data, HttpServletRequest request) {
         data.path = request.getRequestURI();
         data.method = request.getMethod();
 
@@ -62,8 +60,8 @@ public class ServletAttachHandler extends AttachHandler {
             data.headers.put(headerName, list);
         }
 
-        if (useCache(attachs, contentType, HttpMethod.resolve(request.getMethod()))) {
-            if (request instanceof ContentCachingRequestWrapper) {
+        if (isJsonRequest(contentType, HttpMethod.resolve(request.getMethod()))) {
+            if(ObjectUtils.equals(request.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)){
                 ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
                 Charset charset = contentType.getCharset();
                 charset = charset == null ? AttachHandler.DEFAULT_CHARSET : charset;
@@ -71,6 +69,7 @@ public class ServletAttachHandler extends AttachHandler {
 
                 data.body = new String(bytes, charset);
             }
+
         }
 
         return null;

@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.result.method.annotation.GrayRequestMappingHandlerAdapter;
 
+/**
+ * 保证Controller 方法可以调用 RuntimeManager.get方法
+ */
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.controller.enabled", matchIfMissing = true)

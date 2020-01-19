@@ -11,11 +11,8 @@ import org.apache.commons.collections.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -52,6 +49,8 @@ public class GrayAttachServletFilter implements OrderedFilter {
             chain.doFilter(request, response);
             return;
         }
+
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
@@ -60,24 +59,21 @@ public class GrayAttachServletFilter implements OrderedFilter {
 
         if (CollectionUtils.isNotEmpty(paramaters)) {
             List<String> headers = new ArrayList<>();
-            MediaType contentType = MediaType.valueOf(request.getContentType());
-            HttpMethod method = HttpMethod.resolve(httpServletRequest.getMethod());
+            try {
+                initData(httpServletRequest, data);
+                attachHandler.match(data, paramaters, headers);
+                if (CollectionUtils.isNotEmpty(headers)) {
 
-            if (attachHandler.useCache(paramaters, contentType, method)) {
-                httpServletRequest = new ContentCachingRequestWrapper(httpServletRequest);
+                    MultiValueMap<String, String> addHeader = new LinkedMultiValueMap<>();
+                    addHeader.put(properties.getHeaderName(), headers);
+                    httpServletRequest = addHeader(httpServletRequest, addHeader);
+
+
+                }
+            } catch (Exception e) {
+                logger.error("attach match error", e);
             }
 
-
-            paramaters(httpServletRequest, data, paramaters);
-            attachHandler.match(data, paramaters, headers);
-            if (CollectionUtils.isNotEmpty(headers)) {
-
-                MultiValueMap<String, String> addHeader = new LinkedMultiValueMap<>();
-                addHeader.put(properties.getHeaderName(), headers);
-                httpServletRequest = addHeader(httpServletRequest, addHeader);
-
-
-            }
             chain.doFilter(httpServletRequest, response);
 
 
@@ -120,11 +116,10 @@ public class GrayAttachServletFilter implements OrderedFilter {
      * 收集参数
      *
      * @param
-     * @param paramaters
      * @return
      */
-    protected AttachHandler.SimpleRequestData paramaters(HttpServletRequest httpServletRequest, AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters) {
-        return attachHandler.parser(paramaters, data, httpServletRequest);
+    protected AttachHandler.SimpleRequestData initData(HttpServletRequest httpServletRequest, AttachHandler.SimpleRequestData data) {
+        return attachHandler.parser(data, httpServletRequest);
     }
 
 

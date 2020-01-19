@@ -218,19 +218,15 @@ public abstract class AttachHandler {
         return true;
     }
 
-    public boolean useCache(List<GaryAttachParamater> attachs, MediaType contentType, HttpMethod method) {
+    public boolean isJsonRequest(MediaType contentType, HttpMethod method) {
 
 
         if (!(HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method))) {
-            if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)
-                    || contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)) {
-                if (this.properties.getAttach().isReadBody()) {
-                    for (GaryAttachParamater attach : attachs) {
-                        if (MapUtils.isNotEmpty(attach.getJsonpath())) {
-                            return true;
-                        }
-                    }
-                }
+            if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
+
+                return true;
+
+
             }
         }
 

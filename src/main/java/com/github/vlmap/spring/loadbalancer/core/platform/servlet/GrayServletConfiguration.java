@@ -34,6 +34,11 @@ public class GrayServletConfiguration {
     }
 
     @Bean
+    public GrayReadBodyServletFilter readBodyServletFilter() {
+        return new GrayReadBodyServletFilter();
+    }
+
+    @Bean
     public GrayAttachServletFilter attachServletFilter(ServletAttachHandler attachHandler, GrayLoadBalancerProperties properties) {
 
         return new GrayAttachServletFilter(properties, attachHandler);
