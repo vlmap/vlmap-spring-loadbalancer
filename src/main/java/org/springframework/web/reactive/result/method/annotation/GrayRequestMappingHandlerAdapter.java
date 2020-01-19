@@ -164,7 +164,7 @@ public class GrayRequestMappingHandlerAdapter extends RequestMappingHandlerAdapt
         InitBinderBindingContext bindingContext = new InitBinderBindingContext(
                 getWebBindingInitializer(), this.methodResolver.getInitBinderMethods(handlerMethod));
 
-        InvocableHandlerMethod invocableMethod = requestMappingInvoker.invocableMethod(this.reactiveAdapterRegistry,this.methodResolver.getRequestMappingMethod(handlerMethod), handlerMethod);
+        InvocableHandlerMethod invocableMethod = requestMappingInvoker.invocableMethod(this.reactiveAdapterRegistry, this.methodResolver.getRequestMappingMethod(handlerMethod), handlerMethod);
         Function<Throwable, Mono<HandlerResult>> exceptionHandler =
                 ex -> handleException(ex, handlerMethod, bindingContext, exchange);
 

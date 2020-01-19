@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ReactiveAttachHandler extends AttachHandler {
+public class ReactiveAttachHandler extends AbstractAttachHandler {
 
     public ReactiveAttachHandler(GrayLoadBalancerProperties properties, Environment environment) {
         super(properties, environment);
@@ -57,7 +57,7 @@ public class ReactiveAttachHandler extends AttachHandler {
         data.params = params;
         params.addAll(request.getQueryParams());
 
-        if(ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)){
+        if (ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
             return Mono.just(data).flatMap((o) -> {
                 if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
                     return exchange.getFormData().map(formData -> {
@@ -71,7 +71,7 @@ public class ReactiveAttachHandler extends AttachHandler {
                     return DataBufferUtils.join(request.getBody()).flatMap(dataBuffer -> {
 
                         Charset charset = contentType.getCharset();
-                        charset = charset == null ? AttachHandler.DEFAULT_CHARSET : charset;
+                        charset = charset == null ? AbstractAttachHandler.DEFAULT_CHARSET : charset;
 
                         CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
                         DataBufferUtils.release(dataBuffer);
@@ -83,14 +83,9 @@ public class ReactiveAttachHandler extends AttachHandler {
                 return Mono.just(data);
 
             });
-        }
-        else{
+        } else {
             return Mono.just(data);
         }
-
-
-
-
 
 
     }

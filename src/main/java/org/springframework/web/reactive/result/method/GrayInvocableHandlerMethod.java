@@ -19,7 +19,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -35,30 +34,32 @@ public class GrayInvocableHandlerMethod extends InvocableHandlerMethod {
     public void setProperties(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
-    public  Object invoke(ServerWebExchange exchange,   Object... args) throws IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException{
-            try {
-                if (properties != null) {
-                    String headerName = properties.getHeaderName();
 
-                    String tag = exchange.getRequest().getHeaders().getFirst(headerName);
-                     ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
-                    if(StringUtils.isNotBlank(tag)){
-                        ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+    public Object invoke(ServerWebExchange exchange, Object... args) throws IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException {
+        try {
+            if (properties != null) {
+                String headerName = properties.getHeaderName();
 
-                    }
+                String tag = exchange.getRequest().getHeaders().getFirst(headerName);
+                ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
+                if (StringUtils.isNotBlank(tag)) {
+                    ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
                 }
 
-                return  getBridgedMethod().invoke(getBean(), args);
-            }finally {
-
-                if (properties != null) {
-                    ContextManager.getRuntimeContext().onComplete();
-                }
             }
 
+            return getBridgedMethod().invoke(getBean(), args);
+        } finally {
+
+            if (properties != null) {
+                ContextManager.getRuntimeContext().onComplete();
+            }
+        }
+
     }
+
     private static final Object NO_ARG_VALUE = new Object();
 
     public GrayInvocableHandlerMethod(HandlerMethod handlerMethod) {
@@ -74,7 +75,7 @@ public class GrayInvocableHandlerMethod extends InvocableHandlerMethod {
                 ReflectionUtils.makeAccessible(getBridgedMethod());
 
 
-                value =  invoke(exchange, args);
+                value = invoke(exchange, args);
             } catch (IllegalArgumentException ex) {
                 assertTargetBean(getBridgedMethod(), getBean(), args);
                 String text = (ex.getMessage() != null ? ex.getMessage() : "Illegal argument");

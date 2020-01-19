@@ -14,9 +14,12 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
-public class ServletAttachHandler extends AttachHandler {
+public class ServletAttachHandler extends AbstractAttachHandler {
 
     public ServletAttachHandler(GrayLoadBalancerProperties properties, Environment environment) {
         super(properties, environment);
@@ -61,10 +64,10 @@ public class ServletAttachHandler extends AttachHandler {
         }
 
         if (isJsonRequest(contentType, HttpMethod.resolve(request.getMethod()))) {
-            if(ObjectUtils.equals(request.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)){
+            if (ObjectUtils.equals(request.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
                 ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
                 Charset charset = contentType.getCharset();
-                charset = charset == null ? AttachHandler.DEFAULT_CHARSET : charset;
+                charset = charset == null ? AbstractAttachHandler.DEFAULT_CHARSET : charset;
                 byte[] bytes = wrapper.getContentAsByteArray();
 
                 data.body = new String(bytes, charset);

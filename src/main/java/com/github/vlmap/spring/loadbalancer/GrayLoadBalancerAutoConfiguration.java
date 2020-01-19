@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer;
 
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
@@ -22,12 +21,6 @@ public class GrayLoadBalancerAutoConfiguration {
     @Bean
     public StrictHandler strictHandler(CurrentServer currentService, GrayLoadBalancerProperties properties) {
         return new StrictHandler(properties, currentService);
-    }
-
-
-    @Bean
-    public RequestMappingInvoker requestMappingInvoker(GrayLoadBalancerProperties properties) {
-        return new RequestMappingInvoker(properties);
     }
 
 

@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.ReactiveAttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
@@ -26,6 +27,11 @@ public class GrayReactiveConfiguration {
     }
 
     @Bean
+    public RequestMappingInvoker requestMappingInvoker(GrayLoadBalancerProperties properties) {
+        return new RequestMappingInvoker(properties);
+    }
+
+    @Bean
     public GrayStrictWebFilter strictFilter(StrictHandler strictHandler, GrayLoadBalancerProperties properties) {
         return new GrayStrictWebFilter(properties, strictHandler);
     }
@@ -36,8 +42,8 @@ public class GrayReactiveConfiguration {
     }
 
     @Bean
-    public GrayReadBodyWebFilter readBodyWebFilter() {
-        return new GrayReadBodyWebFilter();
+    public GrayReadBodyWebFilter readBodyWebFilter(GrayLoadBalancerProperties properties) {
+        return new GrayReadBodyWebFilter(properties);
     }
 
     @Bean

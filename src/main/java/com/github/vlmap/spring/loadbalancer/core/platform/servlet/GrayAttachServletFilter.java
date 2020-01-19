@@ -1,8 +1,8 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.ServletAttachHandler;
+import com.github.vlmap.spring.loadbalancer.core.attach.SimpleRequestData;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
@@ -54,7 +54,7 @@ public class GrayAttachServletFilter implements OrderedFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
-        AttachHandler.SimpleRequestData data = new AttachHandler.SimpleRequestData();
+        SimpleRequestData data = new SimpleRequestData();
 
 
         if (CollectionUtils.isNotEmpty(paramaters)) {
@@ -118,7 +118,7 @@ public class GrayAttachServletFilter implements OrderedFilter {
      * @param
      * @return
      */
-    protected AttachHandler.SimpleRequestData initData(HttpServletRequest httpServletRequest, AttachHandler.SimpleRequestData data) {
+    protected SimpleRequestData initData(HttpServletRequest httpServletRequest, SimpleRequestData data) {
         return attachHandler.parser(data, httpServletRequest);
     }
 

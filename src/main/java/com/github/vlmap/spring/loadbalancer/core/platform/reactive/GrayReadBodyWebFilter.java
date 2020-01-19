@@ -31,7 +31,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebFilter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -54,7 +53,6 @@ public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebF
     @Autowired(required = false)
     HttpHandler httpHandler;
     ServerCodecConfigurer codecConfigurer = ServerCodecConfigurer.create();
-    private GrayLoadBalancerProperties properties;
 
     HttpWebHandlerAdapter httpWebHandlerAdapter = null;
 
@@ -107,26 +105,6 @@ public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebF
 
     }
 
-    protected boolean use(MediaType contentType, HttpMethod method) {
-        if (HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method)) {
-            return false;
-        }
-        if (contentType != null) {
-            List<MediaType> cacheBodyContentType = properties.getAttach().getCacheBodyContentType();
-
-            if (cacheBodyContentType != null) {
-                for (MediaType type : cacheBodyContentType) {
-                    if (type.isCompatibleWith(contentType)) {
-                        return true;
-
-                    }
-                }
-            }
-
-        }
-        return false;
-
-    }
 
     protected ServerCodecConfigurer getCodecConfigurer() {
         return httpWebHandlerAdapter == null ? codecConfigurer : httpWebHandlerAdapter.getCodecConfigurer();

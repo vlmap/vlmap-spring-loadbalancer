@@ -1,8 +1,8 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.attach.AttachHandler;
 import com.github.vlmap.spring.loadbalancer.core.attach.ReactiveAttachHandler;
+import com.github.vlmap.spring.loadbalancer.core.attach.SimpleRequestData;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,7 +39,7 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
             return chain.filter(exchange);
         }
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
-        AttachHandler.SimpleRequestData data = new AttachHandler.SimpleRequestData();
+        SimpleRequestData data = new SimpleRequestData();
         if (CollectionUtils.isNotEmpty(paramaters)) {
             List<String> headers = new ArrayList<>();
 
@@ -67,7 +67,7 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
      *
      * @return
      */
-    protected Mono<AttachHandler.SimpleRequestData> initData(ServerWebExchange exchange, AttachHandler.SimpleRequestData data) {
+    protected Mono<SimpleRequestData> initData(ServerWebExchange exchange, SimpleRequestData data) {
         return attachHandler.parser(data, exchange);
     }
 

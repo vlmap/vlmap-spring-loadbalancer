@@ -3,7 +3,6 @@ package com.github.vlmap.spring.loadbalancer.core.attach;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GrayAttachCommandLineParser;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -24,8 +23,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public abstract class AttachHandler {
-    private static Logger logger = LoggerFactory.getLogger(AttachHandler.class);
+public abstract class AbstractAttachHandler {
+    private static Logger logger = LoggerFactory.getLogger(AbstractAttachHandler.class);
 
     protected static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     protected Environment environment;
@@ -36,7 +35,7 @@ public abstract class AttachHandler {
     private static final String ATTACH_COMMANDS_PREFIX = "vlmap.spring.loadbalancer.attach.commands";
     protected GrayLoadBalancerProperties properties;
 
-    public AttachHandler(GrayLoadBalancerProperties properties, Environment environment) {
+    public AbstractAttachHandler(GrayLoadBalancerProperties properties, Environment environment) {
         this.environment = environment;
         this.properties = properties;
     }
@@ -99,7 +98,7 @@ public abstract class AttachHandler {
      * @param paramaters
      * @return
      */
-    public void match(AttachHandler.SimpleRequestData data, List<GaryAttachParamater> paramaters, List<String> result) {
+    public void match(SimpleRequestData data, List<GaryAttachParamater> paramaters, List<String> result) {
         List<GaryAttachParamater> list = new ArrayList<>(paramaters);
         this.sort(list, data.getPath());
         for (GaryAttachParamater paramater : list) {
@@ -234,58 +233,4 @@ public abstract class AttachHandler {
     }
 
 
-    public static class SimpleRequestData {
-
-
-        String method;
-        String path;
-        MultiValueMap<String, String> params;
-        MultiValueMap<String, String> headers;
-        MultiValueMap<String, String> cookies;
-        String body;
-        String contentType;
-
-        private boolean parseJson = false;
-        Object document;
-
-        public String getMethod() {
-            return method;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Object getJsonDocument() {
-            if (!parseJson) {
-                parseJson = true;
-                try {
-                    if (StringUtils.isNotBlank(body) && StringUtils.equalsIgnoreCase(contentType, "application/json")) {
-                        this.document = Configuration.defaultConfiguration().jsonProvider().parse(body);
-                    }
-                } catch (Exception e) {
-                    logger.error("parse json error,json:" + body);
-                }
-            }
-            return this.document;
-        }
-
-        public MultiValueMap<String, String> getParams() {
-            return params;
-        }
-
-        public MultiValueMap<String, String> getHeaders() {
-            return headers;
-        }
-
-        public MultiValueMap<String, String> getCookies() {
-            return cookies;
-        }
-
-        public String getBody() {
-            return body;
-        }
-
-
-    }
 }
