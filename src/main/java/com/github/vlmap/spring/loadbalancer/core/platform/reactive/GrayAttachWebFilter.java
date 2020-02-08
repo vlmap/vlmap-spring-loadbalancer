@@ -6,6 +6,7 @@ import com.github.vlmap.spring.loadbalancer.core.attach.SimpleRequestData;
 import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
@@ -35,9 +36,13 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (!this.properties.getAttach().isEnabled()) {
+        String headerName=properties.getHeaderName();
+        String tag=exchange.getRequest().getHeaders().getFirst(headerName);
+
+        if (!this.properties.getAttach().isEnabled()|| StringUtils.isNotBlank(tag)) {
             return chain.filter(exchange);
         }
+
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
         SimpleRequestData data = new SimpleRequestData();
         if (CollectionUtils.isNotEmpty(paramaters)) {
@@ -49,7 +54,7 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
                         if (CollectionUtils.isNotEmpty(headers)) {
                             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
                             for (String header : headers) {
-                                builder.header(properties.getHeaderName(), header);
+                                builder.header(headerName, header);
                             }
 
                             return chain.filter(exchange.mutate().request(builder.build()).build());

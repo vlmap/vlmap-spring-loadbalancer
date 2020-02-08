@@ -8,6 +8,7 @@ import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;
@@ -45,13 +46,16 @@ public class GrayAttachServletFilter implements OrderedFilter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        if (!this.properties.getAttach().isEnabled()) {
-            chain.doFilter(request, response);
-            return;
-        }
 
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String headerName=properties.getHeaderName();
+        String tag=httpServletRequest.getHeader(headerName);
+
+        if (!this.properties.getAttach().isEnabled()|| StringUtils.isNotBlank(tag)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
         SimpleRequestData data = new SimpleRequestData();
