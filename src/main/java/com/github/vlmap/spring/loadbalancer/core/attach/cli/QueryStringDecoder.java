@@ -66,7 +66,7 @@ public class QueryStringDecoder {
     public QueryStringDecoder(String uri) {
         this(uri, HttpConstants.DEFAULT_CHARSET);
     }
-
+ 
     /**
      * Creates a new decoder that decodes the specified URI encoded in the
      * specified charset.
