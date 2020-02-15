@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Set;
 
@@ -45,9 +46,9 @@ public class GrayRibbonClientConfiguration {
     }
 
     @Bean
-    public GrayClientServer clientServer(ApplicationContext context) {
+    public GrayClientServer clientServer(ApplicationContext context, ConfigurableEnvironment environment) {
 
-        GrayClientServer bean = new GrayClientServer(clientName);
+        GrayClientServer bean = new GrayClientServer(environment, clientName);
         if (context.getParent() != null) {
             context = context.getParent();
         }

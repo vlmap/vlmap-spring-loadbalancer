@@ -28,33 +28,33 @@ public class ReactiveAttachHandler extends AbstractAttachHandler {
 
     public Mono<SimpleRequestData> parser(SimpleRequestData data, ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
-        data.path = request.getPath().value();
-        data.method = request.getMethod().name();
+        data.setPath(request.getPath().value());
+        data.setMethod(request.getMethod().name());
         MediaType contentType = request.getHeaders().getContentType();
         if (contentType != null) {
-            data.contentType = contentType.getType() + "/" + contentType.getSubtype();
+            data.setContentType(contentType.getType() + "/" + contentType.getSubtype());
         }
 
-
-        data.headers = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        data.setHeaders(map);
         HttpHeaders headers = request.getHeaders();
         if (headers != null) {
-            data.headers.addAll(headers);
+            map.addAll(headers);
         }
-
-        data.cookies = new LinkedMultiValueMap<>();
+        map = new LinkedMultiValueMap<>();
+        data.setCookies(map);
         for (Map.Entry<String, List<HttpCookie>> entry : request.getCookies().entrySet()) {
             String key = entry.getKey();
             List<HttpCookie> values = entry.getValue();
             List<String> list = new ArrayList<>(values.size());
             values.stream().forEach(cookie -> list.add(cookie.getValue()));
-            data.cookies.put(key, list);
+            map.put(key, list);
 
         }
 
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        data.params = params;
+        data.setParams(params);
         params.addAll(request.getQueryParams());
 
         if (ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
@@ -76,7 +76,7 @@ public class ReactiveAttachHandler extends AbstractAttachHandler {
                         CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
                         DataBufferUtils.release(dataBuffer);
                         String json = charBuffer.toString();
-                        data.body = json;
+                        data.setBody(json);
                         return Mono.just(data);
                     });
                 }

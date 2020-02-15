@@ -67,25 +67,48 @@ vlmap:
    loadbalancer: 
      attach: 
       commands:
-       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
-       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
-       - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
-```
+       - --value debug --header 'aaa=1' --param a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+       - --value debug --header 'aaa=1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+ ```
 
 >参数说明
 ```text
- -C,--cookie <name:value>      COOKIE匹配. 示例：--cookie=a:1
-                               --cookie b:2
- -H,--header <name:value>      HEADER匹配。示例：
-                               --header=referer:https://www.github.com
- -J,--json-path <name:value>   JsonPath匹配. 示例：--json-path=$.data.el[0]:abc
-                               --json-path "$.data.el[0]:abc"
- -M,--method <arg>             Method匹配. 示例：--method=POST
-                               --method  GET
- -P,--param <name:value>       参数匹配. 示例：--param=a:1
-                               --param "b:2"
-    --path <arg>               PATH匹配，支持ANT格式的PATH. 示例：--path=/test/**
- -V,--value <arg>              条件匹配配返回的值
+usage: 格式说明,key=value 中的value需要进行URLEncoder编码,多个值可以用&连接
+    --cookie <name1=value1&name2=value2>            COOKIE匹配.
+                                                    示例：--cookie=name1=valu
+                                                    e1&name2=value2
+    --cookie-regex <arg>                            COOKIE正则匹配.
+                                                    示例：--cookie-regex=name
+                                                    1=value1&name2=value2
+    --header <name1=value1&name2=value2>
+                                                    HEADER匹配。示例：--header=r
+                                                    eferer=https://www.git
+                                                    hub.com
+    --header-regex <name1=value1&name2=value2>
+                                                    HEADE正则匹配。示例：--header-
+                                                    regex=referer=https://
+                                                    www.*
+    --json-path <name1=value1&name2=value2>         JsonPath匹配.
+                                                    示例：--json-path-regex=$
+                                                    .data.el[0]=abc&$.data
+                                                    .el[0]:abc
+    --json-path-regex <name1=value1&name2=value2>   JsonPath正则匹配.
+                                                    示例：--json-path-regex=$
+                                                    .data.el[0]=abc&$.data
+                                                    .el[0]:abc
+    --method <arg>                                  Method匹配.
+                                                    示例：--method=POST
+                                                    --method  GET
+    --param <name1=value1&name2=value2>             参数正则匹配.
+                                                    示例：--param=name1=value
+                                                    1&name2=value2
+    --param-regex <name1=value1&name2=value2>       参数正则匹配.
+                                                    示例：--param-regex=name1
+                                                    =value1&name2=value2
+    --path <arg>                                    PATH匹配，支持ANT格式的PATH.
+                                                    示例：--path=/test/**
+    --value <arg>                                   条件匹配时返回的灰度值
+
 ```
 
 8.使用实例
@@ -151,9 +174,9 @@ vlmap:
       attach:
        enabled: true       
        commands:
-        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
-        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
-        - -V debug --header 'aaa:1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
+        -  --value debug1 --method POST --path /hello/{a}/{b}/{c}/** --header h1=1&h1=2&h2=2 --param p1=1&p1=2&p2=2 --json-path  $.a=1&$.b=abcde --json-path-regex  $.a=%5Cd%2B&$.b=\w%2B
+        -  --value debug1 --method POST --path /hello/{a}/{b}/{c}/** --header h1=1&h1=2&h2=2 --param p1=1&p1=2&p2=2 --json-path  $.a=1&$.b=abcde --json-path-regex  $.a=%5Cd%2B&$.b=\w%2B
+        
 
 
 #（服务灰度值） 配置

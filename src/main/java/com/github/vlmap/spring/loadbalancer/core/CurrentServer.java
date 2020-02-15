@@ -12,7 +12,7 @@ import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
@@ -28,8 +28,10 @@ public class CurrentServer {
     private Set<String> grayTags;
     String id = null;
     String appName = null;
+    ConfigurableEnvironment environment;
 
-    public CurrentServer(Environment environment, InetUtils inetUtils) {
+    public CurrentServer(ConfigurableEnvironment environment, InetUtils inetUtils) {
+        this.environment = environment;
         String port = environment.getProperty("server.port", "8080");
         String ip = "127.0.0.1";
         try {
@@ -80,7 +82,7 @@ public class CurrentServer {
     }
 
     private void bind() {
-        Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(appName);
+        Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(environment, appName);
         Set<String> result = null;
         if (tagOfServer != null) {
             result = tagOfServer.get(id);

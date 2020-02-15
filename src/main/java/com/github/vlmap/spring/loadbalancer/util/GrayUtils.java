@@ -1,13 +1,12 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
-import com.netflix.config.ConfigurationManager;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -18,18 +17,11 @@ import java.util.*;
 public class GrayUtils {
 
 
-    public static Map<String, Set<String>> tagOfServer(String clientName) {
+    public static Map<String, Set<String>> tagOfServer(ConfigurableEnvironment environment, String clientName) {
         clientName = StringUtils.upperCase(clientName);
-        Configuration configuration = ConfigurationManager.getConfigInstance().subset(clientName);
 
+        ConfigurationPropertySource propertySource = EnvironmentUtils.getSubsetConfigurationPropertySource(environment, clientName);
 
-        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
-        Iterator<String> iterator = configuration.getKeys();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            String value = configuration.getString(key);
-            propertySource.put(key, value);
-        }
 
         Binder binder = new Binder(propertySource);
         GrayTagOfServersProperties ribbon = new GrayTagOfServersProperties();
@@ -50,7 +42,6 @@ public class GrayUtils {
 
         }
         return Collections.emptyMap();
-
     }
 
     public static String ip(InetUtils inetUtils, String networkInterface) throws SocketException {

@@ -15,8 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GrayAttachWebFilter implements OrderedWebFilter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,12 +35,12 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String headerName=properties.getHeaderName();
-        String tag=exchange.getRequest().getHeaders().getFirst(headerName);
-
-        if (!this.properties.getAttach().isEnabled()|| StringUtils.isNotBlank(tag)) {
+        String headerName = properties.getHeaderName();
+        String tag = exchange.getRequest().getHeaders().getFirst(headerName);
+        if (!this.properties.getAttach().isEnabled() || StringUtils.isNotBlank(tag)) {
             return chain.filter(exchange);
         }
+        Set<String> values = new HashSet<String>(exchange.getRequest().getHeaders().getOrDefault(headerName, Collections.emptyList()));
 
         List<GaryAttachParamater> paramaters = attachHandler.getAttachParamaters();
         SimpleRequestData data = new SimpleRequestData();
@@ -54,7 +53,10 @@ public class GrayAttachWebFilter implements OrderedWebFilter {
                         if (CollectionUtils.isNotEmpty(headers)) {
                             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
                             for (String header : headers) {
-                                builder.header(headerName, header);
+
+                                if (!values.contains(header)) {
+                                    builder.header(headerName, header);
+                                }
                             }
 
                             return chain.filter(exchange.mutate().request(builder.build()).build());

@@ -47,12 +47,11 @@ public class GrayAttachServletFilter implements OrderedFilter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 
-
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String headerName=properties.getHeaderName();
-        String tag=httpServletRequest.getHeader(headerName);
+        String headerName = properties.getHeaderName();
+        String tag = httpServletRequest.getHeader(headerName);
 
-        if (!this.properties.getAttach().isEnabled()|| StringUtils.isNotBlank(tag)) {
+        if (!this.properties.getAttach().isEnabled() || StringUtils.isNotBlank(tag)) {
             chain.doFilter(request, response);
             return;
         }
@@ -68,9 +67,9 @@ public class GrayAttachServletFilter implements OrderedFilter {
                 attachHandler.match(data, paramaters, headers);
                 if (CollectionUtils.isNotEmpty(headers)) {
 
-                    MultiValueMap<String, String> addHeader = new LinkedMultiValueMap<>();
-                    addHeader.put(properties.getHeaderName(), headers);
-                    httpServletRequest = addHeader(httpServletRequest, addHeader);
+                    MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
+                    values.put(properties.getHeaderName(), headers);
+                    httpServletRequest = addHeader(httpServletRequest, values);
 
 
                 }
@@ -86,7 +85,7 @@ public class GrayAttachServletFilter implements OrderedFilter {
 
     }
 
-    protected HttpServletRequest addHeader(HttpServletRequest httpServletRequest, MultiValueMap<String, String> addHeader) {
+    protected HttpServletRequest addHeader(HttpServletRequest httpServletRequest, MultiValueMap<String, String> values) {
         Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
@@ -95,7 +94,7 @@ public class GrayAttachServletFilter implements OrderedFilter {
             List<String> list = EnumerationUtils.toList(httpServletRequest.getHeaders(headerName));
             headers.put(headerName, list);
         }
-        headers.addAll(addHeader);
+        headers.addAll(values);
         return new HttpServletRequestWrapper(httpServletRequest) {
             @Override
             public String getHeader(String name) {

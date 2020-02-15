@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.Cookie;
@@ -26,41 +27,41 @@ public class ServletAttachHandler extends AbstractAttachHandler {
     }
 
     public SimpleRequestData parser(SimpleRequestData data, HttpServletRequest request) {
-        data.path = request.getRequestURI();
-        data.method = request.getMethod();
+        data.setPath(request.getRequestURI());
+        data.setMethod(request.getMethod());
+        data.setContentType(request.getContentType());
+        MediaType contentType = MediaType.valueOf(data.getContentType());
 
-        MediaType contentType = MediaType.valueOf(data.contentType);
-
-        if (contentType != null) {
-            data.contentType = contentType.getType() + "/" + contentType.getSubtype();
-        }
 
         Cookie[] cookies = request.getCookies();
         if (ArrayUtils.isNotEmpty(cookies)) {
-            data.cookies = new LinkedMultiValueMap<>();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            data.setCookies(map);
             for (Cookie cookie : cookies) {
                 String key = cookie.getName();
                 String value = cookie.getValue();
 
-                data.cookies.add(key, value);
+                map.add(key, value);
 
             }
         }
 
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 
-        data.params = new LinkedMultiValueMap<>();
+        data.setParams(map);
         for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-            data.params.put(entry.getKey(), Arrays.asList(entry.getValue()));
+            map.put(entry.getKey(), Arrays.asList(entry.getValue()));
 
         }
 
 
         Enumeration<String> headerNames = request.getHeaderNames();
-        data.headers = new LinkedMultiValueMap<>();
+        map = new LinkedMultiValueMap<>();
+        data.setHeaders(map);
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             List<String> list = EnumerationUtils.toList(request.getHeaders(headerName));
-            data.headers.put(headerName, list);
+            map.put(headerName, list);
         }
 
         if (isJsonRequest(contentType, HttpMethod.resolve(request.getMethod()))) {
@@ -70,7 +71,7 @@ public class ServletAttachHandler extends AbstractAttachHandler {
                 charset = charset == null ? AbstractAttachHandler.DEFAULT_CHARSET : charset;
                 byte[] bytes = wrapper.getContentAsByteArray();
 
-                data.body = new String(bytes, charset);
+                data.setBody(new String(bytes, charset));
             }
 
         }
