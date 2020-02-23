@@ -1,17 +1,15 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
+
+import com.netflix.util.HashCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
-import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.io.Serializable;
 import java.util.*;
 
 public class GrayUtils {
@@ -34,7 +32,11 @@ public class GrayUtils {
             for (TagOfServers tagOfServer : tagOfServers) {
 
                 if (tagOfServer != null && CollectionUtils.isNotEmpty(tagOfServer.getTags()) && StringUtils.isNotBlank(tagOfServer.getId())) {
-                    map.put(tagOfServer.getId(), tagOfServer.getTags());
+                    Pair<String, Integer> hostPort = getHostPort(tagOfServer.getId());
+
+                    String id =hostPort.first() + ":" + hostPort.second();
+
+                    map.put(id, tagOfServer.getTags());
                 }
             }
             return Collections.unmodifiableMap(map);
@@ -43,38 +45,147 @@ public class GrayUtils {
         }
         return Collections.emptyMap();
     }
+    public static Pair<String, Integer> getHostPort(String id) {
+        if (id != null) {
+            String host = null;
+            int port = 80;
 
-    public static String ip(InetUtils inetUtils, String networkInterface) throws SocketException {
-        String ip = null;
-        if (org.springframework.util.StringUtils.isEmpty(networkInterface)) {
-            ip = inetUtils.findFirstNonLoopbackHostInfo().getIpAddress();
-        } else {
-            NetworkInterface netInterface = NetworkInterface
-                    .getByName(networkInterface);
-            if (null == netInterface) {
-                throw new IllegalArgumentException(
-                        "no such interface " + networkInterface);
+            if (id.toLowerCase().startsWith("http://")) {
+                id = id.substring(7);
+                port = 80;
+            } else if (id.toLowerCase().startsWith("https://")) {
+                id = id.substring(8);
+                port = 443;
             }
 
-            Enumeration<InetAddress> inetAddress = netInterface.getInetAddresses();
-            while (inetAddress.hasMoreElements()) {
-                InetAddress currentAddress = inetAddress.nextElement();
-                if (currentAddress instanceof Inet4Address
-                        && !currentAddress.isLoopbackAddress()) {
-                    ip = currentAddress.getHostAddress();
-                    break;
+            if (id.contains("/")) {
+                int slash_idx = id.indexOf("/");
+                id = id.substring(0, slash_idx);
+            }
+
+            int colon_idx = id.indexOf(':');
+
+            if (colon_idx == -1) {
+                host = id; // default
+            } else {
+                host = id.substring(0, colon_idx);
+                try {
+                    port = Integer.parseInt(id.substring(colon_idx + 1));
+                } catch (NumberFormatException e) {
+                    throw e;
                 }
             }
-
-            if (org.springframework.util.StringUtils.isEmpty(ip)) {
-                throw new RuntimeException("cannot find available ip from"
-                        + " network interface " + networkInterface);
-            }
-
+            return new Pair<String, Integer>(host, port);
+        } else {
+            return null;
         }
-        return ip;
+
     }
 
+
+    /**
+     * A simple class that holds a pair of values.
+     * This may be useful for methods that care to
+     * return two values (instead of just one).
+     */
+    public static class Pair<E1, E2> implements Serializable {
+
+        // ========================================
+        // Static vars: public, protected, then private
+        // ========================================
+        private static final long serialVersionUID = 2L;
+
+        // ========================================
+        // Instance vars: public, protected, then private
+        // ========================================
+
+        private E1 mFirst;
+        private E2 mSecond;
+
+        // ========================================
+        // Constructors
+        // ========================================
+
+        /**
+         * Construct a new pair
+         *
+         * @param first  the object to store as the first value
+         * @param second the object to store as the second value
+         */
+        public Pair(E1 first, E2 second) {
+            mFirst = first;
+            mSecond = second;
+        }
+
+        // ========================================
+        // Methods, grouped by functionality, *not* scope
+        // ========================================
+
+        /**
+         * Get the first value from the pair.
+         *
+         * @return the first value
+         */
+        public E1 first() {
+            return mFirst;
+        }
+
+        /**
+         * Get the second value from the pair.
+         *
+         * @return the second value
+         */
+        public E2 second() {
+            return mSecond;
+        }
+
+        /**
+         * Set the first value of the pair.
+         *
+         * @param first the new first value
+         */
+        public void setFirst(E1 first) {
+            mFirst = first;
+        }
+
+        /**
+         * Set the second value of the pair.
+         *
+         * @param second the new second value
+         */
+        public void setSecond(E2 second) {
+            mSecond = second;
+        }
+
+        // ----------------------------------------
+        // Generic Object methods
+
+        /**
+         * Pair objects are equal iff they have the same content.
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            } else if (obj == null || obj.getClass() != getClass()) {
+                return false;
+            }
+            Pair other = (Pair) obj;
+            return HashCode.equalObjects(mFirst, other.mFirst)
+                    && HashCode.equalObjects(mSecond, other.mSecond);
+        }
+
+        // The hash code needs to align with the
+        // definition of equals.
+        @Override
+        public int hashCode() {
+            HashCode h = new HashCode();
+            h.addValue(mFirst);
+            h.addValue(mSecond);
+            return h.hashCode();
+        }
+
+    } // Pair
 
     /**
      * 灰度路由，服务配置
@@ -114,4 +225,5 @@ public class GrayUtils {
             this.tags = tags;
         }
     }
+
 }

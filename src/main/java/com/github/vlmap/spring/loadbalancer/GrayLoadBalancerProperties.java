@@ -18,7 +18,7 @@ public class GrayLoadBalancerProperties {
 
 
     private Strict strict = new Strict();
-
+    private Actuator actuator=new Actuator();
 
     private Feign feign = new Feign();
     private RestTemplate restTemplate = new RestTemplate();
@@ -92,6 +92,25 @@ public class GrayLoadBalancerProperties {
         this.attach = attach;
     }
 
+    public Actuator getActuator() {
+        return actuator;
+    }
+
+    public void setActuator(Actuator actuator) {
+        this.actuator = actuator;
+    }
+
+    static public class Actuator {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
     static public class Feign {
         private boolean enabled = true;
 

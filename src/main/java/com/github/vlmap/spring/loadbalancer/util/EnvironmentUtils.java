@@ -28,14 +28,13 @@ public class EnvironmentUtils {
     }
 
     public static ConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
-        Map<String, Object> map = new ConcurrentHashMap<>();
-        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
+         MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
         List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
             if (childKey != null) {
-                map.put(childKey, environment.getProperty(key));
+                propertySource.put(childKey, environment.getProperty(key));
             }
         }
         return propertySource;

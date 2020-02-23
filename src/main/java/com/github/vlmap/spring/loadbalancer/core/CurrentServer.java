@@ -7,14 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
-import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.eureka.CloudEurekaInstanceConfig;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -26,53 +24,48 @@ import java.util.Set;
 public class CurrentServer {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private Set<String> grayTags;
-    String id = null;
-    String appName = null;
-    ConfigurableEnvironment environment;
+    private String id = null;
 
-    public CurrentServer(ConfigurableEnvironment environment, InetUtils inetUtils) {
+    private String appName = null;
+    private ConfigurableEnvironment environment;
+
+    public CurrentServer(ConfigurableEnvironment environment) {
         this.environment = environment;
-        String port = environment.getProperty("server.port", "8080");
-        String ip = "127.0.0.1";
-        try {
-            ip = GrayUtils.ip(inetUtils, "");
-        } catch (Exception e) {
-            logger.info("GrayUtils.ip(inetUtils,\"\") error", e);
-        }
-        this.id = ip + ":" + port;
-        this.appName = environment.getProperty("spring.application.name", "application");
-
-    }
-
-    @PostConstruct
-    public void initMethod() {
-
-        bind();
-
 
     }
 
     @EventListener(InstanceRegisteredEvent.class)
     public void listener(InstanceRegisteredEvent event) {
 
-
         Object config = event.getConfig();
 
         String clazzName = config.getClass().getName();
+//        String port = null;
+//        String ip = null;
         if (clazzName.equals("org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties")) {
             NacosDiscoveryProperties properties = (NacosDiscoveryProperties) config;
-            id = properties.getIp() + ":" + properties.getPort();
+//            ip = properties.getIp();
+//            port = String.valueOf(properties.getPort());
+//            id = ip + ":" + port;
+            id = properties.getServerAddr();
+
             appName = properties.getService();
         } else if (StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean")) {
 
             CloudEurekaInstanceConfig properties = (CloudEurekaInstanceConfig) config;
-            id = properties.getIpAddress() + ":" + properties.getNonSecurePort();
+//            ip = properties.getIpAddress();
+//            port = String.valueOf(properties.getNonSecurePort());
+//            id = ip + ":" + port;
+            id = properties.getInstanceId();
             appName = properties.getAppname();
         } else if (StringUtils.equals(clazzName, "org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties")) {
 
             ConsulDiscoveryProperties properties = (ConsulDiscoveryProperties) config;
+//            ip = properties.getIpAddress();
+//            port = String.valueOf(properties.getPort());
+//            id = ip + ":" + port;
+            id = properties.getInstanceId();
 
-            id = properties.getIpAddress() + ":" + properties.getPort();
             appName = properties.getServiceName();
         }
 
@@ -81,15 +74,16 @@ public class CurrentServer {
 
     }
 
-    private void bind() {
+    protected void bind() {
+        if (StringUtils.isBlank(appName) || StringUtils.isBlank(id)) return;
         Map<String, Set<String>> tagOfServer = GrayUtils.tagOfServer(environment, appName);
         Set<String> result = null;
         if (tagOfServer != null) {
-            result = tagOfServer.get(id);
-
+            result = tagOfServer.get(this.id);
         }
         grayTags = result == null ? Collections.emptySet() : Collections.unmodifiableSet(result);
     }
+
 
     @EventListener(EnvironmentChangeEvent.class)
 

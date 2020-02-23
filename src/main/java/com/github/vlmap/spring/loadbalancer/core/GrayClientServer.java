@@ -27,6 +27,8 @@ public class GrayClientServer {
     @PostConstruct
     public void initMethod() {
         this.clientServerTags = GrayUtils.tagOfServer(environment, clientName);
+
+
     }
 
 
