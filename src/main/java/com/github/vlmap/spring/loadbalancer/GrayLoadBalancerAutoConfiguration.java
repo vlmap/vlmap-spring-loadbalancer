@@ -1,8 +1,7 @@
 package com.github.vlmap.spring.loadbalancer;
 
-import com.github.vlmap.spring.loadbalancer.actuate.loadbalancer.GrayLoadbalancerEndpoint;
+import com.github.vlmap.spring.loadbalancer.actuate.loadbalancer.GrayRouteEndpoint;
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -20,17 +19,11 @@ public class GrayLoadBalancerAutoConfiguration {
 
     @Bean
 
-    public CurrentServer currentService(ConfigurableEnvironment environment ) {
+    public CurrentServer currentService(ConfigurableEnvironment environment) {
 
-        return new CurrentServer(environment );
+        return new CurrentServer(environment);
     }
 
-    @Bean
-    public StrictHandler strictHandler(CurrentServer currentService, GrayLoadBalancerProperties properties) {
-
-
-        return new StrictHandler(properties, currentService);
-    }
 
 
     @Configuration
@@ -44,18 +37,16 @@ public class GrayLoadBalancerAutoConfiguration {
     @Configuration
     @ConditionalOnClass({Endpoint.class})
     @ConditionalOnProperty(
-            value = { "vlmap.spring.loadbalancer.actuator.enabled"},
+            value = {"vlmap.spring.loadbalancer.actuator.enabled"},
             matchIfMissing = true
     )
 
     static class ActuatorConfiguration {
         @Bean
-        public GrayLoadbalancerEndpoint loadbalancerEndpoint() {
-            return new GrayLoadbalancerEndpoint();
+        public GrayRouteEndpoint loadbalancerEndpoint() {
+            return new GrayRouteEndpoint();
         }
     }
-
-
 
 
 }

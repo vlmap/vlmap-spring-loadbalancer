@@ -1,29 +1,27 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.StrictHandler;
+import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
+import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-public class GrayStrictWebFilter implements OrderedWebFilter {
-    private GrayLoadBalancerProperties properties;
+public class StrictWebFilter extends StrictFilter implements WebFilter {
+
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    StrictHandler strictHandler;
 
-    public GrayStrictWebFilter(GrayLoadBalancerProperties properties, StrictHandler strictHandler) {
+    public StrictWebFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
+        super(properties,currentServer);
 
-        this.properties = properties;
-        this.strictHandler = strictHandler;
     }
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         if (!properties.getStrict().isEnabled()) {
@@ -39,12 +37,12 @@ public class GrayStrictWebFilter implements OrderedWebFilter {
         /**
          * 严格模式,请求标签不匹配拒绝响应
          */
-        if (!strictHandler.validate(uri, tag)) {
-            String message = strictHandler.getMessage();
-            int code = strictHandler.getCode();
+        if (!validate(uri, tag)) {
+            String message = getMessage();
+            int code = getCode();
             if (logger.isInfoEnabled()) {
 
-                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(strictHandler.getGrayTags(), ",") + "]\",response code:" + code);
+                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(getGrayTags(), ",") + "]\",response code:" + code);
 
             }
             HttpStatus status = HttpStatus.valueOf(code);

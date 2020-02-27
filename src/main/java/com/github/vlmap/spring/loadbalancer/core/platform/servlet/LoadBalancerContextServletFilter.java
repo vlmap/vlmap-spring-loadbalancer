@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 
-public class GrayLoadBalancerContextServletFilter implements OrderedFilter {
+public class LoadBalancerContextServletFilter implements OrderedFilter {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     GrayLoadBalancerProperties properties;
 
-    public GrayLoadBalancerContextServletFilter(GrayLoadBalancerProperties properties) {
+    public LoadBalancerContextServletFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 

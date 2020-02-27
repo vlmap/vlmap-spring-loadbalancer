@@ -37,7 +37,7 @@ public class GrayClientServer {
         if (CollectionUtils.isNotEmpty(keys)) {
             String prefix = StringUtils.upperCase(clientName);
             for (String key : keys) {
-                if (StringUtils.startsWith(key, prefix)) {
+                if (StringUtils.startsWith(key, prefix+".")) {
                     this.clientServerTags = GrayUtils.tagOfServer(environment, clientName);
 
                     break;

@@ -3,8 +3,6 @@ package com.github.vlmap.spring.loadbalancer.core;
 import com.github.vlmap.spring.loadbalancer.util.GrayUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
@@ -22,8 +20,7 @@ import java.util.Set;
  * 从集群中获取当前服务的灰度配置
  */
 public class CurrentServer {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-    private Set<String> grayTags;
+    private Set<String> grayTags = Collections.emptySet();
     private String id = null;
 
     private String appName = null;
@@ -40,31 +37,31 @@ public class CurrentServer {
         Object config = event.getConfig();
 
         String clazzName = config.getClass().getName();
-//        String port = null;
-//        String ip = null;
+
         if (clazzName.equals("org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties")) {
             NacosDiscoveryProperties properties = (NacosDiscoveryProperties) config;
-//            ip = properties.getIp();
-//            port = String.valueOf(properties.getPort());
-//            id = ip + ":" + port;
-            id = properties.getServerAddr();
+
+            id = properties.getIp() + ":" + properties.getPort();
 
             appName = properties.getService();
         } else if (StringUtils.equals(clazzName, "org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean")) {
 
             CloudEurekaInstanceConfig properties = (CloudEurekaInstanceConfig) config;
-//            ip = properties.getIpAddress();
-//            port = String.valueOf(properties.getNonSecurePort());
-//            id = ip + ":" + port;
-            id = properties.getInstanceId();
+
+            String hostName = properties.getHostName(false);
+            if (StringUtils.isEmpty(hostName)) {
+                hostName = properties.getIpAddress();
+            }
+            id = hostName + ":" + properties.getNonSecurePort();
             appName = properties.getAppname();
         } else if (StringUtils.equals(clazzName, "org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties")) {
 
             ConsulDiscoveryProperties properties = (ConsulDiscoveryProperties) config;
-//            ip = properties.getIpAddress();
-//            port = String.valueOf(properties.getPort());
-//            id = ip + ":" + port;
-            id = properties.getInstanceId();
+            String hostName = properties.getHostname();
+            if (StringUtils.isEmpty(hostName)) {
+                hostName = properties.getIpAddress();
+            }
+            id = hostName + ":" + properties.getPort();
 
             appName = properties.getServiceName();
         }
@@ -117,5 +114,11 @@ public class CurrentServer {
         return grayTags;
     }
 
+    public String getId() {
+        return id;
+    }
 
+    public String getAppName() {
+        return appName;
+    }
 }

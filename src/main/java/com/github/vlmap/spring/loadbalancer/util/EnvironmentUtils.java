@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class EnvironmentUtils {
 
@@ -26,18 +25,27 @@ public class EnvironmentUtils {
         }
         return result;
     }
-
-    public static ConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
-         MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
+    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix,boolean withPrefix) {
+        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
         List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
             if (childKey != null) {
-                propertySource.put(childKey, environment.getProperty(key));
+                if(withPrefix){
+                    propertySource.put(key, environment.getProperty(key));
+
+                }else {
+                    propertySource.put(childKey, environment.getProperty(key));
+
+                }
             }
         }
         return propertySource;
+
+    }
+    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
+       return getSubsetConfigurationPropertySource(environment,prefix,false);
 
     }
 

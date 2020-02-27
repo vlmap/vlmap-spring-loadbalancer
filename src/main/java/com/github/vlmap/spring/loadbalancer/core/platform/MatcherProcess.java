@@ -1,6 +1,5 @@
-package com.github.vlmap.spring.loadbalancer.core.attach;
+package com.github.vlmap.spring.loadbalancer.core.platform;
 
-import com.github.vlmap.spring.loadbalancer.core.attach.cli.GaryAttachParamater;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -9,10 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class MatcherProcess {
@@ -25,21 +21,21 @@ public class MatcherProcess {
      * @param paramaters
      * @return
      */
-    public GaryAttachParamater match(SimpleRequestData data, List<GaryAttachParamater> paramaters) {
-        List<GaryAttachParamater> list = new ArrayList<>();
+    public RequestMatchParamater match(SimpleRequest data, Object jsonDocument, Collection<RequestMatchParamater> paramaters) {
+        List<RequestMatchParamater> list = new ArrayList<>();
         String path = data.getPath();
 
-        for (GaryAttachParamater paramater : paramaters) {
-            if (this.match(data, paramater)) {
+        for (RequestMatchParamater paramater : paramaters) {
+            if (this.match(data, jsonDocument, paramater)) {
                 list.add(paramater);
             }
 
 
         }
         if (list.size() > 1) {
-            List<GaryAttachParamater> temp = new ArrayList<>();
+            List<RequestMatchParamater> temp = new ArrayList<>();
 
-            for (GaryAttachParamater paramater : list) {
+            for (RequestMatchParamater paramater : list) {
                 if (StringUtils.isNotBlank(paramater.getPath())) {
                     temp.add(paramater);
                 }
@@ -47,7 +43,7 @@ public class MatcherProcess {
             if (CollectionUtils.isNotEmpty(temp)) {
                 list = temp;
             }
-            this.sort(list, data.getPath());
+            this.sort(list, path);
 
         }
 
@@ -56,14 +52,14 @@ public class MatcherProcess {
 
     }
 
-    protected void sort(List<GaryAttachParamater> list, String path) {
+    protected void sort(List<RequestMatchParamater> list, String path) {
         Comparator<String> comparator = pathMatcher.getPatternComparator(path);
 
-        list.sort(new GaryAttachParamater.Comparator(comparator));
+        list.sort(new RequestMatchParamaterComparator(comparator));
 
     }
 
-    protected boolean match(SimpleRequestData data, GaryAttachParamater paramater) {
+    protected boolean match(SimpleRequest data, Object jsonDocument, RequestMatchParamater paramater) {
 
 
         boolean state = false;
@@ -72,11 +68,24 @@ public class MatcherProcess {
         if (!state) {
             return false;
         }
+        state = matchMethod(paramater.getMethod(), data.getMethod());
+        if (!state) {
+            return false;
+        }
         state = container(data.getCookies(), paramater.getCookies());
         if (!state) {
             return false;
         }
+        state = matchRegex(data.getCookies(), paramater.getCookiesRegex());
+        if (!state) {
+            return false;
+        }
         state = container(data.getHeaders(), paramater.getHeaders());
+        if (!state) {
+            return false;
+        }
+
+        state = matchRegex(data.getHeaders(), paramater.getHeadersRegex());
         if (!state) {
             return false;
         }
@@ -86,29 +95,27 @@ public class MatcherProcess {
             return false;
         }
 
-        state = matchRegex(data.getCookies(), paramater.getCookiesRegex());
-        if (!state) {
-            return false;
-        }
-        state = matchRegex(data.getHeaders(), paramater.getHeadersRegex());
-        if (!state) {
-            return false;
-        }
+
         state = matchRegex(data.getParams(), paramater.getParamsRegex());
         if (!state) {
             return false;
         }
+        state = matchJson(paramater.getJsonpath(), jsonDocument);
 
-        state = matchMethod(paramater.getMethod(), data.getMethod());
         if (!state) {
             return false;
         }
-        state = matchJsonRegex(paramater.getJsonpathRegex(), data.getJsonDocument());
+
+        state = matchJsonRegex(paramater.getJsonpathRegex(), jsonDocument);
         if (!state) {
             return false;
         }
-        state = matchJson(paramater.getJsonpath(), data.getJsonDocument());
 
+        state = matchBody(paramater.getBody(), data.getBody());
+        if (!state) {
+            return false;
+        }
+        state = matchBodyRegex(paramater.getBodyRegex(), data.getBody());
 
         return state;
     }
@@ -239,4 +246,34 @@ public class MatcherProcess {
         return true;
     }
 
+    protected boolean matchBody(String body, String input) {
+        if (StringUtils.isBlank(body)) return true;
+        return StringUtils.equals(body, input);
+
+    }
+
+    protected boolean matchBodyRegex(List<Pattern> bodyRegex, String input) {
+        if (CollectionUtils.isNotEmpty(bodyRegex)) {
+            if (input != null) {
+                for (Pattern pattern : bodyRegex) {
+                    try {
+
+                        if (!pattern.matcher(input).matches()) {
+                            return false;
+                        }
+
+                    } catch (Exception e) {
+                        return false;
+                    }
+
+                }
+
+
+            } else {
+                return false;
+            }
+        }
+        return true;
+
+    }
 }

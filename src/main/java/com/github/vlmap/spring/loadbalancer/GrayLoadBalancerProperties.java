@@ -17,14 +17,18 @@ public class GrayLoadBalancerProperties {
     private String headerName = "Loadbalancer-Tag";
 
 
+    private CacheBody cacheBody = new CacheBody();
+    private Attacher attacher = new Attacher();
+
+    private Responder responder = new Responder();
+
     private Strict strict = new Strict();
-    private Actuator actuator=new Actuator();
+    private Actuator actuator = new Actuator();
 
     private Feign feign = new Feign();
     private RestTemplate restTemplate = new RestTemplate();
     private WebClient webClient = new WebClient();
     private Controller controller = new Controller();
-    private Attach attach = new Attach();
 
 
     public boolean isEnabled() {
@@ -84,12 +88,12 @@ public class GrayLoadBalancerProperties {
         this.strict = strict;
     }
 
-    public Attach getAttach() {
-        return attach;
+    public Attacher getAttacher() {
+        return attacher;
     }
 
-    public void setAttach(Attach attach) {
-        this.attach = attach;
+    public void setAttacher(Attacher attacher) {
+        this.attacher = attacher;
     }
 
     public Actuator getActuator() {
@@ -98,6 +102,22 @@ public class GrayLoadBalancerProperties {
 
     public void setActuator(Actuator actuator) {
         this.actuator = actuator;
+    }
+
+    public CacheBody getCacheBody() {
+        return cacheBody;
+    }
+
+    public void setCacheBody(CacheBody cacheBody) {
+        this.cacheBody = cacheBody;
+    }
+
+    public Responder getResponder() {
+        return responder;
+    }
+
+    public void setResponder(Responder responder) {
+        this.responder = responder;
     }
 
     static public class Actuator {
@@ -111,6 +131,7 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
     }
+
     static public class Feign {
         private boolean enabled = true;
 
@@ -246,12 +267,17 @@ public class GrayLoadBalancerProperties {
         }
     }
 
-    static public class Attach {
+    /**
+     * body缓存配置
+     */
+    static public class CacheBody {
         private boolean enabled = true;
-        List<String> commands;
-        List<MediaType> cacheBodyContentType = Arrays.asList(
+        private  long maxCacheLength = -1;
+
+        private  List<MediaType> cacheBodyContentType = Arrays.asList(
                 MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_FORM_URLENCODED
+
         );
 
         public boolean isEnabled() {
@@ -262,6 +288,14 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
 
+        public long getMaxCacheLength() {
+            return maxCacheLength;
+        }
+
+        public void setMaxCacheLength(long maxCacheLength) {
+            this.maxCacheLength = maxCacheLength;
+        }
+
         public List<MediaType> getCacheBodyContentType() {
             return cacheBodyContentType;
         }
@@ -269,7 +303,47 @@ public class GrayLoadBalancerProperties {
         public void setCacheBodyContentType(List<MediaType> cacheBodyContentType) {
             this.cacheBodyContentType = cacheBodyContentType;
         }
+    }
 
+    static public class Attacher {
+        private boolean enabled = true;
+        private  List<String> commands;
+
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        /**
+         *  mirror to bean  RequestMatchParamater
+         * @return
+         */
+        public List<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(List<String> commands) {
+            this.commands = commands;
+        }
+    }
+    static public class Responder {
+        private boolean enabled = true;
+        private  List<String> commands;
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+        /**
+         *  mirror to bean  ResponderParamater
+         * @return
+         */
         public List<String> getCommands() {
             return commands;
         }

@@ -65,7 +65,7 @@
 vlmap:
  spring: 
    loadbalancer: 
-     attach: 
+     attacher: 
       commands:
        - --value debug --header 'aaa=1' --param a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
        - --value debug --header 'aaa=1' -P a:1 -H=b:2 --path /**  -M POST --json-path $.data[0]:a --cookie  cookie1:2 --param p1:1 --param p2:2
@@ -171,7 +171,7 @@ vlmap:
           path:            #忽略列表，匹配列表的请求将不启用严格模式
             - /antpath/**   # ANT-PATH
             - /antpath2/**
-      attach:
+      attacher:
        enabled: true       
        commands:
         -  --value debug1 --method POST --path /hello/{a}/{b}/{c}/** --header h1=1&h1=2&h2=2 --param p1=1&p1=2&p2=2 --json-path  $.a=1&$.b=abcde --json-path-regex  $.a=%5Cd%2B&$.b=\w%2B

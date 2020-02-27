@@ -1,9 +1,11 @@
-package com.github.vlmap.spring.loadbalancer.core;
+package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.util.AntPathMatcher;
 
@@ -12,16 +14,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * 严格模式校验器
- */
-public class StrictHandler {
-    CurrentServer currentServer;
-    GrayLoadBalancerProperties properties;
+public class StrictFilter implements Ordered {
+    protected GrayLoadBalancerProperties properties;
+
+    private CurrentServer currentServer;
     private final AntPathMatcher matcher = new AntPathMatcher();
     private List<String> ignores = Collections.emptyList();
 
-    public StrictHandler(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
+    public StrictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
         this.currentServer = currentServer;
         this.properties = properties;
     }
@@ -119,4 +119,8 @@ public class StrictHandler {
         return strict.getMessage();
     }
 
+    @Override
+    public int getOrder() {
+        return FilterOrder.ORDER_STRICT_FILTER;
+    }
 }

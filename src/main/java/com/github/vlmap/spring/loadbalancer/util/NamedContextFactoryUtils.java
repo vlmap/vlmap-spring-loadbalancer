@@ -8,7 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.util.Map;
 
-public class  NamedContextFactoryUtils {
+public class NamedContextFactoryUtils {
     private static Logger logger = LoggerFactory.getLogger(NamedContextFactoryUtils.class);
 
     public static void close(NamedContextFactory factory, String contextName) {

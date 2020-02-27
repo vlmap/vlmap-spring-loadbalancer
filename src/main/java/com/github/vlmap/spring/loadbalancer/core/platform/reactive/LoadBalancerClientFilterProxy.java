@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ServerWebExchange;
 
 @Aspect
-public class GrayLoadBalancerClientFilterProxy {
+public class LoadBalancerClientFilterProxy {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GrayLoadBalancerProperties properties;
 
-    public GrayLoadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
+    public LoadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 

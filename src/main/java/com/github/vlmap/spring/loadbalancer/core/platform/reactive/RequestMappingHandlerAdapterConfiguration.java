@@ -18,7 +18,7 @@ import org.springframework.web.reactive.result.method.annotation.GrayRequestMapp
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.controller.enabled", matchIfMissing = true)
 
 @Configuration
-public class GrayRequestMappingHandlerAdapterConfiguration {
+public class RequestMappingHandlerAdapterConfiguration {
 
     @Bean
     public WebFluxRegistrations webFluxRegistrations(RequestMappingInvoker requestMappingInvoker) {

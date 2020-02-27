@@ -1,12 +1,11 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.platform.FilterOrder;
 import com.github.vlmap.spring.loadbalancer.core.platform.ReadBodyFilter;
+import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.Hints;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -25,6 +24,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebExchangeDecorator;
+import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.server.adapter.HttpWebHandlerAdapter;
 import reactor.core.publisher.Flux;
@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 
-public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebFilter {
+public class ReadBodyWebFilter extends ReadBodyFilter implements WebFilter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final ResolvableType FORM_DATA_TYPE =
@@ -56,7 +56,7 @@ public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebF
 
     HttpWebHandlerAdapter httpWebHandlerAdapter = null;
 
-    public GrayReadBodyWebFilter(GrayLoadBalancerProperties properties) {
+    public ReadBodyWebFilter(GrayLoadBalancerProperties properties) {
         super(properties);
     }
 
@@ -70,37 +70,38 @@ public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebF
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        if (properties.getCacheBody().isEnabled()) {
+            MediaType contentType = exchange.getRequest().getHeaders().getContentType();
+
+            HttpMethod method = exchange.getRequest().getMethod();
+            exchange.getRequest().getHeaders().getContentLength();
+            if (RequestUtils.useBody(properties, contentType, method, exchange.getRequest().getHeaders().getContentLength())) {
+                exchange.getAttributes().put(READ_BODY_TAG, true);
+
+                return DataBufferUtils.join(exchange.getRequest().getBody())
+                        .flatMap(dataBuffer -> {
+                            ServerHttpRequest request = new ServerHttpRequestDecorator(exchange.getRequest()) {
+
+                                @Override
+                                public Flux<DataBuffer> getBody() {
+                                    DataBufferUtils.retain(dataBuffer);
+                                    return Flux.defer(() -> Flux.just(
+                                            dataBuffer.slice(0, dataBuffer.readableByteCount())));
+                                }
 
 
-        MediaType contentType = exchange.getRequest().getHeaders().getContentType();
-        HttpMethod method = exchange.getRequest().getMethod();
-        if (use(contentType, method)) {
-            exchange.getAttributes().put(READ_BODY_TAG, true);
+                            };
 
-            return DataBufferUtils.join(exchange.getRequest().getBody())
-                    .flatMap(dataBuffer -> {
-                        ServerHttpRequest request = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                            Mono<MultiValueMap<String, String>> formDataMono = initFormData(request, getCodecConfigurer(), exchange.getLogPrefix());
 
-                            @Override
-                            public Flux<DataBuffer> getBody() {
-                                DataBufferUtils.retain(dataBuffer);
-                                return Flux.defer(() -> Flux.just(
-                                        dataBuffer.slice(0, dataBuffer.readableByteCount())));
-                            }
+                            Mono<MultiValueMap<String, Part>> multipartDataMono = initMultipartData(request, getCodecConfigurer(), exchange.getLogPrefix());
 
+                            return chain.filter(new DelegateServerWebExchangeDecorator(exchange.mutate().request(request).build(), formDataMono, multipartDataMono));
 
-                        };
+                        });
 
-                        Mono<MultiValueMap<String, String>> formDataMono = initFormData(request, getCodecConfigurer(), exchange.getLogPrefix());
-
-                        Mono<MultiValueMap<String, Part>> multipartDataMono = initMultipartData(request, getCodecConfigurer(), exchange.getLogPrefix());
-
-                        return chain.filter(new DelegateServerWebExchangeDecorator(exchange.mutate().request(request).build(), formDataMono, multipartDataMono));
-
-                    });
-
+            }
         }
-
         return chain.filter(exchange);
 
     }
@@ -153,9 +154,6 @@ public class GrayReadBodyWebFilter extends ReadBodyFilter implements OrderedWebF
         return EMPTY_MULTIPART_DATA;
     }
 
-    public int getOrder() {
-        return FilterOrder.ORDER_READ_BODY_FILTER;
-    }
 
     static class DelegateServerWebExchangeDecorator extends ServerWebExchangeDecorator {
         private Mono<MultiValueMap<String, String>> formDataMono;
