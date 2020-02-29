@@ -18,6 +18,7 @@ public class GrayLoadBalancerProperties {
 
 
     private CacheBody cacheBody = new CacheBody();
+
     private Attacher attacher = new Attacher();
 
     private Responder responder = new Responder();

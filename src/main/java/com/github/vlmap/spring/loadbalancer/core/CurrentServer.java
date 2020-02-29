@@ -48,20 +48,14 @@ public class CurrentServer {
 
             CloudEurekaInstanceConfig properties = (CloudEurekaInstanceConfig) config;
 
-            String hostName = properties.getHostName(false);
-            if (StringUtils.isEmpty(hostName)) {
-                hostName = properties.getIpAddress();
-            }
-            id = hostName + ":" + properties.getNonSecurePort();
+
+            id = properties.getIpAddress() + ":" + properties.getNonSecurePort();
             appName = properties.getAppname();
         } else if (StringUtils.equals(clazzName, "org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties")) {
 
             ConsulDiscoveryProperties properties = (ConsulDiscoveryProperties) config;
-            String hostName = properties.getHostname();
-            if (StringUtils.isEmpty(hostName)) {
-                hostName = properties.getIpAddress();
-            }
-            id = hostName + ":" + properties.getPort();
+
+            id = properties.getIpAddress() + ":" + properties.getPort();
 
             appName = properties.getServiceName();
         }
