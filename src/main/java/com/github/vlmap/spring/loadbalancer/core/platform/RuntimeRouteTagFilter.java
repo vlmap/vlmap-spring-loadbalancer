@@ -6,18 +6,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 
-public abstract class ReadBodyFilter implements Ordered {
+public class RuntimeRouteTagFilter implements Ordered {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected GrayLoadBalancerProperties properties;
-    public static final String READ_BODY_TAG = "__ReadBodyTag__";
 
-    public ReadBodyFilter(GrayLoadBalancerProperties properties) {
+    public RuntimeRouteTagFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
+
+    @Override
     public int getOrder() {
-        return FilterOrder.ORDER_ATTACH_FILTER;
+        return FilterOrder.RUNTIME_CONTEXT_TAG_FILTER;
     }
 
 }

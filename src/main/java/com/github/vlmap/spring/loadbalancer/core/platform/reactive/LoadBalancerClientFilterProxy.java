@@ -8,13 +8,10 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.server.ServerWebExchange;
 
 @Aspect
 public class LoadBalancerClientFilterProxy {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private GrayLoadBalancerProperties properties;
 
@@ -37,20 +34,21 @@ public class LoadBalancerClientFilterProxy {
 
         String tag = exchange.getRequest().getHeaders().getFirst(headerName);
 
+        RuntimeContext runtimeContext = null;
+
+        if (StringUtils.isNotBlank(tag)) {
+            runtimeContext = ContextManager.getRuntimeContext();
+            runtimeContext.put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+        }
 
         try {
-            ContextManager.getRuntimeContext().put(RuntimeContext.REACTIVE_SERVER_WEB_EXCHANGE, exchange);
-            if (StringUtils.isNotBlank(tag)) {
-                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
-            }
-
-
             return joinPoint.proceed();
 
-
         } finally {
-            ContextManager.getRuntimeContext().onComplete();
+            if (runtimeContext != null) {
+                runtimeContext.release();
 
+            }
         }
 
 

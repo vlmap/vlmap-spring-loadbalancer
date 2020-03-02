@@ -4,6 +4,8 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
@@ -15,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class StrictFilter implements Ordered {
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
     protected GrayLoadBalancerProperties properties;
 
     private CurrentServer currentServer;

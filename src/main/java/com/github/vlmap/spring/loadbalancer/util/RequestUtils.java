@@ -49,6 +49,13 @@ public class RequestUtils {
         if (HttpMethod.GET.equals(method) || HttpMethod.HEAD.equals(method)) {
             return false;
         }
+        long maxLength = properties.getCacheBody().getMaxLength();
+        if (maxLength == -1) {
+            return true;
+        } else if (length != -1 && maxLength > length) {
+            return true;
+
+        }
         if (contentType != null) {
             List<MediaType> cacheBodyContentType = properties.getCacheBody().getCacheBodyContentType();
 
@@ -60,21 +67,8 @@ public class RequestUtils {
                     }
                 }
             }
-            if (contentType.getCharset() != null) {
-                long maxCacheLength = properties.getCacheBody().getMaxCacheLength();
-                if (maxCacheLength == -1) {
-                    return true;
-                } else {
-                    if (length == -1) return false;
-                    if (length > maxCacheLength) {
-                        return false;
-                    }
-
-                }
-                return true;
-            }
-
         }
+
         return false;
 
     }

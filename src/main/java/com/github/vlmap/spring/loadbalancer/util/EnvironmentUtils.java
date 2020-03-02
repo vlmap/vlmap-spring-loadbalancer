@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
 
-import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.core.env.*;
 
@@ -25,17 +24,18 @@ public class EnvironmentUtils {
         }
         return result;
     }
-    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix,boolean withPrefix) {
+
+    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
         MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
         List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
             if (childKey != null) {
-                if(withPrefix){
+                if (withPrefix) {
                     propertySource.put(key, environment.getProperty(key));
 
-                }else {
+                } else {
                     propertySource.put(childKey, environment.getProperty(key));
 
                 }
@@ -44,8 +44,9 @@ public class EnvironmentUtils {
         return propertySource;
 
     }
+
     public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
-       return getSubsetConfigurationPropertySource(environment,prefix,false);
+        return getSubsetConfigurationPropertySource(environment, prefix, false);
 
     }
 

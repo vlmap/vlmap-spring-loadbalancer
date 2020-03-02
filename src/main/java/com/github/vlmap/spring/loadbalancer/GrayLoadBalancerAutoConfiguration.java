@@ -25,7 +25,6 @@ public class GrayLoadBalancerAutoConfiguration {
     }
 
 
-
     @Configuration
     @ConditionalOnClass(HystrixRequestVariable.class)
     static class HystrixConfiguration {

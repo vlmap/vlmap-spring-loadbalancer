@@ -39,7 +39,10 @@ public class RequestMatchParamater extends CommandParamater {
     private LinkedMultiValueMap<String, Pattern> paramsRegex;
 
 
-    //JsonPath匹配. 示例：key= $.data.el[0],value=abc
+
+    /** JsonPath匹配. 示例：key= $.data.el[0],value=abc
+     * link:https://github.com/json-path/JsonPath
+     */
     private LinkedHashMap<String, String> jsonpath;
     //JsonPath正则匹配
     private Map<String, Pattern> jsonpathRegex;
@@ -152,5 +155,25 @@ public class RequestMatchParamater extends CommandParamater {
 
     public void setBodyRegex(LinkedList<Pattern> bodyRegex) {
         this.bodyRegex = bodyRegex;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RequestMatchParamater{" +
+                "value='" + value + '\'' +
+                ", method='" + method + '\'' +
+                ", path='" + path + '\'' +
+                ", headers=" + headers +
+                ", headersRegex=" + headersRegex +
+                ", cookies=" + cookies +
+                ", cookiesRegex=" + cookiesRegex +
+                ", params=" + params +
+                ", paramsRegex=" + paramsRegex +
+                ", jsonpath=" + jsonpath +
+                ", jsonpathRegex=" + jsonpathRegex +
+                ", body='" + body + '\'' +
+                ", bodyRegex=" + bodyRegex +
+                '}';
     }
 }

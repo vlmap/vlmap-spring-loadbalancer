@@ -4,8 +4,6 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderParamater;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ResponderWebFilter extends ResponderFilter implements WebFilter {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     public ResponderWebFilter(GrayLoadBalancerProperties properties) {
@@ -37,12 +34,14 @@ public class ResponderWebFilter extends ResponderFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        String headerName = properties.getHeaderName();
-        String tag = exchange.getRequest().getHeaders().getFirst(headerName);
+        String tag = exchange.getRequest().getHeaders().getFirst(this.properties.getHeaderName());
         if (this.properties.getResponder().isEnabled() && StringUtils.isNotBlank(tag)) {
 
             ResponderParamater data = getParamater(this.paramaters, tag);
             if (data != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Apply Responder:" + data.toString());
+                }
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.valueOf(data.getCode()));
                 MultiValueMap<String, String> cookies = data.getCookies();
@@ -69,10 +68,10 @@ public class ResponderWebFilter extends ResponderFilter implements WebFilter {
                     byte[] bytes = body.getBytes(charset);
                     response.getHeaders().setContentLength(bytes.length);
                     DataBuffer wrap = response.bufferFactory().wrap(bytes);
-                    MediaType contentType= response.getHeaders().getContentType();
-                    if(contentType==null){
+                    MediaType contentType = response.getHeaders().getContentType();
+                    if (contentType == null) {
 
-                        response.getHeaders().setContentType(MediaType.valueOf(MediaType.TEXT_PLAIN_VALUE+";charset="+charset.name()));
+                        response.getHeaders().setContentType(MediaType.valueOf(MediaType.TEXT_PLAIN_VALUE + ";charset=" + charset.name()));
 
                     }
                     return response.writeWith(Flux.just(wrap));

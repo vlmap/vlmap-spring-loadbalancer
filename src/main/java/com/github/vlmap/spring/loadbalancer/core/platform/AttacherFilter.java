@@ -2,12 +2,15 @@ package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.List;
 
 public class AttacherFilter extends CommandsListener<RequestMatchParamater> implements Ordered {
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected List<RequestMatchParamater> paramaters = Collections.emptyList();
 
@@ -31,7 +34,7 @@ public class AttacherFilter extends CommandsListener<RequestMatchParamater> impl
 
     @Override
     protected boolean validate(RequestMatchParamater paramater) {
-        return paramater.isState()&&StringUtils.isNotBlank(paramater.getValue());
+        return paramater.isState() && StringUtils.isNotBlank(paramater.getValue());
     }
 
     @Override

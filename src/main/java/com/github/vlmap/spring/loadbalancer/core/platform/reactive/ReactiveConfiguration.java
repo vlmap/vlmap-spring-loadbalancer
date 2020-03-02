@@ -2,7 +2,6 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.RequestMappingInvoker;
 import com.github.vlmap.spring.loadbalancer.core.platform.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,13 +23,6 @@ public class ReactiveConfiguration {
 
     }
 
-    @Bean
-    public RequestMappingInvoker requestMappingInvoker(GrayLoadBalancerProperties properties) {
-        return new RequestMappingInvoker(properties);
-    }
-
-
-
 
     @Bean
     public ReadBodyFilter readBodyFilter(GrayLoadBalancerProperties properties) {
@@ -41,17 +33,20 @@ public class ReactiveConfiguration {
     public AttacherFilter attacherFilter(GrayLoadBalancerProperties properties) {
         return new AttacherWebFilter(properties);
     }
+
     @Bean
-    public ResponderFilter responderFilter (GrayLoadBalancerProperties properties) {
+    public ResponderFilter responderFilter(GrayLoadBalancerProperties properties) {
 
         return new ResponderWebFilter(properties);
     }
+
     @Bean
     public StrictFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
         return new StrictWebFilter(properties, currentServer);
     }
+
     @Bean
-    public LoadBalancerClientFilterProxy grayLoadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
+    public LoadBalancerClientFilterProxy loadBalancerClientFilterProxy(GrayLoadBalancerProperties properties) {
 
         return new LoadBalancerClientFilterProxy(properties);
     }

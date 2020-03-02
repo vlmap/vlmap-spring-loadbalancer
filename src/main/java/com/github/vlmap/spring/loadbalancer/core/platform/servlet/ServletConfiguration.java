@@ -20,8 +20,6 @@ public class ServletConfiguration {
     }
 
 
-
-
     @Bean
     public ReadBodyFilter readBodyFilter(GrayLoadBalancerProperties properties) {
         return new ReadBodyServletFilter(properties);
@@ -32,8 +30,9 @@ public class ServletConfiguration {
 
         return new AttacherServletFilter(properties);
     }
+
     @Bean
-    public ResponderFilter responderFilter (GrayLoadBalancerProperties properties) {
+    public ResponderFilter responderFilter(GrayLoadBalancerProperties properties) {
 
         return new ResponderServletFilter(properties);
     }
@@ -42,10 +41,11 @@ public class ServletConfiguration {
     public StrictFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
         return new StrictServletFilter(properties, currentServer);
     }
-    @Bean
-    public LoadBalancerContextServletFilter loadBalancerContextServletFilter(GrayLoadBalancerProperties properties) {
 
-        return new LoadBalancerContextServletFilter(properties);
+    @Bean
+    public RuntimeRouteTagServletFilter runtimeRouteTagServletFilter(GrayLoadBalancerProperties properties) {
+
+        return new RuntimeRouteTagServletFilter(properties);
     }
 
 }

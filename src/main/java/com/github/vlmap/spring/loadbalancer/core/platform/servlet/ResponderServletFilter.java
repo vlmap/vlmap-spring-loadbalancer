@@ -4,8 +4,6 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderParamater;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 
@@ -21,7 +19,6 @@ import java.util.Map;
 
 
 public class ResponderServletFilter extends ResponderFilter implements Filter {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     public ResponderServletFilter(GrayLoadBalancerProperties properties) {
@@ -43,6 +40,9 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
 
             ResponderParamater data = getParamater(this.paramaters, tag);
             if (data != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Apply Responder:" + data.toString());
+                }
                 httpServletResponse.setStatus(data.getCode());
                 MultiValueMap<String, String> cookies = data.getCookies();
                 if (cookies != null) {
@@ -78,11 +78,11 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
 
                     Charset charset = StringUtils.isBlank(charsetName) ? Charset.forName(charsetName) : StandardCharsets.UTF_8;
 
-                    String contentType=response.getContentType();
-                    if(contentType==null){
-                        response.setContentType(MediaType.TEXT_PLAIN_VALUE+";charset="+charset.name());
+                    String contentType = response.getContentType();
+                    if (contentType == null) {
+                        response.setContentType(MediaType.TEXT_PLAIN_VALUE + ";charset=" + charset.name());
                     }
-                    byte[] bytes=body.getBytes(charset);
+                    byte[] bytes = body.getBytes(charset);
                     response.setContentLength(bytes.length);
                     ServletOutputStream outputStream = httpServletResponse.getOutputStream();
                     outputStream.write(bytes);

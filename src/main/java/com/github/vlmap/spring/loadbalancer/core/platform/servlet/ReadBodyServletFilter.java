@@ -29,6 +29,10 @@ public class ReadBodyServletFilter extends ReadBodyFilter implements Filter {
             HttpMethod method = HttpMethod.resolve(httpServletRequest.getMethod());
 
             if (RequestUtils.useBody(properties, contentType, method, request.getContentLengthLong())) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(" apply cacheBody");
+                }
+
                 request.setAttribute(READ_BODY_TAG, true);
                 httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
             }

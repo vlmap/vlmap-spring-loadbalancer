@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.client.feign;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import feign.Request;
@@ -32,8 +33,10 @@ public class GrayFeignClientProxy {
         Request request = (Request) args[0];
         String header = getGrayHeader(request);
         String tag = header;
+        RuntimeContext runtimeContext = ContextManager.getRuntimeContext();
+
         if (StringUtils.isBlank(tag)) {
-            tag = ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
+            tag = runtimeContext.get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
@@ -50,13 +53,19 @@ public class GrayFeignClientProxy {
 
         }
         try {
+
             if (StringUtils.isNotBlank(tag)) {
-                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+
+                runtimeContext.put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
             }
             return joinPoint.proceed();
         } finally {
-            ContextManager.getRuntimeContext().onComplete();
+            if (Platform.getInstnce().isReactive()) {
+                runtimeContext.release();
+
+            }
+
 
         }
 

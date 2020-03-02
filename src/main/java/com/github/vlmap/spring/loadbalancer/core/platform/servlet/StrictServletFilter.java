@@ -4,8 +4,6 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +12,10 @@ import java.io.IOException;
 
 
 public class StrictServletFilter extends StrictFilter implements Filter {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
 
     public StrictServletFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        super(properties,currentServer);
+        super(properties, currentServer);
 
     }
 
@@ -41,8 +37,8 @@ public class StrictServletFilter extends StrictFilter implements Filter {
         if (!validate(uri, tag)) {
             String message = getMessage();
             int code = getCode();
-            if (logger.isInfoEnabled()) {
-                logger.info("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(getGrayTags(), ",") + "]\",response code:" + code);
+            if (logger.isTraceEnabled()) {
+                logger.trace("The server is strict model,current request Header[" + headerName + ":" + tag + "] don't match \"[" + StringUtils.join(getGrayTags(), ",") + "]\",response code:" + code);
             }
 
             if (StringUtils.isBlank(message)) {

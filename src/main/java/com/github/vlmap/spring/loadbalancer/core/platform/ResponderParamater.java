@@ -57,4 +57,15 @@ public class ResponderParamater extends CommandParamater {
     public void setValue(String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ResponderParamater{" +
+                "value='" + value + '\'' +
+                ", code=" + code +
+                ", headers=" + headers +
+                ", cookies=" + cookies +
+                ", body='" + body + '\'' +
+                '}';
+    }
 }

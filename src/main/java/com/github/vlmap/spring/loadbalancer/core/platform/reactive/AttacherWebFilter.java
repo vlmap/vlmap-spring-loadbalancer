@@ -9,8 +9,6 @@ import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
@@ -30,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 public class AttacherWebFilter extends AttacherFilter implements WebFilter {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     public AttacherWebFilter(GrayLoadBalancerProperties properties) {
@@ -58,12 +56,17 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
                         Object jsonDocument = RequestUtils.getJsonDocument(data);
                         RequestMatchParamater paramater = this.matcher.match(data, jsonDocument, paramaters);
                         if (paramater != null) {
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("apply attacher :" + paramater.toString());
+                            }
                             String value = paramater.getValue();
 
 
                             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
 
                             builder.header(headerName, value);
+
+
                             return chain.filter(exchange.mutate().request(builder.build()).build());
 
 
@@ -116,6 +119,24 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
 
         if (ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
             return Mono.just(data).flatMap((o) -> {
+
+                return DataBufferUtils.join(request.getBody()).flatMap(dataBuffer -> {
+
+                    Charset charset = null;
+                    if (contentType != null) {
+                        charset = contentType.getCharset();
+                    }
+                    charset = charset == null ? StandardCharsets.UTF_8 : charset;
+
+                    CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
+                    DataBufferUtils.release(dataBuffer);
+                    String body = charBuffer.toString();
+                    data.setBody(body);
+                    return Mono.just(data);
+                });
+            }).flatMap(o -> {
+
+
                 if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
                     return exchange.getFormData().map(formData -> {
                         params.addAll(formData);
@@ -123,26 +144,7 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
                     });
                 }
                 return Mono.just(data);
-            }).flatMap(o -> {
-                if (ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
 
-
-                    return DataBufferUtils.join(request.getBody()).flatMap(dataBuffer -> {
-
-                        Charset charset =null;
-                        if(contentType!=null){
-                            charset=contentType.getCharset();
-                        }
-                        charset = charset == null ? StandardCharsets.UTF_8 : charset;
-
-                        CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
-                        DataBufferUtils.release(dataBuffer);
-                        String body = charBuffer.toString();
-                        data.setBody(body);
-                        return Mono.just(data);
-                    });
-                }
-                return Mono.just(data);
 
             });
         } else {

@@ -12,7 +12,7 @@ public class HystrixRuntimeContext implements RuntimeContext {
     HystrixRuntimeContext() {
     }
 
-    private Map<String, Object> getContext() {
+    public Map<String, Object> getContext() {
         if (!HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext.initializeContext();
         }
@@ -24,33 +24,9 @@ public class HystrixRuntimeContext implements RuntimeContext {
         return context;
     }
 
-    @Override
-    public void put(String key, Object value) {
-        Map<String, Object> context = getContext();
-        context.put(key, value);
-    }
 
     @Override
-    public Object get(String key) {
-        Map<String, Object> context = getContext();
-        return context.get(key);
-
-    }
-
-    @Override
-    public <T> T get(String key, Class<T> type) {
-        Map<String, Object> context = getContext();
-        return (T) context.get(key);
-    }
-
-    @Override
-    public void remove(String key) {
-        Map<String, Object> context = getContext();
-        context.remove(key);
-    }
-
-    @Override
-    public void onComplete() {
+    public void release() {
         if (HystrixRequestContext.isCurrentThreadInitialized()) {
             HystrixRequestContext.getContextForCurrentThread().close();
         }

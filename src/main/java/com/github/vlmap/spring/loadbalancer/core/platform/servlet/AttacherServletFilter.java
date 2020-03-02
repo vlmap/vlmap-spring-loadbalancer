@@ -2,6 +2,8 @@ package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.*;
+import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
+import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
@@ -9,8 +11,6 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -26,7 +26,6 @@ import java.util.*;
 
 
 public class AttacherServletFilter extends AttacherFilter implements Filter {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     public AttacherServletFilter(GrayLoadBalancerProperties properties) {
@@ -114,7 +113,15 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
                 Object jsonDocument = RequestUtils.getJsonDocument(data);
                 RequestMatchParamater paramater = this.matcher.match(data, jsonDocument, paramaters);
                 if (paramater != null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("apply attacher :" + paramater.toString());
+                    }
                     String value = paramater.getValue();
+
+
+                    ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, value);
+
+
                     MultiValueMap<String, String> values = new LinkedMultiValueMap<>();
                     values.add(properties.getHeaderName(), value);
                     httpServletRequest = addHeader(httpServletRequest, values);

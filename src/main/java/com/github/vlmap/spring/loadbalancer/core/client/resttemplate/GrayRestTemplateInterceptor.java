@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.client.resttemplate;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import org.apache.commons.lang3.StringUtils;
@@ -32,23 +33,26 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
         String headerName = properties.getHeaderName();
         String header = headers.getFirst(headerName);
         String tag = header;
+        RuntimeContext runtimeContext = ContextManager.getRuntimeContext();
         if (StringUtils.isBlank(tag)) {
-            tag = ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
+            tag = runtimeContext.get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
 
         }
 
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
             headers.add(headerName, tag);
         }
-
         try {
             if (StringUtils.isNotBlank(tag)) {
-                ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+                runtimeContext.put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
 
             }
             return execution.execute(request, body);
         } finally {
-            ContextManager.getRuntimeContext().onComplete();
+            if (Platform.getInstnce().isReactive()) {
+                runtimeContext.release();
+
+            }
         }
 
 

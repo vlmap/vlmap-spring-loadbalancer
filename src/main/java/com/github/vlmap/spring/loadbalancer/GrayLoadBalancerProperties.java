@@ -273,9 +273,9 @@ public class GrayLoadBalancerProperties {
      */
     static public class CacheBody {
         private boolean enabled = true;
-        private  long maxCacheLength = -1;
+        private long maxLength = -1;
 
-        private  List<MediaType> cacheBodyContentType = Arrays.asList(
+        private List<MediaType> cacheBodyContentType = Arrays.asList(
                 MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_FORM_URLENCODED
 
@@ -289,12 +289,12 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
 
-        public long getMaxCacheLength() {
-            return maxCacheLength;
+        public long getMaxLength() {
+            return maxLength;
         }
 
-        public void setMaxCacheLength(long maxCacheLength) {
-            this.maxCacheLength = maxCacheLength;
+        public void setMaxLength(long maxLength) {
+            this.maxLength = maxLength;
         }
 
         public List<MediaType> getCacheBodyContentType() {
@@ -308,7 +308,7 @@ public class GrayLoadBalancerProperties {
 
     static public class Attacher {
         private boolean enabled = true;
-        private  List<String> commands;
+        private List<String> commands;
 
 
         public boolean isEnabled() {
@@ -320,7 +320,8 @@ public class GrayLoadBalancerProperties {
         }
 
         /**
-         *  mirror to bean  RequestMatchParamater
+         * mirror to bean  RequestMatchParamater
+         *
          * @return
          */
         public List<String> getCommands() {
@@ -331,9 +332,11 @@ public class GrayLoadBalancerProperties {
             this.commands = commands;
         }
     }
+
     static public class Responder {
         private boolean enabled = true;
-        private  List<String> commands;
+        private List<String> commands;
+
         public boolean isEnabled() {
             return enabled;
         }
@@ -341,8 +344,10 @@ public class GrayLoadBalancerProperties {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
+
         /**
-         *  mirror to bean  ResponderParamater
+         * mirror to bean  ResponderParamater
+         *
          * @return
          */
         public List<String> getCommands() {
