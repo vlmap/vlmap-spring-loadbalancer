@@ -31,12 +31,12 @@ import java.util.Map;
  * @author wusheng, ascrutae
  */
 public class JdkRuntimeContext implements RuntimeContext {
-    private final ThreadLocal<Map<String, Object>> context = new InheritableThreadLocal<>();
+    private final ThreadLocal<Map<String, Object>> context = new ThreadLocal<>();
 
     JdkRuntimeContext() {
     }
 
-    private Map<String, Object> getContext() {
+    public Map<String, Object> getContext() {
         Map<String, Object> context = this.context.get();
         if (context == null) {
             context = new HashMap<>();
@@ -45,36 +45,8 @@ public class JdkRuntimeContext implements RuntimeContext {
         return context;
     }
 
-    public void put(String key, Object value) {
-        getContext().put(key, value);
-    }
 
-    public Object get(String key) {
-        return getContext().get(key);
-    }
-
-    public <T> T get(String key, Class<T> type) {
-        return (T) getContext().get(key);
-    }
-
-    public String getTag() {
-        return get(REQUEST_TAG_REFERENCE, String.class);
-
-    }
-
-    public void setTag(String tag) {
-        put(REQUEST_TAG_REFERENCE, tag);
-    }
-
-    public void remove(String key) {
-        getContext().remove(key);
-
-        if (getContext().isEmpty()) {
-            this.context.remove();
-        }
-    }
-
-    public void onComplete() {
+    public void release() {
 
 
         this.context.remove();

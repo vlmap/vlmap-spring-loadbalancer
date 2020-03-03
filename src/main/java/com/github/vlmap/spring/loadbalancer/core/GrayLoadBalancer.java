@@ -61,6 +61,9 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     }
 
+    protected String getId(Server server) {
+        return server.getHost() + ":" + server.getPort();
+    }
 
     protected List<Server> processServers(List<Server> servers) {
 
@@ -69,14 +72,16 @@ public class GrayLoadBalancer implements ILoadBalancer {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
         }
-        String tagValue = (String) ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE);
+        String tagValue = ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
+
         List<Server> list = new ArrayList<>(servers.size());
 
         if (StringUtils.isBlank(tagValue)) {
             //无标签请求，排除包含标签的节点
 
             for (Server server : servers) {
-                Set<String> tags = map.get(server.getId());
+                String id = getId(server);
+                Set<String> tags = map.get(id);
                 if (CollectionUtils.isEmpty(tags)) {
                     list.add(server);
                 }
@@ -88,7 +93,8 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //有标签的请求,优先匹配标签
 
             for (Server server : servers) {
-                Set<String> tags = map.get(server.getId());
+                String id = getId(server);
+                Set<String> tags = map.get(id);
                 if (tags != null && tags.contains(tagValue)) {
                     list.add(server);
                 }
@@ -97,7 +103,8 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //匹配不到则返回无标签节点
             if (list.isEmpty()) {
                 for (Server server : servers) {
-                    Set<String> tags = map.get(server.getId());
+                    String id = getId(server);
+                    Set<String> tags = map.get(id);
                     if (CollectionUtils.isEmpty(tags)) {
                         list.add(server);
                     }

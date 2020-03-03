@@ -4,8 +4,8 @@ import com.github.vlmap.spring.loadbalancer.config.RibbonClientSpecificationAuto
 import com.github.vlmap.spring.loadbalancer.core.client.feign.GrayFeignConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.client.resttemplate.GrayRestTemplateConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.client.webclient.GrayWebClientConfiguration;
-import com.github.vlmap.spring.loadbalancer.core.platform.reactive.GrayReactiveConfiguration;
-import com.github.vlmap.spring.loadbalancer.core.platform.servlet.GrayServletConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.platform.reactive.ReactiveConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.platform.servlet.ServletConfiguration;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -27,9 +27,9 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
         String[] imports = super.selectImports(metadata);
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
+        importsList.add(ReactiveConfiguration.class.getName());
 
-        importsList.add(GrayReactiveConfiguration.class.getName());
-        importsList.add(GrayServletConfiguration.class.getName());
+        importsList.add(ServletConfiguration.class.getName());
 
         importsList.add(GrayFeignConfiguration.class.getName());
         importsList.add(GrayRestTemplateConfiguration.class.getName());

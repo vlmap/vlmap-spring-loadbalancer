@@ -2,6 +2,12 @@
 
  #### spring cloud 灰度路由
  
+ ###更新说明
+ > 增加Hystrix 支持
+ > 请求入口增加根据HTTP参数动态添加添加灰度值
+ > 增加条件匹配功能
+ > 增加应答器功能
+ > 修复一些bug
 
  ###路由规则说明
  
@@ -51,12 +57,35 @@
     <dependency>
 	    <groupId>com.github.vlmap</groupId>
 	    <artifactId>vlmap-spring-loadbalancer</artifactId>
-	    <version>1.0.0</version>
+	    <version>2.0.0.RELEASE</version>
     </dependency>
 ```
+7.条件匹配(新增)
 
+ 根据HTTP请求参数匹配条件，如果匹配则添加value的值到HTTP头信息(Loadbalancer-Tag:${value})。
+ 配置为JSON格式，会映射到RequestMatchParamater类，
 
-7.使用实例
+8.应答器(新增)
+ 
+  如果Loadbalancer-Tag的值与value值匹配则根据配置生成响应内容并直接返回。
+  配置为JSON格式，会映射到RequestMatchParamater类，
+
+```yaml
+vlmap:
+ spring: 
+   loadbalancer: 
+      attacher:   #条件匹配,匹配则添加value的值到HTTP头信息(Loadbalancer-Tag:${value})
+        commands: #映射到RequestMatchParamater
+          - "{\"value\":\"responder\",\"params\":{\"a\":[\"1\"]},\"path\":\"/**\"}" 
+      responder:  #应答器
+        commands: #映射到ResponderParamater 
+          - "{\"value\":\"responder\",\"body\":\"success\"}"    
+```
+
+9. Actuator (新增) 
+    访问路径 /actuator/gray
+    显示灰度相关的信息。
+10.使用实例
   >@EnableGrayLoadBalancer  开启灰度路由
   
  ```java
@@ -85,7 +114,7 @@ public class WebApplication {
 ```
 
 
-8.标签负载均衡配置
+11.标签负载均衡配置
 
  
    
@@ -104,19 +133,29 @@ vlmap:
         enabled: true #RestTemplate客户端是否启用灰度路由，默认值： true
       web-client:
         enabled: true #WebClient客户端是否启用灰度路由，默认值： true
+      controller:  
+        enabled: true #reactive(WebFlux) 环境 controller 否启用灰度路由,保证标签能传到Contoller层，默认值： true
       strict:
         enabled: true #是否启用严格模式(如果启用，Loadbalancer-Tag的值必匹配当前服务说配置的灰度值，不匹配返回 HTTP code)，默认值： true
         code: 403     #严格模式验证不通过返回的状态码
         message: Fibbon   #严格模式验证不通过返回的状态描述
-        ignore:
+        ignore:       #忽略列表，匹配列表的请求将不启用严格模式
           default:
             enabled: true  #启用默认忽略列表  默认值： true
-          path:            #忽略列表，匹配列表的请求将不启用严格模式
+          path:           
             - /antpath/**   # ANT-PATH
             - /antpath2/**
+      attacher:
+          commands: #映射到RequestMatchParamater
+            - "{\"value\":\"responder\",\"params\":{\"a\":[\"1\"]},\"path\":\"/**\"}" 
+      responder:
+          commands: #映射到ResponderParamater 
+            - "{\"value\":\"responder\",\"body\":\"success\"}"    
+```     
 
 
 #（服务灰度值） 配置
+```
 MICRO-CLOUD-SERVICE: # 大写  , 这里是 ribbon 要请求的服务的 service-id 值
   ribbon:
     gray:

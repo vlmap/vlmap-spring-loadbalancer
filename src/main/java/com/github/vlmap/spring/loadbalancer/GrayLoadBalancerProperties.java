@@ -3,10 +3,10 @@ package com.github.vlmap.spring.loadbalancer;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.MediaType;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @ConfigurationProperties(prefix = "vlmap.spring.loadbalancer")
@@ -17,12 +17,19 @@ public class GrayLoadBalancerProperties {
     private String headerName = "Loadbalancer-Tag";
 
 
-    private Strict strict = new Strict();
+    private CacheBody cacheBody = new CacheBody();
 
+    private Attacher attacher = new Attacher();
+
+    private Responder responder = new Responder();
+
+    private Strict strict = new Strict();
+    private Actuator actuator = new Actuator();
 
     private Feign feign = new Feign();
     private RestTemplate restTemplate = new RestTemplate();
     private WebClient webClient = new WebClient();
+    private Controller controller = new Controller();
 
 
     public boolean isEnabled() {
@@ -41,6 +48,13 @@ public class GrayLoadBalancerProperties {
         this.headerName = headerName;
     }
 
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
 
     public WebClient getWebClient() {
         return webClient;
@@ -75,6 +89,49 @@ public class GrayLoadBalancerProperties {
         this.strict = strict;
     }
 
+    public Attacher getAttacher() {
+        return attacher;
+    }
+
+    public void setAttacher(Attacher attacher) {
+        this.attacher = attacher;
+    }
+
+    public Actuator getActuator() {
+        return actuator;
+    }
+
+    public void setActuator(Actuator actuator) {
+        this.actuator = actuator;
+    }
+
+    public CacheBody getCacheBody() {
+        return cacheBody;
+    }
+
+    public void setCacheBody(CacheBody cacheBody) {
+        this.cacheBody = cacheBody;
+    }
+
+    public Responder getResponder() {
+        return responder;
+    }
+
+    public void setResponder(Responder responder) {
+        this.responder = responder;
+    }
+
+    static public class Actuator {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
 
     static public class Feign {
         private boolean enabled = true;
@@ -188,7 +245,6 @@ public class GrayLoadBalancerProperties {
     }
 
     static public class StrictDefaultIgnore {
-        public final static AtomicReference<Collection<String>> DEFAULT_IGNORE_PATH = new AtomicReference<>();
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -197,6 +253,109 @@ public class GrayLoadBalancerProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    static public class Controller {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    /**
+     * body缓存配置
+     */
+    static public class CacheBody {
+        private boolean enabled = true;
+        private long maxLength = -1;
+
+        private List<MediaType> cacheBodyContentType = Arrays.asList(
+                MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_FORM_URLENCODED
+
+        );
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public long getMaxLength() {
+            return maxLength;
+        }
+
+        public void setMaxLength(long maxLength) {
+            this.maxLength = maxLength;
+        }
+
+        public List<MediaType> getCacheBodyContentType() {
+            return cacheBodyContentType;
+        }
+
+        public void setCacheBodyContentType(List<MediaType> cacheBodyContentType) {
+            this.cacheBodyContentType = cacheBodyContentType;
+        }
+    }
+
+    static public class Attacher {
+        private boolean enabled = true;
+        private List<String> commands;
+
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        /**
+         * mirror to bean  RequestMatchParamater
+         *
+         * @return
+         */
+        public List<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(List<String> commands) {
+            this.commands = commands;
+        }
+    }
+
+    static public class Responder {
+        private boolean enabled = true;
+        private List<String> commands;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        /**
+         * mirror to bean  ResponderParamater
+         *
+         * @return
+         */
+        public List<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(List<String> commands) {
+            this.commands = commands;
         }
     }
 }

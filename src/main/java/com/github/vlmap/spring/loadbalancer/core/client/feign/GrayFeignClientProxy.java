@@ -33,8 +33,10 @@ public class GrayFeignClientProxy {
         Request request = (Request) args[0];
         String header = getGrayHeader(request);
         String tag = header;
-        if (StringUtils.isBlank(tag) && Platform.getInstnce().isServlet()) {
-            tag = (String) ContextManager.getRuntimeContext().get(RuntimeContext.REQUEST_TAG_REFERENCE);
+        RuntimeContext runtimeContext = ContextManager.getRuntimeContext();
+
+        if (StringUtils.isBlank(tag)) {
+            tag = runtimeContext.get(RuntimeContext.REQUEST_TAG_REFERENCE, String.class);
 
         }
         if (StringUtils.isNotBlank(tag) && !StringUtils.equals(tag, header)) {
@@ -51,10 +53,19 @@ public class GrayFeignClientProxy {
 
         }
         try {
-            ContextManager.getRuntimeContext().put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+
+            if (StringUtils.isNotBlank(tag)) {
+
+                runtimeContext.put(RuntimeContext.REQUEST_TAG_REFERENCE, tag);
+
+            }
             return joinPoint.proceed();
         } finally {
-            ContextManager.getRuntimeContext().onComplete();
+            if (Platform.getInstnce().isReactive()) {
+                runtimeContext.release();
+
+            }
+
 
         }
 

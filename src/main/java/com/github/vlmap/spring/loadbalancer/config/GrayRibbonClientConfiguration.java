@@ -7,7 +7,9 @@ import com.github.vlmap.spring.loadbalancer.core.GrayClientServer;
 import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
 import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.*;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.ServerList;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +22,14 @@ import org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.consul.discovery.ConsulServerList;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.netflix.ribbon.PropertiesFactory;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
-import java.util.List;
 import java.util.Set;
 
 
@@ -43,9 +46,9 @@ public class GrayRibbonClientConfiguration {
     }
 
     @Bean
-    public GrayClientServer clientServer(ApplicationContext context) {
+    public GrayClientServer clientServer(ApplicationContext context, ConfigurableEnvironment environment) {
 
-        GrayClientServer bean = new GrayClientServer(clientName);
+        GrayClientServer bean = new GrayClientServer(environment, clientName);
         if (context.getParent() != null) {
             context = context.getParent();
         }
@@ -112,14 +115,13 @@ public class GrayRibbonClientConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean
-        public ServerList<?> ribbonServerList(IClientConfig config, ConsulDiscoveryProperties properties) {
-            AbstractServerList serverList = new ConfigurationBasedServerList();
-            serverList.initWithNiwsConfig(config);
-            List list = serverList.getInitialListOfServers();
-            if (CollectionUtils.isEmpty(list)) {
-                serverList = new ConsulServerList(this.client, properties);
-                serverList.initWithNiwsConfig(config);
+        public ServerList<?> ribbonServerList(IClientConfig config, ConsulDiscoveryProperties properties, PropertiesFactory propertiesFactory) {
+            if (propertiesFactory.isSet(ServerList.class, config.getClientName())) {
+                return propertiesFactory.get(ServerList.class, config, config.getClientName());
             }
+            ConsulServerList serverList = new ConsulServerList(this.client, properties);
+            serverList.initWithNiwsConfig(config);
+
 
             return serverList;
         }
@@ -140,14 +142,12 @@ public class GrayRibbonClientConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean
-        public ServerList<?> ribbonServerList(IClientConfig config, NacosDiscoveryProperties properties) {
-            AbstractServerList serverList = new ConfigurationBasedServerList();
-            serverList.initWithNiwsConfig(config);
-            List list = serverList.getInitialListOfServers();
-            if (CollectionUtils.isEmpty(list)) {
-                serverList = new NacosServerList(properties);
-                serverList.initWithNiwsConfig(config);
+        public ServerList<?> ribbonServerList(IClientConfig config, NacosDiscoveryProperties properties, PropertiesFactory propertiesFactory) {
+            if (propertiesFactory.isSet(ServerList.class, config.getClientName())) {
+                return propertiesFactory.get(ServerList.class, config, config.getClientName());
             }
+            NacosServerList serverList = new NacosServerList(properties);
+            serverList.initWithNiwsConfig(config);
 
             return serverList;
         }

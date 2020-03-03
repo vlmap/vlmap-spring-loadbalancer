@@ -1,16 +1,39 @@
 package com.github.vlmap.spring.loadbalancer.runtime;
 
+import java.util.Map;
+
 public interface RuntimeContext {
-    public static final String REQUEST_TAG_REFERENCE = "REQUEST_TAG_REFERENCE";
+    String REQUEST_TAG_REFERENCE = "REQUEST_TAG_REFERENCE";
 
-    void put(String key, Object value);
 
-    Object get(String key);
+    Map<String, Object> getContext();
 
-    public <T> T get(String key, Class<T> type);
 
-    public void remove(String key);
+    default void put(String key, Object value) {
+        Map<String, Object> context = getContext();
+        context.put(key, value);
+    }
 
-    public void onComplete();
+
+    default Object get(String key) {
+        Map<String, Object> context = getContext();
+        return context.get(key);
+
+    }
+
+
+    default <T> T get(String key, Class<T> type) {
+        Map<String, Object> context = getContext();
+        return (T) context.get(key);
+    }
+
+
+    default void remove(String key) {
+        Map<String, Object> context = getContext();
+        context.remove(key);
+    }
+
+
+    void release();
 
 }
