@@ -25,23 +25,23 @@ public class ReactiveConfiguration {
 
 
     @Bean
-    public ReadBodyFilter readBodyFilter(GrayLoadBalancerProperties properties) {
+    public ReadBodyWebFilter readBodyFilter(GrayLoadBalancerProperties properties) {
         return new ReadBodyWebFilter(properties);
     }
 
     @Bean
-    public AttacherFilter attacherFilter(GrayLoadBalancerProperties properties) {
+    public AttacherWebFilter attacherFilter(GrayLoadBalancerProperties properties) {
         return new AttacherWebFilter(properties);
     }
 
     @Bean
-    public ResponderFilter responderFilter(GrayLoadBalancerProperties properties) {
+    public ResponderWebFilter responderFilter(GrayLoadBalancerProperties properties) {
 
         return new ResponderWebFilter(properties);
     }
 
     @Bean
-    public StrictFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
+    public StrictWebFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
         return new StrictWebFilter(properties, currentServer);
     }
 
