@@ -19,26 +19,6 @@ public class AttacherMatchTest {
         List<RequestMatchParamater> paramaters = new ArrayList<>();
          ObjectMapper mapper = new ObjectMapper();
         RequestMatchParamater p = mapper.readValue("{\"headersRegex\":{\"a\":[\"1\",\"2\"]}}", RequestMatchParamater.class);
-        StringBuilder builder = new StringBuilder();
-        builder.append(" ").append("--value debug");
-        builder.append(" ").append("--method POST");
-        builder.append(" ").append("--path /**");
-
-        builder.append(" ").append("--header=h1=1&h1=2&h2=2");
-        builder.append(" ").append("--param p1=1&p1=2&p2=2");
-        builder.append(" ").append("--json-path =$.a=1&$.b=abcde");
-
-
-
-        builder = new StringBuilder();
-        builder.append(" ").append("--value debug1");
-        builder.append(" ").append("--method POST");
-        builder.append(" ").append("--path /hello/{a}/{b}/{c}/**");
-
-        builder.append(" ").append("--header h1=1&h1=2&h2=2");
-        builder.append(" ").append("--param p1=1&p1=2&p2=2");
-        builder.append(" ").append("--json-path  $.a=1&$.b=abcde");
-        builder.append(" ").append("--json-path-regex  $.a=").append(URLEncoder.encode("\\d+", "utf-8")).append("&$.b=\\w%2B");
 
 
 

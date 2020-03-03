@@ -57,7 +57,7 @@
     <dependency>
 	    <groupId>com.github.vlmap</groupId>
 	    <artifactId>vlmap-spring-loadbalancer</artifactId>
-	    <version>1.0.1.RELEASE</version>
+	    <version>2.0.0.RELEASE</version>
     </dependency>
 ```
 7.条件匹配(新增)
@@ -82,7 +82,7 @@ vlmap:
           - "{\"value\":\"responder\",\"body\":\"success\"}"    
 ```
 
- 9. Actuator (新增) 
+9. Actuator (新增) 
     访问路径 /actuator/gray
     显示灰度相关的信息。
 10.使用实例

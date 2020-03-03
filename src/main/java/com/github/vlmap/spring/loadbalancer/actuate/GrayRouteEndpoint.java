@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.actuate.loadbalancer;
+package com.github.vlmap.spring.loadbalancer.actuate;
 
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.AttacherFilter;
