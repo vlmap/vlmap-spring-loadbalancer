@@ -55,12 +55,7 @@ public class StrictFilter implements Ordered {
     }
 
     /**
-     * 1. tag值不为空
-     * ------当前服务的灰度值包含tag;return true;
-     * ------当前服务的灰度值不包含tag;return false;
-     * 2. tag值为空
-     * ------当前服务的灰度值为空; return  true
-     * ------当前服务的灰度值不为空; return  false
+     * 正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
      *
      * @param uri
      * @param tag 当前请求的灰度值
@@ -69,6 +64,17 @@ public class StrictFilter implements Ordered {
     public boolean validate(String uri, String tag) {
         GrayLoadBalancerProperties.Strict strict = properties.getStrict();
 
+        if (isIgnore(strict, uri)) {
+            return true;
+        }
+        boolean isGrayServer = currentServer.isGrayServer();
+        boolean isGrayRequest = StringUtils.isNotBlank(tag);
+        return isGrayServer == isGrayRequest;
+
+
+    }
+
+    private boolean isIgnore(GrayLoadBalancerProperties.Strict strict, String uri) {
         boolean ignore = false;
 
         if (strict.getIgnore().getDefault().isEnabled()) {
@@ -80,15 +86,8 @@ public class StrictFilter implements Ordered {
 
         ignore = matcher(strict.getIgnore().getPath(), uri);
 
-        if (ignore) {
-            return true;
-        }
-        if (StringUtils.isBlank(tag)) {
-            return !currentServer.isGrayServer();
-        }
-        return currentServer.container(tag);
 
-
+        return ignore;
     }
 
     public Collection<String> getGrayTags() {

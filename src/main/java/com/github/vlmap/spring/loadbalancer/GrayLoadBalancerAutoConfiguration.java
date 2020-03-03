@@ -1,6 +1,6 @@
 package com.github.vlmap.spring.loadbalancer;
 
-import com.github.vlmap.spring.loadbalancer.actuate.loadbalancer.GrayRouteEndpoint;
+import com.github.vlmap.spring.loadbalancer.actuate.GrayRouteEndpoint;
 import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;

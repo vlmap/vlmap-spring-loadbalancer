@@ -4,9 +4,15 @@
  
  ###更新说明
  > 增加Hystrix 支持
- > 请求入口增加根据HTTP参数动态添加添加灰度值
+ 
+ > 请求入口增加根据HTTP参数动态添加添加灰度标签
+ 
  > 增加条件匹配功能
+ 
  > 增加应答器功能
+ 
+ > 增加Actuator支持 
+ 
  > 修复一些bug
 
  ###路由规则说明
@@ -21,6 +27,8 @@
  
   注意：
   >  对于reactive(WebFlux) 环境，因为传值是依靠ThredLocal和HystrixRequestVariable实现，reactive 里的业务方法不能确定在哪个线程里运行，所以再reactive环境中对 resttemplate、feign、 weblcient 客户端调用时负载均衡时需要手动传递请求的灰度值，网关服务 (Zuul,Gateway) 和Servlet环境服务不用考虑该问题
+  
+  >  集成过度阶段，灰度服务建议启用严格模式来规避对正常请求做出的错误响应
   
 1.支持的SpringBoot 版本
 
@@ -85,6 +93,7 @@ vlmap:
 9. Actuator (新增) 
     访问路径 /actuator/gray
     显示灰度相关的信息。
+    
 10.使用实例
   >@EnableGrayLoadBalancer  开启灰度路由
   
@@ -135,8 +144,9 @@ vlmap:
         enabled: true #WebClient客户端是否启用灰度路由，默认值： true
       controller:  
         enabled: true #reactive(WebFlux) 环境 controller 否启用灰度路由,保证标签能传到Contoller层，默认值： true
-      strict:
-        enabled: true #是否启用严格模式(如果启用，Loadbalancer-Tag的值必匹配当前服务说配置的灰度值，不匹配返回 HTTP code)，默认值： true
+      strict:  #正常请求负载到灰度节点或灰度请求负载到非灰度节点验证 
+        enabled: false #是否启用严格模式，默认值： false
+   
         code: 403     #严格模式验证不通过返回的状态码
         message: Fibbon   #严格模式验证不通过返回的状态描述
         ignore:       #忽略列表，匹配列表的请求将不启用严格模式

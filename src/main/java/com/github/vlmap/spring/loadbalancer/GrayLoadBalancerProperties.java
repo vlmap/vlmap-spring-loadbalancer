@@ -175,9 +175,9 @@ public class GrayLoadBalancerProperties {
      */
     static public class Strict {
         /**
-         * 启用兼容模式。如果不启用，正常请求路由到灰度节点（非网关服务）拒绝响应
+         *  如果启用，正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
          */
-        private boolean enabled = true;
+        private boolean enabled = false;
         private int code = 403;
         private String message = "Forbidden";
 
@@ -216,6 +216,8 @@ public class GrayLoadBalancerProperties {
         public void setIgnore(StrictIgnore ignore) {
             this.ignore = ignore;
         }
+
+
     }
 
     static public class StrictIgnore {

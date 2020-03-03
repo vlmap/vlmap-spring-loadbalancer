@@ -97,12 +97,6 @@ public class CurrentServer {
         return CollectionUtils.isNotEmpty(grayTags);
     }
 
-    public boolean container(String tag) {
-        if (grayTags != null) {
-            return grayTags.contains(tag);
-        }
-        return false;
-    }
 
     public Collection<String> getGrayTags() {
         return grayTags;
