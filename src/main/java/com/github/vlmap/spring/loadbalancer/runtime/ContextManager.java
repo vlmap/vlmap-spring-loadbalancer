@@ -22,11 +22,17 @@ package com.github.vlmap.spring.loadbalancer.runtime;
 import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 
 public abstract class ContextManager {
-    private static RuntimeContext runtimeContext = null;
+    private static volatile RuntimeContext runtimeContext = null;
 
     public static RuntimeContext getRuntimeContext() {
         if (runtimeContext == null) {
-            runtimeContext = Platform.getInstnce().isHystrix() ? new HystrixRuntimeContext() : new JdkRuntimeContext();
+            synchronized (RuntimeContext.class){
+                if(runtimeContext==null){
+                    runtimeContext = Platform.getInstnce().isHystrix() ? new HystrixRuntimeContext() : new JdkRuntimeContext();
+
+                }
+
+            }
         }
 
         return runtimeContext;

@@ -6,6 +6,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -234,7 +235,7 @@ public class GrayLoadBalancerProperties {
             Default = aDefault;
         }
 
-        private List<String> path;
+        private List<String> path=Collections.emptyList();
 
 
         public List<String> getPath() {
@@ -242,7 +243,7 @@ public class GrayLoadBalancerProperties {
         }
 
         public void setPath(List<String> path) {
-            this.path = path;
+            this.path =path==null?Collections.emptyList():Collections.unmodifiableList( path);
         }
     }
 
@@ -304,13 +305,13 @@ public class GrayLoadBalancerProperties {
         }
 
         public void setCacheBodyContentType(List<MediaType> cacheBodyContentType) {
-            this.cacheBodyContentType = cacheBodyContentType;
+            this.cacheBodyContentType = cacheBodyContentType==null?Collections.emptyList():Collections.unmodifiableList(cacheBodyContentType);
         }
     }
 
     static public class Attacher {
         private boolean enabled = true;
-        private List<String> commands;
+        private List<String> commands=Collections.emptyList();
 
 
         public boolean isEnabled() {
@@ -331,13 +332,13 @@ public class GrayLoadBalancerProperties {
         }
 
         public void setCommands(List<String> commands) {
-            this.commands = commands;
+            this.commands =  commands==null?Collections.emptyList(): Collections.unmodifiableList(commands);
         }
     }
 
     static public class Responder {
         private boolean enabled = true;
-        private List<String> commands;
+        private List<String> commands=Collections.emptyList();
 
         public boolean isEnabled() {
             return enabled;
@@ -357,7 +358,7 @@ public class GrayLoadBalancerProperties {
         }
 
         public void setCommands(List<String> commands) {
-            this.commands = commands;
+            this.commands =commands==null?Collections.emptyList(): Collections.unmodifiableList(commands) ;
         }
     }
 }

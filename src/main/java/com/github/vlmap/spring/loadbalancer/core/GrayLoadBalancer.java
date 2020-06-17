@@ -1,8 +1,10 @@
 package com.github.vlmap.spring.loadbalancer.core;
 
 
+import com.github.vlmap.spring.loadbalancer.core.registration.GrayInfoTransform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
+import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,11 +20,27 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     private GrayClientServer clientServer;
     private ILoadBalancer target;
-
-
+    private volatile Map<Server,GrayInfo> map =Collections.emptyMap();
+    private GrayInfoTransform transform;
     public GrayLoadBalancer(ILoadBalancer target, GrayClientServer clientServer) {
         this.clientServer = clientServer;
         this.target = target;
+        initLoadBalancer(this.target);
+    }
+    protected void initLoadBalancer(ILoadBalancer target){
+       if(target instanceof BaseLoadBalancer){
+           BaseLoadBalancer  loadBalancer=(BaseLoadBalancer)target;
+           loadBalancer.addServerListChangeListener((oldList, newList) -> {
+               Map<Server,GrayInfo> map=new HashMap<>();
+               for(Server server:newList){
+                   GrayInfo grayInfo=    transform.transform(server);
+                   if(grayInfo!=null){
+                       map.put(server,grayInfo);
+                   }
+               }
+               this.map =map;
+           });
+       }
     }
 
 
@@ -80,6 +98,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //无标签请求，排除包含标签的节点
 
             for (Server server : servers) {
+                GrayInfo info=this.map.get(server);
                 String id = getId(server);
                 Set<String> tags = map.get(id);
                 if (CollectionUtils.isEmpty(tags)) {
