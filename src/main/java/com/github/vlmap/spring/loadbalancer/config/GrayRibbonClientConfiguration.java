@@ -30,7 +30,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.Set;
 
@@ -70,7 +69,7 @@ public class GrayRibbonClientConfiguration {
             transform=new ConsulGrayInfoTransform();
 
         }else {
-            transform=new NoneGrayInfoTransform(config);
+            transform=new StaticGrayInfoTransform(config);
         }
 
 

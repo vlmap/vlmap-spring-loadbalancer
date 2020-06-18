@@ -5,10 +5,10 @@ import com.netflix.loadbalancer.Server;
 
 import java.util.Map;
 
-public class NoneGrayInfoTransform extends AbstractGrayInfoTransform<Server> {
+public class StaticGrayInfoTransform extends AbstractGrayInfoTransform<Server> {
     private IClientConfig config = null;
 
-    public NoneGrayInfoTransform(IClientConfig config) {
+    public StaticGrayInfoTransform(IClientConfig config) {
         this.config = config;
     }
 
