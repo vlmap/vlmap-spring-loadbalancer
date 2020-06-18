@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,8 @@ import reactor.core.publisher.Mono;
 public class StrictWebFilter extends StrictFilter implements WebFilter {
 
 
-    public StrictWebFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        super(properties, currentServer);
+    public StrictWebFilter(GrayLoadBalancerProperties properties) {
+        super(properties);
 
     }
 

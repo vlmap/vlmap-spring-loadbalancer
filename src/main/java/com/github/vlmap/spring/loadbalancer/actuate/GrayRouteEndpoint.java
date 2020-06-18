@@ -1,6 +1,5 @@
 package com.github.vlmap.spring.loadbalancer.actuate;
 
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.AttacherFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
@@ -18,8 +17,7 @@ import java.util.TreeMap;
 @Endpoint(id = "gray")
 public class GrayRouteEndpoint {
 
-    @Autowired
-    private CurrentServer currentServer;
+
     @Autowired
     private AttacherFilter attacherFilter;
     @Autowired
@@ -37,7 +35,7 @@ public class GrayRouteEndpoint {
             result.put("properties", new TreeMap<>(source));
         }
 
-        result.put("currentServer", currentServer);
+
         result.put("attach", attacherFilter.getParamaters());
         result.put("responder", responderFilter.getParamaters());
         return result;

@@ -10,7 +10,10 @@ import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 不要把这个类实例交给Spring 处理，
@@ -18,29 +21,13 @@ import java.util.*;
 
 public class GrayLoadBalancer implements ILoadBalancer {
 
-    private GrayClientServer clientServer;
     private ILoadBalancer target;
-    private volatile Map<Server,GrayInfo> map =Collections.emptyMap();
     private GrayInfoTransform transform;
-    public GrayLoadBalancer(ILoadBalancer target, GrayClientServer clientServer) {
-        this.clientServer = clientServer;
+
+    public GrayLoadBalancer(ILoadBalancer target, GrayInfoTransform transform) {
         this.target = target;
-        initLoadBalancer(this.target);
-    }
-    protected void initLoadBalancer(ILoadBalancer target){
-       if(target instanceof BaseLoadBalancer){
-           BaseLoadBalancer  loadBalancer=(BaseLoadBalancer)target;
-           loadBalancer.addServerListChangeListener((oldList, newList) -> {
-               Map<Server,GrayInfo> map=new HashMap<>();
-               for(Server server:newList){
-                   GrayInfo grayInfo=    transform.transform(server);
-                   if(grayInfo!=null){
-                       map.put(server,grayInfo);
-                   }
-               }
-               this.map =map;
-           });
-       }
+
+        this.transform=transform;
     }
 
 
@@ -79,14 +66,12 @@ public class GrayLoadBalancer implements ILoadBalancer {
 
     }
 
-    protected String getId(Server server) {
-        return server.getHost() + ":" + server.getPort();
-    }
 
     protected List<Server> processServers(List<Server> servers) {
 
-        Map<String, Set<String>> map = clientServer.getClientServerTags();
-        if (map == null || map.isEmpty()) {
+        if (CollectionUtils.isEmpty(servers)) return servers;
+        Map<Server, GrayInfo> infos = transform.transform(servers);
+        if (infos.isEmpty()) {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
         }
@@ -98,10 +83,8 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //无标签请求，排除包含标签的节点
 
             for (Server server : servers) {
-                GrayInfo info=this.map.get(server);
-                String id = getId(server);
-                Set<String> tags = map.get(id);
-                if (CollectionUtils.isEmpty(tags)) {
+                GrayInfo info = infos.get(server);
+                if (info == null || CollectionUtils.isEmpty(info.getTags())) {
                     list.add(server);
                 }
 
@@ -112,9 +95,9 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //有标签的请求,优先匹配标签
 
             for (Server server : servers) {
-                String id = getId(server);
-                Set<String> tags = map.get(id);
-                if (tags != null && tags.contains(tagValue)) {
+                GrayInfo info = infos.get(server);
+
+                if (info != null && info.getTags() != null && info.getTags().contains(tagValue)) {
                     list.add(server);
                 }
 
@@ -122,11 +105,11 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //匹配不到则返回无标签节点
             if (list.isEmpty()) {
                 for (Server server : servers) {
-                    String id = getId(server);
-                    Set<String> tags = map.get(id);
-                    if (CollectionUtils.isEmpty(tags)) {
+                    GrayInfo info = infos.get(server);
+                    if (info == null || CollectionUtils.isEmpty(info.getTags())) {
                         list.add(server);
                     }
+
 
                 }
             }

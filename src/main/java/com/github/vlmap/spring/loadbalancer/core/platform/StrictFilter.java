@@ -1,32 +1,29 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class StrictFilter implements Ordered {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected GrayLoadBalancerProperties properties;
 
-    private CurrentServer currentServer;
     private final AntPathMatcher matcher = new AntPathMatcher();
     private List<String> ignores = Collections.emptyList();
+    @Autowired(required = false)
+    private ServiceInstance serviceInstance;
 
-    public StrictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        this.currentServer = currentServer;
+    public StrictFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
@@ -67,11 +64,19 @@ public class StrictFilter implements Ordered {
         if (isIgnore(strict, uri)) {
             return true;
         }
-        boolean isGrayServer = currentServer.isGrayServer();
+        boolean isGrayServer = isGrayServer();
         boolean isGrayRequest = StringUtils.isNotBlank(tag);
         return isGrayServer == isGrayRequest;
 
 
+    }
+
+    protected boolean isGrayServer() {
+        String tags = getGrayTags();
+        if (StringUtils.isNotBlank(tags)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isIgnore(GrayLoadBalancerProperties.Strict strict, String uri) {
@@ -90,8 +95,15 @@ public class StrictFilter implements Ordered {
         return ignore;
     }
 
-    public Collection<String> getGrayTags() {
-        return currentServer.getGrayTags();
+    public String getGrayTags() {
+        if (this.serviceInstance != null) {
+            Map<String, String> metadata = serviceInstance.getMetadata();
+            if (metadata != null) {
+                String tags = metadata.get("gray.tags");
+                return tags;
+            }
+        }
+        return StringUtils.EMPTY;
     }
 
     private boolean matcher(Collection<String> list, String uri) {

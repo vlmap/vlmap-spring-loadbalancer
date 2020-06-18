@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,8 +13,8 @@ import java.io.IOException;
 public class StrictServletFilter extends StrictFilter implements Filter {
 
 
-    public StrictServletFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        super(properties, currentServer);
+    public StrictServletFilter(GrayLoadBalancerProperties properties) {
+        super(properties);
 
     }
 

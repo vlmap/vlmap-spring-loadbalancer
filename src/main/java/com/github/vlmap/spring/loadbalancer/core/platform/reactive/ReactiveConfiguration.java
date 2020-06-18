@@ -1,8 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.platform.*;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -41,8 +40,8 @@ public class ReactiveConfiguration {
     }
 
     @Bean
-    public StrictWebFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        return new StrictWebFilter(properties, currentServer);
+    public StrictWebFilter strictFilter(GrayLoadBalancerProperties properties) {
+        return new StrictWebFilter(properties);
     }
 
     @Bean

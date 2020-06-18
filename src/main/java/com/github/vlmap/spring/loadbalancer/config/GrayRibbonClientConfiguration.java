@@ -3,10 +3,11 @@ package com.github.vlmap.spring.loadbalancer.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.GrayClientServer;
-import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
+ import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
+import com.github.vlmap.spring.loadbalancer.core.registration.*;
 import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
 import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ServerList;
@@ -19,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.consul.discovery.ConsulServerList;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -45,30 +47,34 @@ public class GrayRibbonClientConfiguration {
         this.clientName = clientConfig.getClientName();
     }
 
-    @Bean
-    public GrayClientServer clientServer(ApplicationContext context, ConfigurableEnvironment environment) {
-
-        GrayClientServer bean = new GrayClientServer(environment, clientName);
-        if (context.getParent() != null) {
-            context = context.getParent();
-        }
-        if (context instanceof AbstractApplicationContext) {
-            AbstractApplicationContext root = (AbstractApplicationContext) context;
-            root.addApplicationListener((EnvironmentChangeEvent event) -> {
-                bean.listener(event);
-            });
-        }
-        return bean;
-    }
 
 
     @Autowired
     public void initLoadBalancer(ILoadBalancer lb,
-                                 IRule rule,
-                                 GrayClientServer clientServer) {
+                                 IRule rule, ServiceInstance serviceInstance) {
 
         //替换默认ILoadBalancer为GrayLoadBalancer
-        rule.setLoadBalancer(new GrayLoadBalancer(lb, clientServer));
+        IClientConfig config=null;
+        if(lb instanceof BaseLoadBalancer){
+            config=     ((BaseLoadBalancer) lb).getClientConfig();
+        }
+        GrayInfoTransform transform=null;
+        String clazz=serviceInstance.getClass().getName();
+        if(clazz.equals("org.springframework.cloud.alibaba.nacos.registry.NacosRegistration")){
+            transform=new NacosGrayInfoTransform();
+
+        } else if(clazz.equals("org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration")){
+            transform=new EurekaGrayInfoTransform();
+
+        } else if(clazz.equals("org.springframework.cloud.consul.serviceregistry.ConsulRegistration")){
+            transform=new ConsulGrayInfoTransform();
+
+        }else {
+            transform=new NoneGrayInfoTransform(config);
+        }
+
+
+        rule.setLoadBalancer(new GrayLoadBalancer(lb,transform));
 
     }
 

@@ -1,8 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.platform.*;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,8 +37,8 @@ public class ServletConfiguration {
     }
 
     @Bean
-    public StrictServletFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        return new StrictServletFilter(properties, currentServer);
+    public StrictServletFilter strictFilter(GrayLoadBalancerProperties properties) {
+        return new StrictServletFilter(properties);
     }
 
     @Bean
