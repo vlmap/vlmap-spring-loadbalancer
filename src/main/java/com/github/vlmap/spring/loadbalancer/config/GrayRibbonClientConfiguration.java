@@ -53,10 +53,7 @@ public class GrayRibbonClientConfiguration {
                                  IRule rule, ServiceInstance serviceInstance) {
 
         //替换默认ILoadBalancer为GrayLoadBalancer
-        IClientConfig config=null;
-        if(lb instanceof BaseLoadBalancer){
-            config=     ((BaseLoadBalancer) lb).getClientConfig();
-        }
+
         GrayInfoTransform transform=null;
         String clazz=serviceInstance.getClass().getName();
         if(clazz.equals("org.springframework.cloud.alibaba.nacos.registry.NacosRegistration")){
@@ -69,6 +66,10 @@ public class GrayRibbonClientConfiguration {
             transform=new ConsulGrayInfoTransform();
 
         }else {
+            IClientConfig config=null;
+            if(lb instanceof BaseLoadBalancer){
+                config=     ((BaseLoadBalancer) lb).getClientConfig();
+            }
             transform=new StaticGrayInfoTransform(config);
         }
 
