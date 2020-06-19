@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.registration;
 
 import com.github.vlmap.spring.loadbalancer.core.GrayInfo;
+import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -17,7 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractGrayInfoTransform<T extends Server> implements GrayInfoTransform<T> {
     private Map<Server, GrayInfo> caches = new ConcurrentHashMap<>();
+    protected IClientConfig config = null;
 
+    public AbstractGrayInfoTransform(IClientConfig config) {
+        this.config = config;
+    }
     public Map<T, GrayInfo> transform(List<T> servers) {
         if (CollectionUtils.isNotEmpty(servers)) {
             Map<T, GrayInfo> result = new HashMap<>(servers.size());

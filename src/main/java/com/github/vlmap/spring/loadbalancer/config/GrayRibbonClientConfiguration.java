@@ -55,21 +55,22 @@ public class GrayRibbonClientConfiguration {
         //替换默认ILoadBalancer为GrayLoadBalancer
 
         GrayInfoTransform transform=null;
+        IClientConfig config=null;
+        if(lb instanceof BaseLoadBalancer){
+            config=     ((BaseLoadBalancer) lb).getClientConfig();
+        }
         String clazz=serviceInstance.getClass().getName();
         if(clazz.equals("org.springframework.cloud.alibaba.nacos.registry.NacosRegistration")){
-            transform=new NacosGrayInfoTransform();
+            transform=new NacosGrayInfoTransform(config);
 
         } else if(clazz.equals("org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration")){
-            transform=new EurekaGrayInfoTransform();
+            transform=new EurekaGrayInfoTransform(config);
 
         } else if(clazz.equals("org.springframework.cloud.consul.serviceregistry.ConsulRegistration")){
-            transform=new ConsulGrayInfoTransform();
+            transform=new ConsulGrayInfoTransform(config);
 
         }else {
-            IClientConfig config=null;
-            if(lb instanceof BaseLoadBalancer){
-                config=     ((BaseLoadBalancer) lb).getClientConfig();
-            }
+
             transform=new StaticGrayInfoTransform(config);
         }
 
