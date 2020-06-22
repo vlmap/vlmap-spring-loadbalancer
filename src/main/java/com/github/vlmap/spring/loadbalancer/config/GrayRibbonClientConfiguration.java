@@ -7,10 +7,7 @@ import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.registration.*;
 import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.BaseLoadBalancer;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.ServerList;
+import com.netflix.loadbalancer.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,23 +47,27 @@ public class GrayRibbonClientConfiguration {
 
     @Autowired
     public void initLoadBalancer(ILoadBalancer lb,
-                                 IRule rule, ServiceInstance serviceInstance) {
+                                 IRule rule,   ServerList serverList) {
 
         //替换默认ILoadBalancer为GrayLoadBalancer
 
         GrayInfoTransform transform=null;
         IClientConfig config=null;
+
+
         if(lb instanceof BaseLoadBalancer){
             config=     ((BaseLoadBalancer) lb).getClientConfig();
+
         }
-        String clazz=serviceInstance.getClass().getName();
+
+        String clazz=serverList.getClass().getName();
         if(clazz.equals("org.springframework.cloud.alibaba.nacos.registry.NacosRegistration")){
             transform=new NacosGrayInfoTransform(config);
 
         } else if(clazz.equals("org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration")){
             transform=new EurekaGrayInfoTransform(config);
 
-        } else if(clazz.equals("org.springframework.cloud.consul.serviceregistry.ConsulRegistration")){
+        } else if(clazz.equals("org.springframework.cloud.consul.discovery.ConsulServerList")){
             transform=new ConsulGrayInfoTransform(config);
 
         }else {
