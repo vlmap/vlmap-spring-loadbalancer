@@ -8,7 +8,16 @@ public class Platform {
     private boolean isServlet;
     private boolean isReactive;
     private boolean isHystrix;
+    private SpringBootVersion springBootVersion = SpringBootVersion.VERSION_2;
+    WebPlatform webPlatform = WebPlatform.SERVLET;
 
+    static public enum SpringBootVersion {
+        VERSION_1, VERSION_2
+    }
+
+    static public enum WebPlatform {
+        SERVLET, REACTIVE
+    }
 
     /**
      * 当前是否就网关服务
