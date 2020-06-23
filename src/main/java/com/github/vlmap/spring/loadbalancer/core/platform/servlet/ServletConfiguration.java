@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnMissingClass("org.springframework.web.reactive.DispatcherHandler")
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
 public class ServletConfiguration {
+
     public ServletConfiguration() {
         Platform.getInstnce().setPlatform(Platform.SERVLET);
     }

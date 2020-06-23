@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class GrayFeignConfiguration {
 
     @Configuration
+    @ConditionalOnClass(name="org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration")
 
     @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
     @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
