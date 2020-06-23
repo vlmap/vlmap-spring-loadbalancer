@@ -61,10 +61,10 @@ public class GrayRibbonClientConfiguration {
         }
 
         String clazz=serverList.getClass().getName();
-        if(clazz.equals("org.springframework.cloud.alibaba.nacos.registry.NacosRegistration")){
+        if(clazz.equals("org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList")){
             transform=new NacosGrayInfoTransform(config);
 
-        } else if(clazz.equals("org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration")){
+        } else if(clazz.equals("org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServerList")){
             transform=new EurekaGrayInfoTransform(config);
 
         } else if(clazz.equals("org.springframework.cloud.consul.discovery.ConsulServerList")){
@@ -80,31 +80,31 @@ public class GrayRibbonClientConfiguration {
 
     }
 
-
-    @Autowired
-    public void ribbonClientRefresh(ApplicationContext context, SpringClientFactory clientFactory) {
-        ApplicationContext parent = context.getParent();
-        String name = clientName + ".";
-        if (parent instanceof AbstractApplicationContext) {
-            AbstractApplicationContext applicationContext = (AbstractApplicationContext) parent;
-            applicationContext.addApplicationListener((EnvironmentChangeEvent e) -> {
-                Set<String> keys = e.getKeys();
-                if (CollectionUtils.isNotEmpty(keys)) {
-                    for (String key : keys) {
-                        if (StringUtils.startsWith(key, name)) {
-                            NamedContextFactoryUtils.close(clientFactory, clientName);
-
-                            applicationContext.getApplicationListeners().remove(this);
-                            break;
-                        }
-                    }
-                }
-
-            });
-        }
-
-
-    }
+//
+//    @Autowired
+//    public void ribbonClientRefresh(ApplicationContext context, SpringClientFactory clientFactory) {
+//        ApplicationContext parent = context.getParent();
+//        String name = clientName + ".";
+//        if (parent instanceof AbstractApplicationContext) {
+//            AbstractApplicationContext applicationContext = (AbstractApplicationContext) parent;
+//            applicationContext.addApplicationListener((EnvironmentChangeEvent e) -> {
+//                Set<String> keys = e.getKeys();
+//                if (CollectionUtils.isNotEmpty(keys)) {
+//                    for (String key : keys) {
+//                        if (StringUtils.startsWith(key, name)) {
+//                            NamedContextFactoryUtils.close(clientFactory, clientName);
+//
+//                            applicationContext.getApplicationListeners().remove(this);
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//            });
+//        }
+//
+//
+//    }
 
     @Configuration
     @ConditionalOnClass(ConsulDiscoveryProperties.class)

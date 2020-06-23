@@ -24,19 +24,7 @@ public class GrayLoadBalancerAutoConfiguration {
         }
     }
 
-    @Configuration
-    @ConditionalOnClass({Endpoint.class})
-    @ConditionalOnProperty(
-            value = {"vlmap.spring.loadbalancer.actuator.enabled"},
-            matchIfMissing = true
-    )
 
-    static class ActuatorConfiguration {
-        @Bean
-        public GrayRouteEndpoint loadbalancerEndpoint() {
-            return new GrayRouteEndpoint();
-        }
-    }
 
 
 }

@@ -37,6 +37,7 @@ public class ReadBodyServletFilter extends ReadBodyFilter implements Filter {
                 httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
             }
             chain.doFilter(httpServletRequest, response);
+            return ;
         }
         chain.doFilter(request, response);
 

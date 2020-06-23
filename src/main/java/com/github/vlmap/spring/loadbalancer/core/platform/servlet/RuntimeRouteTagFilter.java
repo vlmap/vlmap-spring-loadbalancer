@@ -39,7 +39,7 @@ public class RuntimeRouteTagFilter implements Filter, Ordered {
         String headerName = this.properties.getHeaderName();
         String tag = httpServletRequest.getHeader(headerName);
         RuntimeContext runtimeContext = ContextManager.getRuntimeContext();
-        ;
+
         try {
             if (StringUtils.isNotBlank(tag)) {
 
