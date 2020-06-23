@@ -1,6 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -82,7 +83,7 @@ public class StrictFilter implements Ordered {
     private boolean isIgnore(GrayLoadBalancerProperties.Strict strict, String uri) {
         boolean ignore = false;
 
-        if (strict.getIgnore().getDefault().isEnabled()) {
+        if (strict.getIgnore()!=null&&strict.getIgnore().isEnableDefault()) {
             ignore = matcher(ignores, uri);
         }
         if (ignore) {

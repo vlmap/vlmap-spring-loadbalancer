@@ -39,7 +39,7 @@ public class AttacherFilter extends CommandsListener<RequestMatchParamater> impl
 
     @Override
     protected List<String> getCommands(GrayLoadBalancerProperties properties) {
-        return properties.getAttacher().getCommands();
+        return properties.getAttacher()==null?null:properties.getAttacher().getCommands();
     }
 
     @Override

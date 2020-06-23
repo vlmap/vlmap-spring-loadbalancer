@@ -6,8 +6,7 @@ import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
+ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
 import java.util.LinkedHashMap;
@@ -29,10 +28,9 @@ public class GrayRouteEndpoint {
     public Map<String, Object> get() {
         Map<String, Object> result = new LinkedHashMap<>();
         if (environment instanceof ConfigurableEnvironment) {
-            MapConfigurationPropertySource propertySource = EnvironmentUtils.getSubsetConfigurationPropertySource((ConfigurableEnvironment) environment, "vlmap.spring.loadbalancer", true);
+            Map<String,String> map = EnvironmentUtils.getSubset((ConfigurableEnvironment) environment, "vlmap.spring.loadbalancer", true);
 
-            Map<String, Object> source = (Map<String, Object>) propertySource.getUnderlyingSource();
-            result.put("properties", new TreeMap<>(source));
+             result.put("properties", new TreeMap<>(map));
         }
 
 

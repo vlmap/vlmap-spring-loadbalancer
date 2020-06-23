@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderParamater;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -36,7 +37,7 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
         String tag = httpServletRequest.getHeader(headerName);
 
 
-        if (this.properties.getResponder().isEnabled() && StringUtils.isNotBlank(tag)) {
+        if (Util.isEnabled(this.properties.getResponder())  && StringUtils.isNotBlank(tag)) {
 
             ResponderParamater data = getParamater(this.paramaters, tag);
             if (data != null) {

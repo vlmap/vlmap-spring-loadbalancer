@@ -5,6 +5,7 @@ import com.github.vlmap.spring.loadbalancer.core.platform.*;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.IteratorUtils;
@@ -98,7 +99,7 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
         String headerName = properties.getHeaderName();
         String tag = httpServletRequest.getHeader(headerName);
 
-        if (!this.properties.getAttacher().isEnabled() || StringUtils.isNotBlank(tag)) {
+        if (!Util.isEnabled(this.properties.getAttacher())  || StringUtils.isNotBlank(tag)) {
             chain.doFilter(request, response);
             return;
         }

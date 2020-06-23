@@ -1,13 +1,9 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
 
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
-import org.springframework.core.env.*;
+ import org.springframework.core.env.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnvironmentUtils {
 
@@ -25,30 +21,28 @@ public class EnvironmentUtils {
         return result;
     }
 
-    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
-        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
-        List<String> keys = getKeys(environment);
+    public static Map<String,String> getSubset(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
+        Map<String,String> map=new HashMap<>();
+         List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
             if (childKey != null) {
                 if (withPrefix) {
-                    propertySource.put(key, environment.getProperty(key));
+
+                    map.put(key, environment.getProperty(key));
 
                 } else {
-                    propertySource.put(childKey, environment.getProperty(key));
+                    map.put(childKey, environment.getProperty(key));
 
                 }
             }
         }
-        return propertySource;
+        return map;
 
     }
 
-    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
-        return getSubsetConfigurationPropertySource(environment, prefix, false);
 
-    }
 
     public static String toSubsetKey(String key, String prefix, String delimiter) {
         if (!key.startsWith(prefix)) {

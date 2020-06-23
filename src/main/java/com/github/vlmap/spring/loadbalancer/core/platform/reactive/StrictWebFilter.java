@@ -2,6 +2,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,7 +21,7 @@ public class StrictWebFilter extends StrictFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (!properties.getStrict().isEnabled()) {
+        if (!Util.isEnabled(properties.getStrict())) {
             return chain.filter(exchange);
         }
         String headerName = this.properties.getHeaderName();

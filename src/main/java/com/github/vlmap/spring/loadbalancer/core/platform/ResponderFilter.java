@@ -40,7 +40,7 @@ public class ResponderFilter extends CommandsListener<ResponderParamater> implem
 
     @Override
     protected List<String> getCommands(GrayLoadBalancerProperties properties) {
-        return properties.getResponder().getCommands();
+        return properties.getResponder()==null?null: properties.getResponder().getCommands();
     }
 
     @Override
