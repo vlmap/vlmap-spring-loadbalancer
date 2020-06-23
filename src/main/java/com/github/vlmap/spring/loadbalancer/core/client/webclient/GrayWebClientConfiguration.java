@@ -14,7 +14,10 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.web-client.enabled", matchIfMissing = true)
-@ConditionalOnClass(name="org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration")
+@ConditionalOnClass( name={
+        "org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration",
+        "org.springframework.web.reactive.function.client.ExchangeFilterFunction"
+})
 
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 
