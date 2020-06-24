@@ -25,6 +25,15 @@ public class RuntimeRouteTagFilter implements Filter, Ordered {
         this.properties = properties;
     }
 
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
+    }
 
     @Override
     public int getOrder() {

@@ -1,8 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,17 +10,10 @@ import org.springframework.context.annotation.Configuration;
  * 重写GatewayLoadBalancerClientAutoConfiguration
  */
 @Configuration
-@ConditionalOnClass(name="org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration")
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
 public class ReactiveConfiguration {
-
-    public ReactiveConfiguration() {
-        Platform.getInstnce().setPlatform(Platform.REACTIVE);
-
-    }
-
 
 
     @Bean
@@ -51,6 +42,10 @@ public class ReactiveConfiguration {
 
         return new LoadBalancerClientFilterProxy(properties);
     }
+
+
+
+
 
 
 }

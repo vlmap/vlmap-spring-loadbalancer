@@ -1,22 +1,17 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnMissingClass("org.springframework.web.reactive.DispatcherHandler")
-@EnableConfigurationProperties({GrayLoadBalancerProperties.class})
+ @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
+@ConditionalOnWebApplication
 
 public class ServletConfiguration {
 
-    public ServletConfiguration() {
-        Platform.getInstnce().setPlatform(Platform.SERVLET);
-    }
 
 
     @Bean

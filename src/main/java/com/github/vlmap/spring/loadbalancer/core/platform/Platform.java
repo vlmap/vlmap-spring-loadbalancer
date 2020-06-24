@@ -1,61 +1,111 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ClassUtils;
+
 public class Platform {
-    public static final String SERVLET = "servlet";
-    public static final String REACTIVE = "reactive";
-    private static final Platform instnce = new Platform();
-    private String platform;
-    private boolean isServlet;
-    private boolean isReactive;
-    private boolean isHystrix;
-    private SpringBootVersion springBootVersion = SpringBootVersion.VERSION_2;
-    WebPlatform webPlatform = WebPlatform.SERVLET;
 
-    static public enum SpringBootVersion {
-        VERSION_1, VERSION_2
-    }
+    private static final String SERVLET_WEB_APPLICATION_CLASS = "org.springframework.web.context.support.GenericWebApplicationContext";
 
-    static public enum WebPlatform {
-        SERVLET, REACTIVE
-    }
+    private static final String REACTIVE_WEB_APPLICATION_CLASS = "org.springframework.web.reactive.HandlerResult";
 
-    /**
-     * 当前是否就网关服务
-     */
-    private boolean isGatewayService = false;
+    private static final String HYSTRIX_REQUEST_VARIABLE_CLASS = " com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable";
 
-    public static Platform getInstnce() {
-        return instnce;
-    }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-        isServlet = SERVLET.equals(platform);
-        isReactive = REACTIVE.equals(platform);
-    }
 
-    public boolean isHystrix() {
-        return isHystrix;
-    }
 
-    public void setHystrix(boolean hystrix) {
-        isHystrix = hystrix;
-    }
 
-    public boolean isGatewayService() {
-        return isGatewayService;
-    }
 
-    public void setGatewayService(boolean gatewayService) {
-        isGatewayService = gatewayService;
+
+
+
+    private static Boolean hystrix;
+    private static Boolean servlet;
+
+    private static Boolean reactive;
+    public static boolean isHystrix() {
+        if(hystrix==null){
+            if (isPresent(HYSTRIX_REQUEST_VARIABLE_CLASS, Platform.class.getClassLoader())) {
+                hystrix=true;
+
+            }else{
+                hystrix=     false;
+            }
+        }
+
+        return hystrix;
     }
 
 
-    public boolean isServlet() {
-        return isServlet;
+
+
+
+
+    public static boolean isSpringBoot_1(){
+        String version = org.springframework.boot.SpringBootVersion.getVersion();
+        return StringUtils.startsWith(version, "1.");
+
+    }
+    public static boolean isSpringBoot_2(){
+        String version = org.springframework.boot.SpringBootVersion.getVersion();
+        return StringUtils.startsWith(version, "2.");
+
     }
 
-    public boolean isReactive() {
-        return isReactive;
+    public static boolean isServlet() {
+        if(servlet==null){
+            if (isPresent(REACTIVE_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
+                servlet= false;
+
+            } else if (isPresent(SERVLET_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
+                servlet= true;
+
+            }else{
+                servlet=false;
+            }
+        }
+
+        return servlet;
+
     }
+
+    public static boolean isReactive() {
+
+        if(reactive==null){
+            if (isPresent(REACTIVE_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
+                reactive= true;
+
+            } else if (isPresent(SERVLET_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
+                reactive= false;
+
+            }else{
+                reactive=false;
+            }
+        }
+
+        return reactive;
+
+    }
+
+
+    public static boolean isPresent(String className, ClassLoader classLoader) {
+        if (classLoader == null) {
+            classLoader = ClassUtils.getDefaultClassLoader();
+        }
+        try {
+            forName(className, classLoader);
+            return true;
+        } catch (Throwable ex) {
+            return false;
+        }
+    }
+
+    private static Class<?> forName(String className, ClassLoader classLoader)
+            throws ClassNotFoundException {
+        if (classLoader != null) {
+            return classLoader.loadClass(className);
+        }
+        return Class.forName(className);
+    }
+
 }

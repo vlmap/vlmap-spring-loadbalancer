@@ -1,9 +1,11 @@
 package com.github.vlmap.spring.loadbalancer.annotation;
 
+import com.github.vlmap.spring.loadbalancer.config.ActuatorConfiguration;
 import com.github.vlmap.spring.loadbalancer.config.RibbonClientSpecificationAutoConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.client.feign.GrayFeignConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.client.resttemplate.GrayRestTemplateConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.client.webclient.GrayWebClientConfiguration;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import com.github.vlmap.spring.loadbalancer.core.platform.reactive.ReactiveConfiguration;
 import com.github.vlmap.spring.loadbalancer.core.platform.servlet.ServletConfiguration;
 import org.springframework.cloud.commons.util.SpringFactoryImportSelector;
@@ -27,13 +29,24 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
         String[] imports = super.selectImports(metadata);
         List<String> importsList = new ArrayList<>(Arrays.asList(imports));
         importsList.add(RibbonClientSpecificationAutoConfiguration.class.getName());
-        importsList.add(ReactiveConfiguration.class.getName());
+        if (Platform.isServlet()) {
+            importsList.add(ServletConfiguration.class.getName());
 
-        importsList.add(ServletConfiguration.class.getName());
+        } else if (Platform.isReactive()) {
+            importsList.add(ReactiveConfiguration.class.getName());
+            importsList.add(GrayWebClientConfiguration.class.getName());
 
+        }
+        if (Platform.isSpringBoot_2()) {
+            importsList.add(ActuatorConfiguration.class.getName());
+        } else if (Platform.isSpringBoot_1()) {
+
+        }
+
+//
         importsList.add(GrayFeignConfiguration.class.getName());
+
         importsList.add(GrayRestTemplateConfiguration.class.getName());
-        importsList.add(GrayWebClientConfiguration.class.getName());
 
 
         imports = importsList.toArray(new String[0]);

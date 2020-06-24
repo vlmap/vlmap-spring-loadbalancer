@@ -49,7 +49,7 @@ public class GrayRestTemplateInterceptor implements ClientHttpRequestInterceptor
             }
             return execution.execute(request, body);
         } finally {
-            if (Platform.getInstnce().isReactive()) {
+            if (Platform.isReactive()) {
                 runtimeContext.release();
 
             }

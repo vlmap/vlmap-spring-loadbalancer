@@ -34,6 +34,15 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
         super(properties);
 
     }
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
+    }
 
 
     public SimpleRequest parser(SimpleRequest data, HttpServletRequest request) {

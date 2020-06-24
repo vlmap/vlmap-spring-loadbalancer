@@ -15,8 +15,7 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.rest-template.enabled", matchIfMissing = true)
-
-public class GrayRestTemplateConfiguration {
+ public class GrayRestTemplateConfiguration {
 
     @Autowired
     public void initRestTemplate(@Autowired(required = false) RestTemplateBuilder builder,
