@@ -96,6 +96,14 @@ public class StrictFilter implements Ordered {
         return ignore;
     }
 
+    public void setIgnores(List<String> ignores) {
+        this.ignores = Collections.unmodifiableList(ignores);
+    }
+
+    public List<String> getIgnores() {
+        return ignores;
+    }
+
     public String getGrayTags() {
         if (this.serviceInstance != null) {
             Map<String, String> metadata = serviceInstance.getMetadata();

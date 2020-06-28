@@ -158,7 +158,8 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
             List<String> list = EnumerationUtils.toList(httpServletRequest.getHeaders(headerName));
             headers.put(headerName, list);
         }
-        headers.addAll(values);
+        Util.addAll(headers,values);
+
         return new HttpServletRequestWrapper(httpServletRequest) {
             @Override
             public String getHeader(String name) {

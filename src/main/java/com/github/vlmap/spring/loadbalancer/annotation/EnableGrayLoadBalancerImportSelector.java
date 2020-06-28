@@ -37,11 +37,9 @@ public class EnableGrayLoadBalancerImportSelector extends SpringFactoryImportSel
             importsList.add(GrayWebClientConfiguration.class.getName());
 
         }
-        if (Platform.isSpringBoot_2()) {
-            importsList.add(ActuatorConfiguration.class.getName());
-        } else if (Platform.isSpringBoot_1()) {
+        importsList.add(ActuatorConfiguration.class.getName());
 
-        }
+   
 
 //
         importsList.add(GrayFeignConfiguration.class.getName());
