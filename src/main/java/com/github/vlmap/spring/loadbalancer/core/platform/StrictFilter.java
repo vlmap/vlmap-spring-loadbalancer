@@ -1,17 +1,17 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-
+import com.github.vlmap.spring.loadbalancer.core.registration.MetaDataProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.util.AntPathMatcher;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 public class StrictFilter implements Ordered {
@@ -22,14 +22,15 @@ public class StrictFilter implements Ordered {
     private final AntPathMatcher matcher = new AntPathMatcher();
     private List<String> ignores = Collections.emptyList();
     @Autowired(required = false)
-    private ServiceInstance serviceInstance;
-
+    private MetaDataProvider metaDataProvider;
+    @Autowired
+    private Environment environment;
     public StrictFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
 
-    @Autowired
-    public void initMethod(Environment environment) {
+    @PostConstruct
+    public void initMethod() {
         List<String> patterns = new ArrayList<>();
         patterns.add("/webjars/**");
         patterns.add("/favicon.ico");
@@ -105,8 +106,9 @@ public class StrictFilter implements Ordered {
     }
 
     public String getGrayTags() {
-        if (this.serviceInstance != null) {
-            Map<String, String> metadata = serviceInstance.getMetadata();
+        if (this.metaDataProvider != null) {
+
+            Map<String, String> metadata = metaDataProvider.metadata();
             if (metadata != null) {
                 String tags = metadata.get("gray.tags");
                 return tags;

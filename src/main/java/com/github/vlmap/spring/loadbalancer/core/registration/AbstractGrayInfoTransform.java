@@ -1,14 +1,12 @@
 package com.github.vlmap.spring.loadbalancer.core.registration;
 
 import com.github.vlmap.spring.loadbalancer.core.GrayInfo;
+import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ * @param <T>
+ */
 public abstract class AbstractGrayInfoTransform<T extends Server> implements GrayInfoTransform<T> {
     private Map<Server, GrayInfo> caches = new ConcurrentHashMap<>();
     protected IClientConfig config = null;
@@ -66,10 +68,10 @@ public abstract class AbstractGrayInfoTransform<T extends Server> implements Gra
 
     protected GrayInfo parse(Map<String, String> metadata) {
         if (MapUtils.isNotEmpty(metadata)) {
-            MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource(metadata);
-            Binder binder = new Binder(propertySource);
             GrayInfo bean = new GrayInfo();
-            binder.bind("gray", Bindable.ofInstance(bean));
+
+            EnvironmentUtils.binder(bean, metadata, "gray");
+
             if(CollectionUtils.isEmpty(bean.getTags())){
                 return null;
             }

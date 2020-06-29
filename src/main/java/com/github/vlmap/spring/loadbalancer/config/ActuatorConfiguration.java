@@ -15,8 +15,10 @@ import org.springframework.context.annotation.Configuration;
         value = {"vlmap.spring.loadbalancer.actuator.enabled"},
         matchIfMissing = true
 )
+
 public class ActuatorConfiguration {
     @Bean
+
     public GrayParamater GrayParamater() {
         return new GrayParamater();
     }

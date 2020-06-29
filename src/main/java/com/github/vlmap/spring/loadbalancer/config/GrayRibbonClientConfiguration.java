@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import javax.annotation.PostConstruct;
 import java.util.Set;
 
 
@@ -36,18 +37,13 @@ import java.util.Set;
 
 public class GrayRibbonClientConfiguration {
 
-    private String clientName;
 
-    public GrayRibbonClientConfiguration(IClientConfig clientConfig) {
+    @Autowired ILoadBalancer lb;
+    @Autowired IRule rule;
+    @Autowired ServerList serverList;
 
-        this.clientName = clientConfig.getClientName();
-    }
-
-
-
-    @Autowired
-    public void initLoadBalancer(ILoadBalancer lb,
-                                 IRule rule,   ServerList serverList) {
+    @PostConstruct
+    public void initLoadBalancer( ) {
 
         //替换默认ILoadBalancer为GrayLoadBalancer
 

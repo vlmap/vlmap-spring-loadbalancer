@@ -1,11 +1,21 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
 
- import org.springframework.core.env.*;
+import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.boot.bind.PropertiesConfigurationFactory;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
+import org.springframework.core.env.*;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
 public class EnvironmentUtils {
+
+    private static BeanBinder binder = Platform.isSpringBoot_2() ? new ConfigurationPropertySourceBeanBinder() : new PropertiesBeanBinder();
 
     public static List<String> getKeys(ConfigurableEnvironment environment) {
         List<String> result = new ArrayList<>();
@@ -85,5 +95,49 @@ public class EnvironmentUtils {
         }
     }
 
+    public static <T> T binder(T target, Map source,String prefix) {
+        return (T) binder.bind(target, source,prefix);
+    }
+
+
+    interface BeanBinder<T> {
+        T bind(T target, Map<String, Object> map, String prefix);
+    }
+
+    static class PropertiesBeanBinder<T> implements BeanBinder<T> {
+
+        @Override
+        public T bind(T target, Map<String, Object> map, String prefix) {
+            PropertiesConfigurationFactory factory = new PropertiesConfigurationFactory(target);
+            MapPropertySource propertySource = new MapPropertySource("binder", map);
+            MutablePropertySources propertySources = new MutablePropertySources();
+            propertySources.addLast(propertySource);
+            factory.setPropertySources(propertySources);
+            if (StringUtils.hasLength(prefix)) {
+                factory.setTargetName(prefix);
+            }
+            try {
+                factory.bindPropertiesToTarget();
+            } catch (Exception ex) {
+                String targetClass = ClassUtils.getShortName(target.getClass());
+                throw new BeanCreationException(targetClass, "Could not bind properties to "
+                        + targetClass, ex);
+            }
+            return target;
+        }
+    }
+
+    static class ConfigurationPropertySourceBeanBinder<T> implements BeanBinder<T> {
+        @Override
+        public T bind(T target, Map<String, Object> map, String prefix) {
+            MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource(map);
+            Binder binder = new Binder(propertySource);
+            binder.bind(prefix, Bindable.ofInstance(target));
+
+            return target;
+        }
+
+
+    }
 
 }

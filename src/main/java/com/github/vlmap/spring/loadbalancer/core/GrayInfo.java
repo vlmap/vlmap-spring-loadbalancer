@@ -1,13 +1,13 @@
 package com.github.vlmap.spring.loadbalancer.core;
 
-import java.util.Collections;
+ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class GrayInfo {
     Map<String, String> metadata;
 
-    private Set<String> tags = Collections.emptySet();
+    private LinkedHashSet<String> tags =null;
 
     public Map<String, String> getMetadata() {
         return metadata;
@@ -21,7 +21,7 @@ public class GrayInfo {
         return tags;
     }
 
-    public void setTags(Set<String> tags) {
+    public void setTags(LinkedHashSet<String> tags) {
         this.tags = tags;
     }
 }

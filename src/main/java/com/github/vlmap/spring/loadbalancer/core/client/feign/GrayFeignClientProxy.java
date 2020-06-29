@@ -10,17 +10,18 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.util.*;
 
 @Aspect
+
 public class GrayFeignClientProxy {
     private GrayLoadBalancerProperties properties;
-    private boolean isSpringBoot_2=false;
-    public GrayFeignClientProxy(GrayLoadBalancerProperties properties) {
+     public GrayFeignClientProxy(GrayLoadBalancerProperties properties) {
         this.properties = properties;
-        isSpringBoot_2= Platform.isSpringBoot_2();
-    }
+     }
 
     @Pointcut("execution(*   *.*.execute(feign.Request,feign.Request.Options))&&this(feign.Client)")
     public void feignClient() {
@@ -49,7 +50,7 @@ public class GrayFeignClientProxy {
                 headerMap = new LinkedHashMap<>(headerMap);
             }
             headerMap.put(headerName, Collections.unmodifiableCollection(Arrays.asList(tag)));
-            if(isSpringBoot_2){
+            if(Platform.isSpringBoot_2()){
                 request = Request.create(request.httpMethod(), request.url(), Collections.unmodifiableMap(headerMap), request.requestBody());
             }else{
                 request = Request.create(request.method(), request.url(), Collections.unmodifiableMap(headerMap), request.body(),request.charset());

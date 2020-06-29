@@ -13,8 +13,16 @@ public class Platform {
 
 
 
+    private volatile static Boolean isSpringBoot1;
+    private  volatile static Boolean isSpringBoot2;
 
 
+    static {
+        String version = org.springframework.boot.SpringBootVersion.getVersion();
+        isSpringBoot1= StringUtils.startsWith(version, "1.");
+        isSpringBoot2= StringUtils.startsWith(version, "2.");
+
+    }
 
 
 
@@ -42,13 +50,13 @@ public class Platform {
 
 
     public static boolean isSpringBoot_1(){
-        String version = org.springframework.boot.SpringBootVersion.getVersion();
-        return StringUtils.startsWith(version, "1.");
+
+        return isSpringBoot1;
 
     }
     public static boolean isSpringBoot_2(){
-        String version = org.springframework.boot.SpringBootVersion.getVersion();
-        return StringUtils.startsWith(version, "2.");
+
+        return isSpringBoot2;
 
     }
 
