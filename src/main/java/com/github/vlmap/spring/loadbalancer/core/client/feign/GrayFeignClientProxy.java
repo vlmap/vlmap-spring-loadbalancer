@@ -10,8 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.util.*;
 
@@ -19,9 +17,10 @@ import java.util.*;
 
 public class GrayFeignClientProxy {
     private GrayLoadBalancerProperties properties;
-     public GrayFeignClientProxy(GrayLoadBalancerProperties properties) {
+    private  RequestCreate requestCreate=Platform.isSpringBoot_2()?new DefaultRequestCreate():new OldRequestCreate();
+    public GrayFeignClientProxy(GrayLoadBalancerProperties properties) {
         this.properties = properties;
-     }
+    }
 
     @Pointcut("execution(*   *.*.execute(feign.Request,feign.Request.Options))&&this(feign.Client)")
     public void feignClient() {
@@ -50,11 +49,7 @@ public class GrayFeignClientProxy {
                 headerMap = new LinkedHashMap<>(headerMap);
             }
             headerMap.put(headerName, Collections.unmodifiableCollection(Arrays.asList(tag)));
-            if(Platform.isSpringBoot_2()){
-                request = Request.create(request.httpMethod(), request.url(), Collections.unmodifiableMap(headerMap), request.requestBody());
-            }else{
-                request = Request.create(request.method(), request.url(), Collections.unmodifiableMap(headerMap), request.body(),request.charset());
-            }
+            request=requestCreate.create(request,headerMap);
 
 
             args[0] = request;
@@ -97,6 +92,23 @@ public class GrayFeignClientProxy {
         }
         return header;
     }
+    interface RequestCreate{
+        Request create(Request request,Map<String, Collection<String>> headerMap);
+    }
+    static class DefaultRequestCreate implements RequestCreate {
 
+        @Override
+        public Request create(Request request, Map<String, Collection<String>> headerMap) {
+            return  Request.create(request.httpMethod(), request.url(), Collections.unmodifiableMap(headerMap), request.requestBody());
+        }
+    }
+
+    static class OldRequestCreate implements RequestCreate {
+
+        @Override
+        public Request create(Request request, Map<String, Collection<String>> headerMap) {
+            return  Request.create(request.method(), request.url(), Collections.unmodifiableMap(headerMap), request.body(), request.charset());
+        }
+    }
 
 }

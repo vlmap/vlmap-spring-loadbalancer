@@ -10,12 +10,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ResponderFilter extends CommandsListener<ResponderParamater> implements Ordered {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
     private static final String RESPONDER_COMMANDS_PREFIX = "vlmap.spring.loadbalancer.responder.commands";
-
-
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
     protected List<ResponderParamater> paramaters = Collections.emptyList();
 
     public ResponderFilter(GrayLoadBalancerProperties properties) {
@@ -40,16 +36,16 @@ public class ResponderFilter extends CommandsListener<ResponderParamater> implem
 
     @Override
     protected List<String> getCommands(GrayLoadBalancerProperties properties) {
-        return properties.getResponder()==null?null: properties.getResponder().getCommands();
+        return properties.getResponder() == null ? null : properties.getResponder().getCommands();
+    }
+
+    public List<ResponderParamater> getParamaters() {
+        return paramaters;
     }
 
     @Override
     protected void setParamaters(List list) {
         paramaters = list;
-    }
-
-    public List<ResponderParamater> getParamaters() {
-        return paramaters;
     }
 
     protected ResponderParamater getParamater(List<ResponderParamater> paramaters, String tag) {

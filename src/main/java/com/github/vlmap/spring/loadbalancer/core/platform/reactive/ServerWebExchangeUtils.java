@@ -14,11 +14,9 @@ import reactor.core.publisher.Mono;
 import java.util.function.Function;
 
 class ServerWebExchangeUtils {
-    private static final Log log = LogFactory.getLog(ServerWebExchangeUtils.class);
-
     public static final String CACHED_SERVER_HTTP_REQUEST_DECORATOR_ATTR = "cachedServerHttpRequestDecorator";
-
     public static final String CACHED_REQUEST_BODY_ATTR = "cachedRequestBody";
+    private static final Log log = LogFactory.getLog(ServerWebExchangeUtils.class);
 
     public static <T> Mono<T> cacheRequestBody(ServerWebExchange exchange,
                                                Function<ServerHttpRequest, Mono<T>> function) {

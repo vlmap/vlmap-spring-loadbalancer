@@ -26,8 +26,8 @@ public abstract class ContextManager {
 
     public static RuntimeContext getRuntimeContext() {
         if (runtimeContext == null) {
-            synchronized (ContextManager.class){
-                if(runtimeContext==null){
+            synchronized (ContextManager.class) {
+                if (runtimeContext == null) {
                     runtimeContext = Platform.isHystrix() ? new HystrixRuntimeContext() : new JdkRuntimeContext();
 
                 }

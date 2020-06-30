@@ -99,7 +99,7 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
         data.setHeaders(map);
         HttpHeaders headers = request.getHeaders();
         if (headers != null) {
-            Util.addAll(map,headers);
+            Util.addAll(map, headers);
 
         }
         map = new LinkedMultiValueMap<>();
@@ -116,7 +116,7 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         data.setParams(params);
-        Util.addAll(params,request.getQueryParams());
+        Util.addAll(params, request.getQueryParams());
 
         MediaType contentType = request.getHeaders().getContentType();
 
@@ -142,9 +142,9 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
 
                 if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
                     return exchange.getFormData().map(formData -> {
-                        Util.addAll(params,formData);
+                        Util.addAll(params, formData);
 
-                         return data;
+                        return data;
                     });
                 }
                 return Mono.just(data);

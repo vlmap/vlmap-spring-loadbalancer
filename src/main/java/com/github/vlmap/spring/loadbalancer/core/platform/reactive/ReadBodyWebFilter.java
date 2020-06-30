@@ -23,9 +23,9 @@ public class ReadBodyWebFilter extends ReadBodyFilter implements WebFilter {
 
 
     @Autowired(required = false)
-    HttpHandler httpHandler;
+    private  HttpHandler httpHandler;
 
-    HttpWebHandlerAdapter httpWebHandlerAdapter = null;
+    private   HttpWebHandlerAdapter httpWebHandlerAdapter = null;
 
     public ReadBodyWebFilter(GrayLoadBalancerProperties properties) {
         super(properties);

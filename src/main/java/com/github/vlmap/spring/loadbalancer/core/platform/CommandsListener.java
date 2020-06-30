@@ -19,9 +19,8 @@ import java.util.Set;
 
 public abstract class CommandsListener<T extends CommandParamater> {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     protected GrayLoadBalancerProperties properties;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private ObjectMapper mapper;
 

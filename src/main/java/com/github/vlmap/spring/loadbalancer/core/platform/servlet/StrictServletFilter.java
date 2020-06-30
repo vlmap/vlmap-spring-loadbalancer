@@ -18,6 +18,7 @@ public class StrictServletFilter extends StrictFilter implements Filter {
         super(properties);
 
     }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 

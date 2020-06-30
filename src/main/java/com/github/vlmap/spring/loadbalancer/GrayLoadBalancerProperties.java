@@ -23,8 +23,11 @@ public class GrayLoadBalancerProperties {
 
     private Responder responder = new Responder(true);
 
-    private Strict strict = new Strict();
+    private Strict strict = new Strict(true);
+
+
     private Enabled actuator = new Enabled(true);
+
 
     private Enabled feign = new Enabled(true);
     private Enabled restTemplate = new Enabled(true);
@@ -140,6 +143,53 @@ public class GrayLoadBalancerProperties {
         }
     }
 
+    static public class StrictIgnore {
+
+
+        private boolean enableDefault = true;
+        private ArrayList<String> path = null;
+
+        public boolean isEnableDefault() {
+            return enableDefault;
+        }
+
+        public void setEnableDefault(boolean enableDefault) {
+            this.enableDefault = enableDefault;
+        }
+
+        public ArrayList<String> getPath() {
+            return path;
+        }
+
+        public void setPath(ArrayList<String> path) {
+            this.path = path;
+        }
+    }
+
+    static public class Responder extends Enabled {
+        private ArrayList<String> commands = null;
+
+        public Responder() {
+        }
+
+        public Responder(boolean enabled) {
+            super(enabled);
+        }
+
+        /**
+         * mirror to bean  ResponderParamater
+         *
+         * @return
+         */
+        public ArrayList<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(ArrayList<String> commands) {
+            this.commands = commands;
+        }
+    }
+
     /**
      * 严格模式
      */
@@ -187,33 +237,6 @@ public class GrayLoadBalancerProperties {
 
     }
 
-    static public class StrictIgnore {
-
-
-        private boolean enableDefault = true;
-
-        public boolean isEnableDefault() {
-            return enableDefault;
-        }
-
-        public void setEnableDefault(boolean enableDefault) {
-            this.enableDefault = enableDefault;
-        }
-
-        private ArrayList<String> path = null;
-
-
-        public ArrayList<String> getPath() {
-            return path;
-        }
-
-        public void setPath(ArrayList<String> path) {
-            this.path = path;
-        }
-    }
-
- 
-
     /**
      * body缓存配置
      */
@@ -253,6 +276,8 @@ public class GrayLoadBalancerProperties {
     }
 
     public class Attacher extends Enabled {
+        private ArrayList<String> commands = new ArrayList();
+
         public Attacher() {
 
         }
@@ -260,9 +285,6 @@ public class GrayLoadBalancerProperties {
         public Attacher(boolean enabled) {
             super(enabled);
         }
-
-        private ArrayList<String> commands = new ArrayList();
-
 
         /**
          * mirror to bean  RequestMatchParamater
@@ -277,28 +299,4 @@ public class GrayLoadBalancerProperties {
             this.commands = commands;
         }
     }
-
-   static public class Responder extends Enabled {
-        public Responder() {
-        }
-
-        public Responder(boolean enabled) {
-            super(enabled);
-        }
-
-        private ArrayList<String> commands = null;
-
-
-        /**
-         * mirror to bean  ResponderParamater
-         *
-         * @return
-         */
-        public ArrayList<String> getCommands() {
-            return commands;
-        }
-
-        public void setCommands(ArrayList<String> commands) {
-            this.commands = commands;
-        }
-    }}
+}

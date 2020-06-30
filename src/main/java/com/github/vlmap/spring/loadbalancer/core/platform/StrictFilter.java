@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.registration.MetaDataProvider;
+import com.github.vlmap.spring.loadbalancer.core.MetaDataProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -15,16 +15,15 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 public class StrictFilter implements Ordered {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    protected GrayLoadBalancerProperties properties;
-
     private final AntPathMatcher matcher = new AntPathMatcher();
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected GrayLoadBalancerProperties properties;
     private List<String> ignores = Collections.emptyList();
     @Autowired(required = false)
     private MetaDataProvider metaDataProvider;
     @Autowired
     private Environment environment;
+
     public StrictFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;
     }
@@ -34,8 +33,12 @@ public class StrictFilter implements Ordered {
         List<String> patterns = new ArrayList<>();
         patterns.add("/webjars/**");
         patterns.add("/favicon.ico");
-        String path = environment.getProperty("management.endpoints.web.base-path", "/actuator");
-        patterns.add(pattern(path));
+        if(Platform.isSpringBoot_2()){
+            String path = environment.getProperty("management.endpoints.web.base-path", "/actuator");
+            patterns.add(pattern(path));
+        }
+
+
         this.ignores = Collections.unmodifiableList(patterns);
     }
 
@@ -84,7 +87,7 @@ public class StrictFilter implements Ordered {
     private boolean isIgnore(GrayLoadBalancerProperties.Strict strict, String uri) {
         boolean ignore = false;
 
-        if (strict.getIgnore()!=null&&strict.getIgnore().isEnableDefault()) {
+        if (strict.getIgnore() != null && strict.getIgnore().isEnableDefault()) {
             ignore = matcher(ignores, uri);
         }
         if (ignore) {
@@ -97,12 +100,12 @@ public class StrictFilter implements Ordered {
         return ignore;
     }
 
-    public void setIgnores(List<String> ignores) {
-        this.ignores = Collections.unmodifiableList(ignores);
-    }
-
     public List<String> getIgnores() {
         return ignores;
+    }
+
+    public void setIgnores(List<String> ignores) {
+        this.ignores = Collections.unmodifiableList(ignores);
     }
 
     public String getGrayTags() {

@@ -4,7 +4,6 @@ package com.github.vlmap.spring.loadbalancer.core;
 import com.github.vlmap.spring.loadbalancer.core.registration.GrayInfoTransform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
-import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,7 +26,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
     public GrayLoadBalancer(ILoadBalancer target, GrayInfoTransform transform) {
         this.target = target;
 
-        this.transform=transform;
+        this.transform = transform;
     }
 
 

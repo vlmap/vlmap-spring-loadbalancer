@@ -15,16 +15,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @param <T>
  */
 public abstract class AbstractGrayInfoTransform<T extends Server> implements GrayInfoTransform<T> {
-    private Map<Server, GrayInfo> caches = new ConcurrentHashMap<>();
     protected IClientConfig config = null;
+    private Map<Server, GrayInfo> caches = new ConcurrentHashMap<>();
 
     public AbstractGrayInfoTransform(IClientConfig config) {
         this.config = config;
     }
+
     public Map<T, GrayInfo> transform(List<T> servers) {
         if (CollectionUtils.isNotEmpty(servers)) {
             Map<T, GrayInfo> result = new HashMap<>(servers.size());
@@ -72,7 +72,7 @@ public abstract class AbstractGrayInfoTransform<T extends Server> implements Gra
 
             EnvironmentUtils.binder(bean, metadata, "gray");
 
-            if(CollectionUtils.isEmpty(bean.getTags())){
+            if (CollectionUtils.isEmpty(bean.getTags())) {
                 return null;
             }
             bean.setMetadata(metadata);

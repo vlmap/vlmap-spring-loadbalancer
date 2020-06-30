@@ -3,13 +3,13 @@ package com.github.vlmap.spring.loadbalancer.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
- import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
+import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
 import com.github.vlmap.spring.loadbalancer.core.registration.*;
-import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.ServerList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,19 +17,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.consul.discovery.ConsulServerList;
-import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.ribbon.PropertiesFactory;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.PostConstruct;
-import java.util.Set;
 
 
 @Configuration
@@ -38,41 +32,43 @@ import java.util.Set;
 public class GrayRibbonClientConfiguration {
 
 
-    @Autowired ILoadBalancer lb;
-    @Autowired IRule rule;
-    @Autowired ServerList serverList;
+    @Autowired
+    private  ILoadBalancer lb;
+    @Autowired
+    private   IRule rule;
+    @Autowired
+    private   ServerList serverList;
 
     @PostConstruct
-    public void initLoadBalancer( ) {
+    public void initLoadBalancer() {
 
         //替换默认ILoadBalancer为GrayLoadBalancer
 
-        GrayInfoTransform transform=null;
-        IClientConfig config=null;
+        GrayInfoTransform transform = null;
+        IClientConfig config = null;
 
 
-        if(lb instanceof BaseLoadBalancer){
-            config=     ((BaseLoadBalancer) lb).getClientConfig();
+        if (lb instanceof BaseLoadBalancer) {
+            config = ((BaseLoadBalancer) lb).getClientConfig();
 
         }
 
-        String clazz=serverList.getClass().getName();
-        if(clazz.equals("org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList")){
-            transform=new NacosGrayInfoTransform(config);
+        String clazz = serverList.getClass().getName();
+        if (clazz.equals("org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList")) {
+            transform = new NacosGrayInfoTransform(config);
 
-        } else if(clazz.equals("org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServerList")){
-            transform=new EurekaGrayInfoTransform(config);
+        } else if (clazz.equals("org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServerList")) {
+            transform = new EurekaGrayInfoTransform(config);
 
-        } else if(clazz.equals("org.springframework.cloud.consul.discovery.ConsulServerList")){
-            transform=new ConsulGrayInfoTransform(config);
+        } else if (clazz.equals("org.springframework.cloud.consul.discovery.ConsulServerList")) {
+            transform = new ConsulGrayInfoTransform(config);
 
-        }else {
-
-            transform=new StaticGrayInfoTransform(config);
+        } else {
+            transform = new StaticGrayInfoTransform(config);
         }
 
 
-        rule.setLoadBalancer(new GrayLoadBalancer(lb,transform));
+        rule.setLoadBalancer(new GrayLoadBalancer(lb, transform));
 
     }
 

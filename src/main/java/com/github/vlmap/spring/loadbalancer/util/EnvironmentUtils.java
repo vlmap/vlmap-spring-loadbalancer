@@ -15,7 +15,7 @@ import java.util.*;
 
 public class EnvironmentUtils {
 
-    private static BeanBinder binder = Platform.isSpringBoot_2() ? new ConfigurationPropertySourceBeanBinder() : new PropertiesBeanBinder();
+    private static BeanBinder binder = Platform.isSpringBoot_2() ? new PropertiesBeanBinder() : new OldPropertiesBeanBinder();
 
     public static List<String> getKeys(ConfigurableEnvironment environment) {
         List<String> result = new ArrayList<>();
@@ -31,9 +31,9 @@ public class EnvironmentUtils {
         return result;
     }
 
-    public static Map<String,String> getSubset(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
-        Map<String,String> map=new HashMap<>();
-         List<String> keys = getKeys(environment);
+    public static Map<String, String> getSubset(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
+        Map<String, String> map = new HashMap<>();
+        List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
@@ -51,7 +51,6 @@ public class EnvironmentUtils {
         return map;
 
     }
-
 
 
     public static String toSubsetKey(String key, String prefix, String delimiter) {
@@ -95,8 +94,8 @@ public class EnvironmentUtils {
         }
     }
 
-    public static <T> T binder(T target, Map source,String prefix) {
-        return (T) binder.bind(target, source,prefix);
+    public static <T> T binder(T target, Map source, String prefix) {
+        return (T) binder.bind(target, source, prefix);
     }
 
 
@@ -104,7 +103,7 @@ public class EnvironmentUtils {
         T bind(T target, Map<String, Object> map, String prefix);
     }
 
-    static class PropertiesBeanBinder<T> implements BeanBinder<T> {
+    static class OldPropertiesBeanBinder<T> implements BeanBinder<T> {
 
         @Override
         public T bind(T target, Map<String, Object> map, String prefix) {
@@ -120,14 +119,13 @@ public class EnvironmentUtils {
                 factory.bindPropertiesToTarget();
             } catch (Exception ex) {
                 String targetClass = ClassUtils.getShortName(target.getClass());
-                throw new BeanCreationException(targetClass, "Could not bind properties to "
-                        + targetClass, ex);
+                throw new BeanCreationException(targetClass, "Could not bind properties to " + targetClass, ex);
             }
             return target;
         }
     }
 
-    static class ConfigurationPropertySourceBeanBinder<T> implements BeanBinder<T> {
+    static class PropertiesBeanBinder<T> implements BeanBinder<T> {
         @Override
         public T bind(T target, Map<String, Object> map, String prefix) {
             MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource(map);

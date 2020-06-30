@@ -21,13 +21,10 @@ public class GrayParamater {
     private Environment environment;
 
 
-
-
-
     public Map<String, Object> invoke() {
         Map<String, Object> result = new LinkedHashMap<>();
         if (environment instanceof ConfigurableEnvironment) {
-            Map<String,String> map = EnvironmentUtils.getSubset((ConfigurableEnvironment) environment, "vlmap.spring.loadbalancer", true);
+            Map<String, String> map = EnvironmentUtils.getSubset((ConfigurableEnvironment) environment, "vlmap.spring.loadbalancer", true);
 
             result.put("properties", new TreeMap<>(map));
         }

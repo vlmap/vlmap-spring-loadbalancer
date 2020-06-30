@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.config;
 
 
-
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

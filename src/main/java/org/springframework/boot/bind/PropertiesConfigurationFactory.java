@@ -16,33 +16,15 @@
 
 package org.springframework.boot.bind;
 
-import java.beans.PropertyDescriptor;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.PropertySources;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.DataBinder;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
+
+import java.util.Properties;
 
 /**
  * Validate some {@link Properties} (or optionally {@link PropertySources}) by binding
@@ -60,6 +42,7 @@ public class PropertiesConfigurationFactory<T>
     public void setPropertySources(PropertySources propertySources) {
 
     }
+
     public void bindPropertiesToTarget() throws BindException {
 
 
@@ -68,6 +51,7 @@ public class PropertiesConfigurationFactory<T>
     public void setTargetName(String targetName) {
 
     }
+
     @Override
     public T getObject() throws Exception {
         return null;

@@ -15,9 +15,8 @@ public class GrayEndpoint {
     private GrayParamater paramater;
 
 
-
     @ReadOperation
-    public  Map<String, Object> get() {
+    public Map<String, Object> get() {
 
         return paramater.invoke();
     }

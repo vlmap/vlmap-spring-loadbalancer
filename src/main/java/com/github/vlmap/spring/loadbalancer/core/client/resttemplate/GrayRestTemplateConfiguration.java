@@ -8,6 +8,7 @@ import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,28 @@ import java.util.List;
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.rest-template.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(GrayLoadBalancerProperties.class)
 
- public class GrayRestTemplateConfiguration {
+public class GrayRestTemplateConfiguration {
 
 
+    @Bean
+    public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
+        return new GrayRestTemplateInterceptor();
+    }
+
+
+    private static void restTemplateCustomizer(RestTemplate restTemplate, GrayRestTemplateInterceptor interceptor) {
+
+        List<ClientHttpRequestInterceptor> list = new ArrayList<>();
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+
+        if (!interceptors.contains(interceptor)) {
+            list.add(interceptor);
+
+        }
+        list.addAll(interceptors);
+        restTemplate.setInterceptors(list);
+
+    }
     @Configuration
     @ConditionalOnClass(RestTemplateCustomizer.class)
 
@@ -28,16 +48,8 @@ import java.util.List;
         public RestTemplateCustomizer restTemplateCustomizer(GrayRestTemplateInterceptor interceptor) {
             RestTemplateCustomizer customizer = (restTemplate) -> {
 
+                GrayRestTemplateConfiguration.restTemplateCustomizer(restTemplate, interceptor);
 
-                List<ClientHttpRequestInterceptor> list = new ArrayList<>();
-                List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-
-                if (!interceptors.contains(interceptor)) {
-                    list.add(interceptor);
-
-                }
-                list.addAll(interceptors);
-                restTemplate.setInterceptors(list);
 
             };
             return customizer;
@@ -55,25 +67,13 @@ import java.util.List;
             org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer customizer = (restTemplate) -> {
 
 
-                List<ClientHttpRequestInterceptor> list = new ArrayList<>();
-                List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+                GrayRestTemplateConfiguration.restTemplateCustomizer(restTemplate, interceptor);
 
-                if (!interceptors.contains(interceptor)) {
-                    list.add(interceptor);
-
-                }
-                list.addAll(interceptors);
-                restTemplate.setInterceptors(list);
 
             };
             return customizer;
         }
 
-    }
-
-    @Bean
-    public GrayRestTemplateInterceptor grayClientHttpRequestInterceptor() {
-        return new GrayRestTemplateInterceptor();
     }
 
 

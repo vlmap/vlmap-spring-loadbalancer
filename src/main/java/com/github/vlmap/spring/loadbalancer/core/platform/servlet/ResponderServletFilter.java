@@ -27,6 +27,7 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
         super(properties);
 
     }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -46,7 +47,7 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
         String tag = httpServletRequest.getHeader(headerName);
 
 
-        if (Util.isEnabled(this.properties.getResponder())  && StringUtils.isNotBlank(tag)) {
+        if (Util.isEnabled(this.properties.getResponder()) && StringUtils.isNotBlank(tag)) {
 
             ResponderParamater data = getParamater(this.paramaters, tag);
             if (data != null) {

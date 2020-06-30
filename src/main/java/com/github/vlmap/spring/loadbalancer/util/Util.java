@@ -8,26 +8,26 @@ import java.util.List;
 import java.util.Map;
 
 public class Util {
-    private static boolean isSpringBoot_2= Platform.isSpringBoot_2();
+    private static boolean isSpringBoot_2 = Platform.isSpringBoot_2();
 
-    public static boolean isEnabled(GrayLoadBalancerProperties.Enabled enabled){
-        if(enabled!=null){
+    public static boolean isEnabled(GrayLoadBalancerProperties.Enabled enabled) {
+        if (enabled != null) {
             return enabled.isEnabled();
         }
         return false;
     }
 
 
-    public static<K,V> MultiValueMap addAll( MultiValueMap<K,V> container, MultiValueMap<K,V> values){
-        if(isSpringBoot_2){
+    public static <K, V> MultiValueMap addAll(MultiValueMap<K, V> container, MultiValueMap<K, V> values) {
+        if (isSpringBoot_2) {
             container.addAll(values);
-        }else{
+        } else {
             for (Map.Entry<K, List<V>> entry : values.entrySet()) {
-                K key=entry.getKey();
-                List<V> list=entry.getValue();
-                if(list!=null){
-                    for(V value:list){
-                        container.add(key,value);
+                K key = entry.getKey();
+                List<V> list = entry.getValue();
+                if (list != null) {
+                    for (V value : list) {
+                        container.add(key, value);
                     }
                 }
 

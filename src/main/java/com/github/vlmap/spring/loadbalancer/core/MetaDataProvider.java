@@ -1,6 +1,5 @@
-package com.github.vlmap.spring.loadbalancer.core.registration;
+package com.github.vlmap.spring.loadbalancer.core;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.alibaba.nacos.registry.NacosRegistration;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.consul.discovery.ConsulServerUtils;
@@ -10,9 +9,12 @@ import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistrati
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
+/**
+ * 获取当前示例的metadata
+ */
 public class MetaDataProvider {
-    private Registration registration;
     IMetaDataProvider metaDataProvider = null;
+    private Registration registration;
 
     public MetaDataProvider(Registration registration) {
         this.registration = registration;
@@ -41,6 +43,10 @@ public class MetaDataProvider {
             return metaDataProvider.metadata(registration);
         }
         return null;
+    }
+
+    interface IMetaDataProvider {
+        Map<String, String> metadata(Registration instanceConfig);
     }
 
     static class ConsulMetaDataProvider implements IMetaDataProvider {
@@ -76,9 +82,5 @@ public class MetaDataProvider {
 
 
         }
-    }
-
-    interface IMetaDataProvider {
-        Map<String, String> metadata(Registration instanceConfig);
     }
 }

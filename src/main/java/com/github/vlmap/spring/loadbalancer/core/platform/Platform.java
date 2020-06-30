@@ -12,32 +12,26 @@ public class Platform {
     private static final String HYSTRIX_REQUEST_VARIABLE_CLASS = " com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable";
 
 
-
     private volatile static Boolean isSpringBoot1;
-    private  volatile static Boolean isSpringBoot2;
-
+    private volatile static Boolean isSpringBoot2;
+    private static Boolean hystrix;
+    private static Boolean servlet;
+    private static Boolean reactive;
 
     static {
         String version = org.springframework.boot.SpringBootVersion.getVersion();
-        isSpringBoot1= StringUtils.startsWith(version, "1.");
-        isSpringBoot2= StringUtils.startsWith(version, "2.");
+        isSpringBoot1 = StringUtils.startsWith(version, "1.");
+        isSpringBoot2 = StringUtils.startsWith(version, "2.");
 
     }
 
-
-
-
-    private static Boolean hystrix;
-    private static Boolean servlet;
-
-    private static Boolean reactive;
     public static boolean isHystrix() {
-        if(hystrix==null){
+        if (hystrix == null) {
             if (isPresent(HYSTRIX_REQUEST_VARIABLE_CLASS, Platform.class.getClassLoader())) {
-                hystrix=true;
+                hystrix = true;
 
-            }else{
-                hystrix=     false;
+            } else {
+                hystrix = false;
             }
         }
 
@@ -45,31 +39,28 @@ public class Platform {
     }
 
 
-
-
-
-
-    public static boolean isSpringBoot_1(){
+    public static boolean isSpringBoot_1() {
 
         return isSpringBoot1;
 
     }
-    public static boolean isSpringBoot_2(){
+
+    public static boolean isSpringBoot_2() {
 
         return isSpringBoot2;
 
     }
 
     public static boolean isServlet() {
-        if(servlet==null){
+        if (servlet == null) {
             if (isPresent(REACTIVE_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
-                servlet= false;
+                servlet = false;
 
             } else if (isPresent(SERVLET_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
-                servlet= true;
+                servlet = true;
 
-            }else{
-                servlet=false;
+            } else {
+                servlet = false;
             }
         }
 
@@ -79,15 +70,15 @@ public class Platform {
 
     public static boolean isReactive() {
 
-        if(reactive==null){
+        if (reactive == null) {
             if (isPresent(REACTIVE_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
-                reactive= true;
+                reactive = true;
 
             } else if (isPresent(SERVLET_WEB_APPLICATION_CLASS, Platform.class.getClassLoader())) {
-                reactive= false;
+                reactive = false;
 
-            }else{
-                reactive=false;
+            } else {
+                reactive = false;
             }
         }
 

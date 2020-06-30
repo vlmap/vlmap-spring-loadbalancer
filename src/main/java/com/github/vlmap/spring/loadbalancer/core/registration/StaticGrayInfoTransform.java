@@ -15,10 +15,10 @@ public class StaticGrayInfoTransform extends AbstractGrayInfoTransform<Server> {
     @Override
     public Map<String, String> metadata(Server server) {
 
-        if(config!=null){
-            Map<String, Object>  properties=  config.getProperties();
-            Map<String,String> result=new HashMap<>();
-            for(Map.Entry<String,Object> entry:properties.entrySet()){
+        if (config != null) {
+            Map<String, Object> properties = config.getProperties();
+            Map<String, String> result = new HashMap<>();
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 result.put(entry.getKey(), ObjectUtils.toString(entry.getValue()));
             }
             return result;

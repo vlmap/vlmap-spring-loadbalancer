@@ -34,6 +34,7 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
         super(properties);
 
     }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -108,7 +109,7 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
         String headerName = properties.getHeaderName();
         String tag = httpServletRequest.getHeader(headerName);
 
-        if (!Util.isEnabled(this.properties.getAttacher())  || StringUtils.isNotBlank(tag)) {
+        if (!Util.isEnabled(this.properties.getAttacher()) || StringUtils.isNotBlank(tag)) {
             chain.doFilter(request, response);
             return;
         }
@@ -158,7 +159,7 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
             List<String> list = EnumerationUtils.toList(httpServletRequest.getHeaders(headerName));
             headers.put(headerName, list);
         }
-        Util.addAll(headers,values);
+        Util.addAll(headers, values);
 
         return new HttpServletRequestWrapper(httpServletRequest) {
             @Override

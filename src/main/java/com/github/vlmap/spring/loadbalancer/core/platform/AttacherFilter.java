@@ -10,11 +10,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class AttacherFilter extends CommandsListener<RequestMatchParamater> implements Ordered {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    protected List<RequestMatchParamater> paramaters = Collections.emptyList();
-
     private static final String ATTACH_COMMANDS_PREFIX = "vlmap.spring.loadbalancer.attach.commands";
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected List<RequestMatchParamater> paramaters = Collections.emptyList();
     protected MatcherProcess matcher = new MatcherProcess();
 
 
@@ -39,17 +37,17 @@ public class AttacherFilter extends CommandsListener<RequestMatchParamater> impl
 
     @Override
     protected List<String> getCommands(GrayLoadBalancerProperties properties) {
-        return properties.getAttacher()==null?null:properties.getAttacher().getCommands();
+        return properties.getAttacher() == null ? null : properties.getAttacher().getCommands();
+    }
+
+    public List<RequestMatchParamater> getParamaters() {
+        return paramaters;
     }
 
     @Override
     protected void setParamaters(List<RequestMatchParamater> paramaters) {
         this.paramaters = paramaters;
 
-    }
-
-    public List<RequestMatchParamater> getParamaters() {
-        return paramaters;
     }
 
     @Override

@@ -16,11 +16,11 @@
 
 package org.springframework.boot.actuate.endpoint.mvc;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.util.Collections;
 import java.util.Map;
-
- import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 
 public interface MvcEndpoint {
@@ -34,16 +34,17 @@ public interface MvcEndpoint {
 
     /**
      * Return the MVC path of the endpoint.
+     *
      * @return the endpoint path
      */
     String getPath();
 
     /**
      * Return if the endpoint exposes sensitive information.
+     *
      * @return if the endpoint is sensitive
      */
     boolean isSensitive();
-
 
 
 }
