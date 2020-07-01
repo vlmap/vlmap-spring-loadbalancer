@@ -1,4 +1,4 @@
-package com.github.vlmap.spring.loadbalancer.core.platform;
+package com.github.vlmap.spring.loadbalancer.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ClassUtils;

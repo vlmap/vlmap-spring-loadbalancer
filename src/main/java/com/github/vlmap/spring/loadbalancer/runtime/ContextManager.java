@@ -19,7 +19,7 @@
 package com.github.vlmap.spring.loadbalancer.runtime;
 
 
-import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
+import com.github.vlmap.spring.loadbalancer.util.Platform;
 
 public abstract class ContextManager {
     private static volatile RuntimeContext runtimeContext = null;

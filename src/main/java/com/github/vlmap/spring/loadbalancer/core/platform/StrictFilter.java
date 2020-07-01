@@ -2,6 +2,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.CurrentInstanceMetadataProvider;
+import com.github.vlmap.spring.loadbalancer.util.Platform;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
 
-import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.bind.PropertiesConfigurationFactory;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -29,6 +28,28 @@ public class EnvironmentUtils {
             }
         }
         return result;
+    }
+
+    public static <V>  Map<String,  V> getSubset(Map<String,  V> container, String prefix, boolean withPrefix) {
+        if(container==null)return  null;
+        Map<String,  V> map = new HashMap<>();
+        String delimiter = ".";
+        for (String key : container.keySet()) {
+            String childKey = toSubsetKey(key, prefix, delimiter);
+            if (childKey != null) {
+                V value = container.get(key);
+                if (withPrefix) {
+
+                    map.put(key, value);
+
+                } else {
+                    map.put(childKey, value);
+
+                }
+            }
+        }
+        return map;
+
     }
 
     public static Map<String, String> getSubset(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
@@ -95,7 +116,7 @@ public class EnvironmentUtils {
     }
 
     public static <T> T binder(T target, Map source, String prefix) {
-        if(source==null)return target;
+        if (source == null) return target;
         return (T) binder.bind(target, source, prefix);
     }
 

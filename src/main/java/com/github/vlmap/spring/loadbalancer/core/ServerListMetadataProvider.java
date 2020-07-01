@@ -22,11 +22,11 @@ public interface ServerListMetadataProvider<T extends Server> {
     Map<T, GrayMeteData> transform(List<T> servers);
 
 
-    abstract class AbstractTransform<T extends Server> implements ServerListMetadataProvider<T> {
+    abstract class AbstractServerListerMetadataProvider<T extends Server> implements ServerListMetadataProvider<T> {
         protected IClientConfig config = null;
         private Map<Server, Object[]> caches = new ConcurrentHashMap<>();
 
-        public AbstractTransform(IClientConfig config) {
+        public AbstractServerListerMetadataProvider(IClientConfig config) {
             this.config = config;
         }
 
@@ -67,7 +67,6 @@ public interface ServerListMetadataProvider<T extends Server> {
         protected GrayMeteData parse(Map<String, String> metadata) {
             if (MapUtils.isNotEmpty(metadata)) {
                 GrayMeteData bean = new GrayMeteData();
-
                 EnvironmentUtils.binder(bean, metadata, "gray");
 
                 if (CollectionUtils.isEmpty(bean.getTags())) {
@@ -81,7 +80,7 @@ public interface ServerListMetadataProvider<T extends Server> {
         protected abstract Map<String, String> metadata(T server);
     }
 
-    class StaticServerListMetadataProvider extends AbstractTransform {
+    class StaticServerListMetadataProvider extends AbstractServerListerMetadataProvider {
         public StaticServerListMetadataProvider(IClientConfig config) {
             super(config);
         }
@@ -92,12 +91,11 @@ public interface ServerListMetadataProvider<T extends Server> {
                 Map<String, Object> properties = config.getProperties();
                 Map<String, String> result = new HashMap<>();
                 if (properties != null) {
+                    properties= EnvironmentUtils.getSubset(properties,"matedata",false);
+
                     for (Map.Entry<String, Object> entry : properties.entrySet()) {
                         String key = entry.getKey();
-                        if (StringUtils.startsWith(key, "matedata.")) {
-
-                            result.put(StringUtils.substringBefore(key, "matedata."), ObjectUtils.toString(entry.getValue()));
-                        }
+                        result.put(key, ObjectUtils.toString(entry.getValue()));
 
                     }
                 }
@@ -110,7 +108,7 @@ public interface ServerListMetadataProvider<T extends Server> {
         }
     }
 
-    class EurekaServerListMetadataProvider extends AbstractTransform<DiscoveryEnabledServer> {
+    class EurekaServerListMetadataProvider extends AbstractServerListerMetadataProvider<DiscoveryEnabledServer> {
         public EurekaServerListMetadataProvider(IClientConfig config) {
             super(config);
         }
@@ -125,7 +123,7 @@ public interface ServerListMetadataProvider<T extends Server> {
         }
     }
 
-    class ConsulServerListMetadataProvider extends AbstractTransform<ConsulServer> {
+    class ConsulServerListMetadataProvider extends AbstractServerListerMetadataProvider<ConsulServer> {
         public ConsulServerListMetadataProvider(IClientConfig config) {
             super(config);
         }
@@ -137,7 +135,7 @@ public interface ServerListMetadataProvider<T extends Server> {
         }
     }
 
-    class NacosServerListMetadataProvider extends AbstractTransform<NacosServer> {
+    class NacosServerListMetadataProvider extends AbstractServerListerMetadataProvider<NacosServer> {
         public NacosServerListMetadataProvider(IClientConfig config) {
             super(config);
         }

@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.client.feign;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.platform.Platform;
+import com.github.vlmap.spring.loadbalancer.util.Platform;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import feign.Request;
