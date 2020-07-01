@@ -95,6 +95,7 @@ public class EnvironmentUtils {
     }
 
     public static <T> T binder(T target, Map source, String prefix) {
+        if(source==null)return target;
         return (T) binder.bind(target, source, prefix);
     }
 

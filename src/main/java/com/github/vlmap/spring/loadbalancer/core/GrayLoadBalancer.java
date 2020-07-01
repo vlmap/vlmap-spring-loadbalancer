@@ -69,7 +69,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
     protected List<Server> processServers(List<Server> servers) {
 
         if (CollectionUtils.isEmpty(servers)) return servers;
-        Map<Server, GrayInfo> matadatas = metadataProvider.transform(servers);
+        Map<Server, GrayMeteData> matadatas = metadataProvider.transform(servers);
         if (MapUtils.isEmpty(matadatas)) {
             return servers;             // 如果所有节点都没配标签，返回所有列表，
 
@@ -82,7 +82,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //无标签请求，排除包含标签的节点
 
             for (Server server : servers) {
-                GrayInfo info = matadatas.get(server);
+                GrayMeteData info = matadatas.get(server);
                 if (info == null || CollectionUtils.isEmpty(info.getTags())) {
                     list.add(server);
                 }
@@ -94,7 +94,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //有标签的请求,优先匹配标签
 
             for (Server server : servers) {
-                GrayInfo info = matadatas.get(server);
+                GrayMeteData info = matadatas.get(server);
 
                 if (info != null && info.getTags() != null && info.getTags().contains(tagValue)) {
                     list.add(server);
@@ -104,7 +104,7 @@ public class GrayLoadBalancer implements ILoadBalancer {
             //匹配不到则返回无标签节点
             if (list.isEmpty()) {
                 for (Server server : servers) {
-                    GrayInfo info = matadatas.get(server);
+                    GrayMeteData info = matadatas.get(server);
                     if (info == null || CollectionUtils.isEmpty(info.getTags())) {
                         list.add(server);
                     }

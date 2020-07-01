@@ -1,7 +1,9 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
+import com.github.vlmap.spring.loadbalancer.core.GrayMeteData;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
+import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
 import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,8 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 public class StrictWebFilter extends StrictFilter implements WebFilter {
 
@@ -21,7 +25,12 @@ public class StrictWebFilter extends StrictFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (!Util.isEnabled(properties.getStrict())) {
+        Map<String, String> metadata = metadata();
+        GrayMeteData object = new GrayMeteData();
+        EnvironmentUtils.binder(object, metadata, "");
+
+
+        if (!object.getStrict().isEnabled()) {
             return chain.filter(exchange);
         }
         String headerName = this.properties.getHeaderName();

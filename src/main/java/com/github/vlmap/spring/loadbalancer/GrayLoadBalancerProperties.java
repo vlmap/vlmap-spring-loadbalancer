@@ -23,7 +23,7 @@ public class GrayLoadBalancerProperties {
 
     private Responder responder = new Responder(true);
 
-    private Strict strict = new Strict(true);
+    private Strict strict = new Strict( );
 
 
     private Enabled actuator = new Enabled(true);
@@ -193,7 +193,7 @@ public class GrayLoadBalancerProperties {
     /**
      * 严格模式
      */
-    public class Strict extends Enabled {
+    public class Strict   {
         /**
          * 如果启用，正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
          */
@@ -202,13 +202,7 @@ public class GrayLoadBalancerProperties {
 
         private StrictIgnore ignore = new StrictIgnore();
 
-        public Strict() {
 
-        }
-
-        public Strict(boolean enabled) {
-            super(enabled);
-        }
 
         public int getCode() {
             return code;

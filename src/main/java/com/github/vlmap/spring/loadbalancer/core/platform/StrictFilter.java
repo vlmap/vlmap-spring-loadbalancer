@@ -108,15 +108,21 @@ public class StrictFilter implements Ordered {
         this.ignores = Collections.unmodifiableList(ignores);
     }
 
-    public String getGrayTags() {
+    public Map<String, String> metadata(){
         if (this.metaDataProvider != null) {
 
-            Map<String, String> metadata = metaDataProvider.metadata();
-            if (metadata != null) {
-                String tags = metadata.get("gray.tags");
-                return tags;
-            }
+            return metaDataProvider.metadata();
+
         }
+        return null;
+    }
+    public String getGrayTags() {
+        Map<String, String> metadata = metadata();
+        if (metadata != null) {
+            String tags = metadata.get("gray.tags");
+            return tags;
+        }
+
         return StringUtils.EMPTY;
     }
 

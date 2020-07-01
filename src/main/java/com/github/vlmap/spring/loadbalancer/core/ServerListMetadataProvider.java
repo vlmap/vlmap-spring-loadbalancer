@@ -1,7 +1,6 @@
 package com.github.vlmap.spring.loadbalancer.core;
 
-import com.github.vlmap.spring.loadbalancer.core.GrayInfo;
-import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
+ import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.Server;
@@ -20,22 +19,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface ServerListMetadataProvider<T extends Server> {
-    Map<T, GrayInfo> transform(List<T> servers);
+    Map<T, GrayMeteData> transform(List<T> servers);
 
 
     abstract class AbstractTransform<T extends Server> implements ServerListMetadataProvider<T> {
         protected IClientConfig config = null;
-        private Map<Server, GrayInfo> caches = new ConcurrentHashMap<>();
+        private Map<Server, Object[]> caches = new ConcurrentHashMap<>();
 
         public AbstractTransform(IClientConfig config) {
             this.config = config;
         }
 
-        public Map<T, GrayInfo> transform(List<T> servers) {
+        public Map<T, GrayMeteData> transform(List<T> servers) {
             if (CollectionUtils.isNotEmpty(servers)) {
-                Map<T, GrayInfo> result = new HashMap<>(servers.size());
+                Map<T, GrayMeteData> result = new HashMap<>(servers.size());
                 for (T server : servers) {
-                    GrayInfo object = transform(server);
+                    GrayMeteData object = transform(server);
                     if (object != null && CollectionUtils.isNotEmpty(object.getTags())) {
                         result.put(server, object);
                     }
@@ -45,43 +44,35 @@ public interface ServerListMetadataProvider<T extends Server> {
             return Collections.emptyMap();
         }
 
-        public GrayInfo transform(T server) {
+        public GrayMeteData transform(T server) {
             Map<String, String> metadata = metadata(server);
-            GrayInfo cache = caches.get(server);
+            if (MapUtils.isEmpty(metadata)) return null;
+            Object[] ref = caches.get(server);
+            GrayMeteData cache = null;
 
-            if (cache != null && ObjectUtils.equals(metadata, cache.getMetadata())) {
+            if (ref != null && ObjectUtils.equals(metadata, ref[1])) {
+                cache = (GrayMeteData) ref[0];
                 return cache;
 
             }
-            if (metadata != null) {
-                GrayInfo object = parse(metadata);
-                if (object != null) {
-                    caches.put(server, object);
-                } else {
-                    if (cache != null) {
-                        caches.remove(server);
 
-                    }
-                }
-                return object;
-            } else if (cache != null) {
-                caches.remove(server);
+            cache = parse(metadata);
+            caches.put(server, new Object[]{cache, metadata});
 
-            }
-            return null;
+
+            return cache;
         }
 
 
-        protected GrayInfo parse(Map<String, String> metadata) {
+        protected GrayMeteData parse(Map<String, String> metadata) {
             if (MapUtils.isNotEmpty(metadata)) {
-                GrayInfo bean = new GrayInfo();
+                GrayMeteData bean = new GrayMeteData();
 
                 EnvironmentUtils.binder(bean, metadata, "gray");
 
                 if (CollectionUtils.isEmpty(bean.getTags())) {
                     return null;
                 }
-                bean.setMetadata(metadata);
                 return bean;
             }
             return null;
