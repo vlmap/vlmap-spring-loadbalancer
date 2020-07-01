@@ -1,7 +1,7 @@
 package com.github.vlmap.spring.loadbalancer.core.platform;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.MetaDataProvider;
+import com.github.vlmap.spring.loadbalancer.core.CurrentInstanceMetadataProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ public class StrictFilter implements Ordered {
     protected GrayLoadBalancerProperties properties;
     private List<String> ignores = Collections.emptyList();
     @Autowired(required = false)
-    private MetaDataProvider metaDataProvider;
+    private CurrentInstanceMetadataProvider metaDataProvider;
     @Autowired
     private Environment environment;
 
