@@ -1,11 +1,9 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.GrayMeteData;
+import com.github.vlmap.spring.loadbalancer.core.GrayMetedata;
 import com.github.vlmap.spring.loadbalancer.core.platform.StrictFilter;
 import com.github.vlmap.spring.loadbalancer.util.EnvironmentUtils;
-import com.github.vlmap.spring.loadbalancer.util.Util;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
@@ -37,12 +35,10 @@ public class StrictServletFilter extends StrictFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        Map<String, String> metadata = metadata();
-        GrayMeteData object = new GrayMeteData();
-        EnvironmentUtils.binder(object, metadata, "");
 
 
-        if (!object.getStrict().isEnabled()) {
+
+        if (! this.properties.getStrict().isEnabled()) {
             chain.doFilter(request, response);
             return;
         }

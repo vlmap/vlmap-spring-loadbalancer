@@ -49,7 +49,7 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
 
         if (Util.isEnabled(this.properties.getResponder()) && StringUtils.isNotBlank(tag)) {
 
-            ResponderParamater data = getParamater(this.paramaters, tag);
+            ResponderParamater data = getParamater( tag);
             if (data != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Apply Responder:" + data.toString());

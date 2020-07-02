@@ -38,7 +38,7 @@ public class ResponderWebFilter extends ResponderFilter implements WebFilter {
         String tag = exchange.getRequest().getHeaders().getFirst(this.properties.getHeaderName());
         if (Util.isEnabled(this.properties.getResponder()) && StringUtils.isNotBlank(tag)) {
 
-            ResponderParamater data = getParamater(this.paramaters, tag);
+            ResponderParamater data = getParamater( tag);
             if (data != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Apply Responder:" + data.toString());

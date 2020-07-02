@@ -114,7 +114,7 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
             return;
         }
 
-        List<RequestMatchParamater> paramaters = super.paramaters;
+        List<RequestMatchParamater> paramaters = getParamaters();
         SimpleRequest data = new SimpleRequest();
 
 

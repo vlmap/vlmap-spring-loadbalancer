@@ -47,7 +47,7 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        List<RequestMatchParamater> paramaters = super.paramaters;
+        List<RequestMatchParamater> paramaters = getParamaters();
         SimpleRequest data = new SimpleRequest();
         if (CollectionUtils.isNotEmpty(paramaters)) {
 

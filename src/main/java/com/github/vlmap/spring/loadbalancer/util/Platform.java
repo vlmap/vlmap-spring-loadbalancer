@@ -11,7 +11,7 @@ public class Platform {
 
     private static final String HYSTRIX_REQUEST_VARIABLE_CLASS = " com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable";
 
-
+    private static  volatile String springBootVersion;
     private volatile static Boolean isSpringBoot1;
     private volatile static Boolean isSpringBoot2;
     private static Boolean hystrix;
@@ -19,9 +19,9 @@ public class Platform {
     private static Boolean reactive;
 
     static {
-        String version = org.springframework.boot.SpringBootVersion.getVersion();
-        isSpringBoot1 = StringUtils.startsWith(version, "1.");
-        isSpringBoot2 = StringUtils.startsWith(version, "2.");
+        springBootVersion = org.springframework.boot.SpringBootVersion.getVersion();
+        isSpringBoot1 = StringUtils.startsWith(springBootVersion, "1.");
+        isSpringBoot2 = StringUtils.startsWith(springBootVersion, "2.");
 
     }
 

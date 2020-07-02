@@ -58,7 +58,7 @@ public class StrictFilter implements Ordered {
     }
 
     /**
-     * 正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
+     * 正常请求负载到灰度节点或灰度请求负载到正常实例验证不通过
      *
      * @param uri
      * @param tag 当前请求的灰度值
@@ -70,8 +70,12 @@ public class StrictFilter implements Ordered {
         if (isIgnore(strict, uri)) {
             return true;
         }
+
         boolean isGrayServer = isGrayServer();
         boolean isGrayRequest = StringUtils.isNotBlank(tag);
+
+
+
         return isGrayServer == isGrayRequest;
 
 
