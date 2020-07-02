@@ -162,9 +162,9 @@ vlmap:
 ```     
 
 
-#（服务灰度值） 配置
-通过实例的metadata配置 灰度标签  
- gray.tags:  当前实例匹配的标签
+# 灰度标签配置
+通过实例的metadata下增加gray.tags进行配置
+ 
 以Eureka为例
 ```properties
 eureka.instance.metadata-map.gray.tags=a,b,c,d

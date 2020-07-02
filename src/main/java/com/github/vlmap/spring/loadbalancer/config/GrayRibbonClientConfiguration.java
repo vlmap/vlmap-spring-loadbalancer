@@ -3,13 +3,11 @@ package com.github.vlmap.spring.loadbalancer.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
 import com.github.vlmap.spring.loadbalancer.core.ServerListMetadataProvider;
+import com.github.vlmap.spring.loadbalancer.core.route.DefaultInitializingRouteBean;
+import com.github.vlmap.spring.loadbalancer.core.route.InitializingRouteBean;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ServerList;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,35 +20,21 @@ import org.springframework.cloud.netflix.ribbon.PropertiesFactory;
 import org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServerList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
+import org.springframework.core.annotation.Order;
 
 
 @Configuration
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
-
+@Order(10)
 public class GrayRibbonClientConfiguration {
     @Configuration
-    static class RuleConfiguration {
-
-        @Autowired
-        private ILoadBalancer lb;
-        @Autowired
-        private ServerListMetadataProvider transform;
-        @Autowired
-        private IRule rule;
-
-
-        @PostConstruct
-        public void initLoadBalancer() {
-
-            //替换默认ILoadBalancer为GrayLoadBalancer
-            rule.setLoadBalancer(new GrayLoadBalancer(lb, transform));
-
+    static class InitializingRouteConfiguration {
+        @Bean
+        @ConditionalOnMissingBean
+        public InitializingRouteBean initializingRouteBean() {
+            return new DefaultInitializingRouteBean();
         }
     }
-
-
     @Configuration
     @ConditionalOnClass(DomainExtractingServerList.class)
     static class EurekaServerListMetaDataProviderConfiguration {
