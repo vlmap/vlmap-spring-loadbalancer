@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
- * @param <K>
- * @param <V>
+ * @param <K> 需要转换的对象
+ * @param <V> 转换后的对象
  */
 public class MapCache<K, V> {
     private Logger logger = LoggerFactory.getLogger(MapCache.class);

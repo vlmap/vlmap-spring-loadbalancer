@@ -182,10 +182,8 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
     }
 
     /**
-     * 收集参数
+     * 收集请求数据
      *
-     * @param
-     * @return
      */
     protected SimpleRequest initData(HttpServletRequest httpServletRequest, SimpleRequest data) {
         return parser(data, httpServletRequest);

@@ -254,32 +254,6 @@ public class GrayLoadBalancerProperties {
         }
     }
 
-    public class Attacher extends Enabled {
-        public Attacher() {
-
-        }
-
-        public Attacher(boolean enabled) {
-            super(enabled);
-        }
-
-        private ArrayList<String> commands = new ArrayList();
-
-
-        /**
-         * mirror to bean  RequestMatchParamater
-         *
-         * @return
-         */
-        public ArrayList<String> getCommands() {
-            return commands;
-        }
-
-        public void setCommands(ArrayList<String> commands) {
-            this.commands = commands;
-        }
-    }
-
     static public class Responder extends Enabled {
         public Responder() {
         }
@@ -294,7 +268,30 @@ public class GrayLoadBalancerProperties {
         /**
          * mirror to bean  ResponderParamater
          *
-         * @return
+         *
+         */
+        public ArrayList<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(ArrayList<String> commands) {
+            this.commands = commands;
+        }
+    }
+
+    static public class Attacher extends Enabled {
+        private ArrayList<String> commands = new ArrayList();
+
+        public Attacher() {
+
+        }
+
+        public Attacher(boolean enabled) {
+            super(enabled);
+        }
+
+        /**
+         * mirror to bean  RequestMatchParamater
          */
         public ArrayList<String> getCommands() {
             return commands;

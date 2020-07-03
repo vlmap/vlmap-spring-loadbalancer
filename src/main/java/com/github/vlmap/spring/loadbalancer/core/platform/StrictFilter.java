@@ -60,7 +60,7 @@ public class StrictFilter implements Ordered {
     /**
      * 正常请求负载到灰度节点或灰度请求负载到正常实例验证不通过
      *
-     * @param uri
+     * @param uri 请求path
      * @param tag 当前请求的灰度值
      * @return
      */
@@ -91,15 +91,17 @@ public class StrictFilter implements Ordered {
 
     private boolean isIgnore(GrayLoadBalancerProperties.Strict strict, String uri) {
         boolean ignore = false;
+        if (strict != null) {
+            if (strict.getIgnore() != null && strict.getIgnore().isEnableDefault()) {
+                ignore = matcher(ignores, uri);
+            }
+            if (ignore) {
+                return true;
+            }
 
-        if (strict.getIgnore() != null && strict.getIgnore().isEnableDefault()) {
-            ignore = matcher(ignores, uri);
-        }
-        if (ignore) {
-            return true;
-        }
+            ignore = matcher(strict.getIgnore().getPath(), uri);
 
-        ignore = matcher(strict.getIgnore().getPath(), uri);
+        }
 
 
         return ignore;

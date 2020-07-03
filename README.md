@@ -3,7 +3,7 @@
  #### spring cloud 灰度路由
  
  ###更新说明
- > 支持大于1.3版本的 springboot环境  
+ > 全面支持springboot1，springboot2   
  
  > 灰度值配置使用metadata 方式配置
  
@@ -31,7 +31,7 @@
   
 1.支持的SpringBoot 版本
 
->  spring-boot 2
+>  springboot1，springboot2   
 
 2.支持的注册中心类型
   
@@ -49,23 +49,13 @@
  curl -H "LoadBalancer-Tag:debug" http://localhost:8080/demo/test
 ```
 6.MVN坐标
->Step 1. Add the JitPack repository to your build file
- ```xml
- 
-    <repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-```
->  Step 2. Add the dependency
-```xml
+  ```xml
     <dependency>
 	    <groupId>com.github.vlmap</groupId>
 	    <artifactId>vlmap-spring-loadbalancer</artifactId>
 	    <version>3.0.0.RELEASE</version>
     </dependency>
+
 ```
 7.条件匹配
 
@@ -122,12 +112,8 @@ public class WebApplication {
 ```
 
 
-11.标签负载均衡配置
-
- 
-   
- >  以下配置动态修改即时生效,建议使用配置中心对 （服务灰度值）进行配置
-   
+11.配置说明
+  
  
 ```yaml
 vlmap:
@@ -143,8 +129,8 @@ vlmap:
         enabled: true #WebClient客户端是否启用灰度路由，默认值： true
       controller:  
         enabled: true #reactive(WebFlux) 环境 controller 否启用灰度路由,保证标签能传到Contoller层，默认值： true
-      strict:  #正常请求负载到灰度节点或灰度请求负载到非灰度节点验证    
-        enabled: false  
+      strict:  #正常实例只能响应正常请求，灰度实例只能响应灰度请求,其他情况拒绝响应    
+        enabled: false  #默认值： false
         code: 403     #严格模式验证不通过返回的状态码
         message: Fibbon   #严格模式验证不通过返回的状态描述
         ignore:       #忽略列表，匹配列表的请求将不启用严格模式
@@ -163,7 +149,7 @@ vlmap:
 
 
 # 灰度标签配置
-通过实例的metadata下增加gray.tags进行配置
+通过实例的metadata增加gray.tags进行配置
  
 以Eureka为例
 ```properties
