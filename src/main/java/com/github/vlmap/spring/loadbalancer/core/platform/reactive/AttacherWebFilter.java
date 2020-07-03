@@ -6,6 +6,7 @@ import com.github.vlmap.spring.loadbalancer.core.platform.ReadBodyFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.RequestMatchParamater;
 import com.github.vlmap.spring.loadbalancer.core.platform.SimpleRequest;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,11 +43,11 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String headerName = properties.getHeaderName();
         String tag = exchange.getRequest().getHeaders().getFirst(headerName);
-        if (!this.properties.getAttacher().isEnabled() || StringUtils.isNotBlank(tag)) {
+        if (!Util.isEnabled(this.properties.getAttacher()) || StringUtils.isNotBlank(tag)) {
             return chain.filter(exchange);
         }
 
-        List<RequestMatchParamater> paramaters = super.paramaters;
+        List<RequestMatchParamater> paramaters = getParamaters();
         SimpleRequest data = new SimpleRequest();
         if (CollectionUtils.isNotEmpty(paramaters)) {
 
@@ -80,9 +81,9 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
     }
 
     /**
-     * 收集参数
+     * 收集请求数据
      *
-     * @return
+     *
      */
     protected Mono<SimpleRequest> initData(ServerWebExchange exchange, SimpleRequest data) {
         return parser(data, exchange);
@@ -98,7 +99,8 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
         data.setHeaders(map);
         HttpHeaders headers = request.getHeaders();
         if (headers != null) {
-            map.addAll(headers);
+            Util.addAll(map, headers);
+
         }
         map = new LinkedMultiValueMap<>();
         data.setCookies(map);
@@ -114,7 +116,8 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         data.setParams(params);
-        params.addAll(request.getQueryParams());
+        Util.addAll(params, request.getQueryParams());
+
         MediaType contentType = request.getHeaders().getContentType();
 
         if (ObjectUtils.equals(exchange.getAttribute(ReadBodyFilter.READ_BODY_TAG), Boolean.TRUE)) {
@@ -139,7 +142,8 @@ public class AttacherWebFilter extends AttacherFilter implements WebFilter {
 
                 if (MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(contentType)) {
                     return exchange.getFormData().map(formData -> {
-                        params.addAll(formData);
+                        Util.addAll(params, formData);
+
                         return data;
                     });
                 }

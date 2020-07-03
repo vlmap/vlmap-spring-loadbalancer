@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ReadBodyFilter;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -19,10 +20,21 @@ public class ReadBodyServletFilter extends ReadBodyFilter implements Filter {
     }
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        if (properties.getCacheBody().isEnabled()) {
+        if (Util.isEnabled(this.properties.getCacheBody())) {
 
 
             MediaType contentType = RequestUtils.getContentType(httpServletRequest.getContentType());
@@ -37,6 +49,7 @@ public class ReadBodyServletFilter extends ReadBodyFilter implements Filter {
                 httpServletRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
             }
             chain.doFilter(httpServletRequest, response);
+            return;
         }
         chain.doFilter(request, response);
 

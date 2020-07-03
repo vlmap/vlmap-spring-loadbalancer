@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderParamater;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,9 @@ public class ResponderWebFilter extends ResponderFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         String tag = exchange.getRequest().getHeaders().getFirst(this.properties.getHeaderName());
-        if (this.properties.getResponder().isEnabled() && StringUtils.isNotBlank(tag)) {
+        if (Util.isEnabled(this.properties.getResponder()) && StringUtils.isNotBlank(tag)) {
 
-            ResponderParamater data = getParamater(this.paramaters, tag);
+            ResponderParamater data = getParamater( tag);
             if (data != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Apply Responder:" + data.toString());

@@ -17,45 +17,44 @@ public class SimpleRequest {
         return method;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-
-    public MultiValueMap<String, String> getParams() {
-        return params;
-    }
-
-    public MultiValueMap<String, String> getHeaders() {
-        return headers;
-    }
-
-    public MultiValueMap<String, String> getCookies() {
-        return cookies;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public void setPath(String path) {
         this.path = path;
     }
 
+    public MultiValueMap<String, String> getParams() {
+        return params;
+    }
+
     public void setParams(MultiValueMap<String, String> params) {
         this.params = params;
+    }
+
+    public MultiValueMap<String, String> getHeaders() {
+        return headers;
     }
 
     public void setHeaders(MultiValueMap<String, String> headers) {
         this.headers = headers;
     }
 
+    public MultiValueMap<String, String> getCookies() {
+        return cookies;
+    }
+
     public void setCookies(MultiValueMap<String, String> cookies) {
         this.cookies = cookies;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public void setBody(String body) {

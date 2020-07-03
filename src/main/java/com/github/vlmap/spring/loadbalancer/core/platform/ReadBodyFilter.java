@@ -7,10 +7,9 @@ import org.springframework.core.Ordered;
 
 
 public abstract class ReadBodyFilter implements Ordered {
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    protected GrayLoadBalancerProperties properties;
     public static final String READ_BODY_TAG = "__ReadBodyTag__";
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected GrayLoadBalancerProperties properties;
 
     public ReadBodyFilter(GrayLoadBalancerProperties properties) {
         this.properties = properties;

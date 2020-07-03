@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderFilter;
 import com.github.vlmap.spring.loadbalancer.core.platform.ResponderParamater;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
@@ -28,6 +29,16 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
     }
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
@@ -36,9 +47,9 @@ public class ResponderServletFilter extends ResponderFilter implements Filter {
         String tag = httpServletRequest.getHeader(headerName);
 
 
-        if (this.properties.getResponder().isEnabled() && StringUtils.isNotBlank(tag)) {
+        if (Util.isEnabled(this.properties.getResponder()) && StringUtils.isNotBlank(tag)) {
 
-            ResponderParamater data = getParamater(this.paramaters, tag);
+            ResponderParamater data = getParamater( tag);
             if (data != null) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Apply Responder:" + data.toString());

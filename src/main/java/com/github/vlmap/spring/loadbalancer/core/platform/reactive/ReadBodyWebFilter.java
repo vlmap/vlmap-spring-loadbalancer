@@ -3,6 +3,7 @@ package com.github.vlmap.spring.loadbalancer.core.platform.reactive;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
 import com.github.vlmap.spring.loadbalancer.core.platform.ReadBodyFilter;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.PooledDataBuffer;
 import org.springframework.http.HttpMethod;
@@ -22,9 +23,9 @@ public class ReadBodyWebFilter extends ReadBodyFilter implements WebFilter {
 
 
     @Autowired(required = false)
-    HttpHandler httpHandler;
+    private  HttpHandler httpHandler;
 
-    HttpWebHandlerAdapter httpWebHandlerAdapter = null;
+    private   HttpWebHandlerAdapter httpWebHandlerAdapter = null;
 
     public ReadBodyWebFilter(GrayLoadBalancerProperties properties) {
         super(properties);
@@ -40,7 +41,7 @@ public class ReadBodyWebFilter extends ReadBodyFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (properties.getCacheBody().isEnabled()) {
+        if (Util.isEnabled(this.properties.getCacheBody())) {
             MediaType contentType = exchange.getRequest().getHeaders().getContentType();
 
             HttpMethod method = exchange.getRequest().getMethod();

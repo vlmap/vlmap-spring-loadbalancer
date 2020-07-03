@@ -1,23 +1,16 @@
 package com.github.vlmap.spring.loadbalancer.core.platform.servlet;
 
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.CurrentServer;
-import com.github.vlmap.spring.loadbalancer.core.platform.*;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnMissingClass("org.springframework.web.reactive.DispatcherHandler")
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ConditionalOnWebApplication
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
 
 public class ServletConfiguration {
-    public ServletConfiguration() {
-        Platform.getInstnce().setPlatform(Platform.SERVLET);
-    }
 
 
     @Bean
@@ -38,14 +31,20 @@ public class ServletConfiguration {
     }
 
     @Bean
-    public StrictServletFilter strictFilter(GrayLoadBalancerProperties properties, CurrentServer currentServer) {
-        return new StrictServletFilter(properties, currentServer);
+
+    public StrictServletFilter strictFilter(GrayLoadBalancerProperties properties) {
+
+        return new StrictServletFilter(properties);
     }
+
 
     @Bean
     public RuntimeRouteTagFilter runtimeRouteTagFilter(GrayLoadBalancerProperties properties) {
 
         return new RuntimeRouteTagFilter(properties);
     }
+
+
+
 
 }

@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 @ConfigurationProperties(prefix = "vlmap.spring.loadbalancer")
@@ -17,19 +17,19 @@ public class GrayLoadBalancerProperties {
     private String headerName = "Loadbalancer-Tag";
 
 
-    private CacheBody cacheBody = new CacheBody();
+    private CacheBody cacheBody = new CacheBody(true);
 
-    private Attacher attacher = new Attacher();
+    private Attacher attacher = new Attacher(true);
 
-    private Responder responder = new Responder();
+    private Responder responder = new Responder(true);
 
-    private Strict strict = new Strict();
-    private Actuator actuator = new Actuator();
+    private Strict strict = new Strict(false);
+    private Enabled actuator = new Enabled(true);
 
-    private Feign feign = new Feign();
-    private RestTemplate restTemplate = new RestTemplate();
-    private WebClient webClient = new WebClient();
-    private Controller controller = new Controller();
+    private Enabled feign = new Enabled(true);
+    private Enabled restTemplate = new Enabled(true);
+    private Enabled webClient = new Enabled(true);
+    private Enabled controller = new Enabled(true);
 
 
     public boolean isEnabled() {
@@ -48,35 +48,35 @@ public class GrayLoadBalancerProperties {
         this.headerName = headerName;
     }
 
-    public Controller getController() {
+    public Enabled getController() {
         return controller;
     }
 
-    public void setController(Controller controller) {
+    public void setController(Enabled controller) {
         this.controller = controller;
     }
 
-    public WebClient getWebClient() {
+    public Enabled getWebClient() {
         return webClient;
     }
 
-    public void setWebClient(WebClient webClient) {
+    public void setWebClient(Enabled webClient) {
         this.webClient = webClient;
     }
 
-    public RestTemplate getRestTemplate() {
+    public Enabled getRestTemplate() {
         return restTemplate;
     }
 
-    public void setRestTemplate(RestTemplate restTemplate) {
+    public void setRestTemplate(Enabled restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public Feign getFeign() {
+    public Enabled getFeign() {
         return feign;
     }
 
-    public void setFeign(Feign feign) {
+    public void setFeign(Enabled feign) {
         this.feign = feign;
     }
 
@@ -97,11 +97,11 @@ public class GrayLoadBalancerProperties {
         this.attacher = attacher;
     }
 
-    public Actuator getActuator() {
+    public Enabled getActuator() {
         return actuator;
     }
 
-    public void setActuator(Actuator actuator) {
+    public void setActuator(Enabled actuator) {
         this.actuator = actuator;
     }
 
@@ -121,8 +121,15 @@ public class GrayLoadBalancerProperties {
         this.responder = responder;
     }
 
-    static public class Actuator {
+    static public class Enabled {
         private boolean enabled = true;
+
+        public Enabled() {
+        }
+
+        public Enabled(boolean enabled) {
+            this.enabled = enabled;
+        }
 
         public boolean isEnabled() {
             return enabled;
@@ -132,64 +139,26 @@ public class GrayLoadBalancerProperties {
             this.enabled = enabled;
         }
     }
-
-    static public class Feign {
-        private boolean enabled = true;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    static public class RestTemplate {
-        private boolean enabled = true;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    static public class WebClient {
-        private boolean enabled = true;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
 
     /**
      * 严格模式
      */
-    static public class Strict {
+    public class Strict extends Enabled {
+
         /**
-         *  如果启用，正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
+         * 如果启用，正常请求负载到灰度节点或灰度请求负载到非灰度节点验证不通过
          */
-        private boolean enabled = false;
         private int code = 403;
         private String message = "Forbidden";
 
         private StrictIgnore ignore = new StrictIgnore();
 
+        public Strict() {
 
-        public boolean isEnabled() {
-            return enabled;
         }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public Strict(boolean enabled) {
+            super(enabled);
         }
 
         public int getCode() {
@@ -209,6 +178,7 @@ public class GrayLoadBalancerProperties {
         }
 
 
+
         public StrictIgnore getIgnore() {
             return ignore;
         }
@@ -217,79 +187,55 @@ public class GrayLoadBalancerProperties {
             this.ignore = ignore;
         }
 
-
     }
 
     static public class StrictIgnore {
 
 
-        private StrictDefaultIgnore Default = new StrictDefaultIgnore();
+        private boolean enableDefault = true;
 
-
-        public StrictDefaultIgnore getDefault() {
-            return Default;
+        public boolean isEnableDefault() {
+            return enableDefault;
         }
 
-        public void setDefault(StrictDefaultIgnore aDefault) {
-            Default = aDefault;
+        public void setEnableDefault(boolean enableDefault) {
+            this.enableDefault = enableDefault;
         }
 
-        private List<String> path;
+        private ArrayList<String> path = null;
 
 
-        public List<String> getPath() {
+        public ArrayList<String> getPath() {
             return path;
         }
 
-        public void setPath(List<String> path) {
+        public void setPath(ArrayList<String> path) {
             this.path = path;
         }
     }
 
-    static public class StrictDefaultIgnore {
-        private boolean enabled = true;
 
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    static public class Controller {
-        private boolean enabled = true;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
 
     /**
      * body缓存配置
      */
-    static public class CacheBody {
-        private boolean enabled = true;
+    public class CacheBody extends Enabled {
         private long maxLength = -1;
 
-        private List<MediaType> cacheBodyContentType = Arrays.asList(
+        private ArrayList<MediaType> cacheBodyContentType = new ArrayList(Arrays.asList(
                 MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_FORM_URLENCODED
 
-        );
+        ));
 
-        public boolean isEnabled() {
-            return enabled;
+        public CacheBody() {
+
         }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public CacheBody(boolean enabled) {
+            super(enabled);
         }
+
 
         public long getMaxLength() {
             return maxLength;
@@ -299,64 +245,59 @@ public class GrayLoadBalancerProperties {
             this.maxLength = maxLength;
         }
 
-        public List<MediaType> getCacheBodyContentType() {
+        public ArrayList<MediaType> getCacheBodyContentType() {
             return cacheBodyContentType;
         }
 
-        public void setCacheBodyContentType(List<MediaType> cacheBodyContentType) {
+        public void setCacheBodyContentType(ArrayList<MediaType> cacheBodyContentType) {
             this.cacheBodyContentType = cacheBodyContentType;
         }
     }
 
-    static public class Attacher {
-        private boolean enabled = true;
-        private List<String> commands;
-
-
-        public boolean isEnabled() {
-            return enabled;
+    static public class Responder extends Enabled {
+        public Responder() {
         }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public Responder(boolean enabled) {
+            super(enabled);
         }
 
-        /**
-         * mirror to bean  RequestMatchParamater
-         *
-         * @return
-         */
-        public List<String> getCommands() {
-            return commands;
-        }
+        private ArrayList<String> commands = null;
 
-        public void setCommands(List<String> commands) {
-            this.commands = commands;
-        }
-    }
-
-    static public class Responder {
-        private boolean enabled = true;
-        private List<String> commands;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
 
         /**
          * mirror to bean  ResponderParamater
          *
-         * @return
+         *
          */
-        public List<String> getCommands() {
+        public ArrayList<String> getCommands() {
             return commands;
         }
 
-        public void setCommands(List<String> commands) {
+        public void setCommands(ArrayList<String> commands) {
+            this.commands = commands;
+        }
+    }
+
+    static public class Attacher extends Enabled {
+        private ArrayList<String> commands = new ArrayList();
+
+        public Attacher() {
+
+        }
+
+        public Attacher(boolean enabled) {
+            super(enabled);
+        }
+
+        /**
+         * mirror to bean  RequestMatchParamater
+         */
+        public ArrayList<String> getCommands() {
+            return commands;
+        }
+
+        public void setCommands(ArrayList<String> commands) {
             this.commands = commands;
         }
     }

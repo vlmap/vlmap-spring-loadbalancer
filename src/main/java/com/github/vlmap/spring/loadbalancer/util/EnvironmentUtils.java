@@ -1,15 +1,20 @@
 package com.github.vlmap.spring.loadbalancer.util;
 
 
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.boot.bind.PropertiesConfigurationFactory;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.core.env.*;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnvironmentUtils {
+
+    private static BeanBinder binder = Platform.isSpringBoot_2() ? new PropertiesBeanBinder() : new OldPropertiesBeanBinder();
 
     public static List<String> getKeys(ConfigurableEnvironment environment) {
         List<String> result = new ArrayList<>();
@@ -25,30 +30,49 @@ public class EnvironmentUtils {
         return result;
     }
 
-    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
-        MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource();
+    public static <V>  Map<String,  V> getSubset(Map<String,  V> container, String prefix, boolean withPrefix) {
+        if(container==null)return  null;
+        Map<String,  V> map = new HashMap<>();
+        String delimiter = ".";
+        for (String key : container.keySet()) {
+            String childKey = toSubsetKey(key, prefix, delimiter);
+            if (childKey != null) {
+                V value = container.get(key);
+                if (withPrefix) {
+
+                    map.put(key, value);
+
+                } else {
+                    map.put(childKey, value);
+
+                }
+            }
+        }
+        return map;
+
+    }
+
+    public static Map<String, String> getSubset(ConfigurableEnvironment environment, String prefix, boolean withPrefix) {
+        Map<String, String> map = new HashMap<>();
         List<String> keys = getKeys(environment);
         String delimiter = ".";
         for (String key : keys) {
             String childKey = toSubsetKey(key, prefix, delimiter);
             if (childKey != null) {
                 if (withPrefix) {
-                    propertySource.put(key, environment.getProperty(key));
+
+                    map.put(key, environment.getProperty(key));
 
                 } else {
-                    propertySource.put(childKey, environment.getProperty(key));
+                    map.put(childKey, environment.getProperty(key));
 
                 }
             }
         }
-        return propertySource;
+        return map;
 
     }
 
-    public static MapConfigurationPropertySource getSubsetConfigurationPropertySource(ConfigurableEnvironment environment, String prefix) {
-        return getSubsetConfigurationPropertySource(environment, prefix, false);
-
-    }
 
     public static String toSubsetKey(String key, String prefix, String delimiter) {
         if (!key.startsWith(prefix)) {
@@ -91,5 +115,49 @@ public class EnvironmentUtils {
         }
     }
 
+    public static <T> T binder(T target, Map source, String prefix) {
+        if (source == null) return target;
+        return (T) binder.bind(target, source, prefix);
+    }
+
+
+    interface BeanBinder<T> {
+        T bind(T target, Map<String, Object> map, String prefix);
+    }
+
+    static class OldPropertiesBeanBinder<T> implements BeanBinder<T> {
+
+        @Override
+        public T bind(T target, Map<String, Object> map, String prefix) {
+            PropertiesConfigurationFactory factory = new PropertiesConfigurationFactory(target);
+            MapPropertySource propertySource = new MapPropertySource("binder", map);
+            MutablePropertySources propertySources = new MutablePropertySources();
+            propertySources.addLast(propertySource);
+            factory.setPropertySources(propertySources);
+            if (StringUtils.hasLength(prefix)) {
+                factory.setTargetName(prefix);
+            }
+            try {
+                factory.bindPropertiesToTarget();
+            } catch (Exception ex) {
+                String targetClass = ClassUtils.getShortName(target.getClass());
+                throw new BeanCreationException(targetClass, "Could not bind properties to " + targetClass, ex);
+            }
+            return target;
+        }
+    }
+
+    static class PropertiesBeanBinder<T> implements BeanBinder<T> {
+        @Override
+        public T bind(T target, Map<String, Object> map, String prefix) {
+            MapConfigurationPropertySource propertySource = new MapConfigurationPropertySource(map);
+            Binder binder = new Binder(propertySource);
+            binder.bind(prefix, Bindable.ofInstance(target));
+
+            return target;
+        }
+
+
+    }
 
 }

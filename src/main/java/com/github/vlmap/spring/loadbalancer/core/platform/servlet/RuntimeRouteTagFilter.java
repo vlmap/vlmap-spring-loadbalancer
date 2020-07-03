@@ -25,6 +25,15 @@ public class RuntimeRouteTagFilter implements Filter, Ordered {
         this.properties = properties;
     }
 
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
+    }
 
     @Override
     public int getOrder() {
@@ -39,7 +48,7 @@ public class RuntimeRouteTagFilter implements Filter, Ordered {
         String headerName = this.properties.getHeaderName();
         String tag = httpServletRequest.getHeader(headerName);
         RuntimeContext runtimeContext = ContextManager.getRuntimeContext();
-        ;
+
         try {
             if (StringUtils.isNotBlank(tag)) {
 

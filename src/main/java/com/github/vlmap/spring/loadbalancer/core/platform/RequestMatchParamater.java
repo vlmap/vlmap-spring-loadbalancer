@@ -39,8 +39,8 @@ public class RequestMatchParamater extends CommandParamater {
     private LinkedMultiValueMap<String, Pattern> paramsRegex;
 
 
-
-    /** JsonPath匹配. 示例：key= $.data.el[0],value=abc
+    /**
+     * JsonPath匹配. 示例：key= $.data.el[0],value=abc
      * link:https://github.com/json-path/JsonPath
      */
     private LinkedHashMap<String, String> jsonpath;

@@ -12,18 +12,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnClass(org.springframework.cloud.openfeign.FeignAutoConfiguration.class)
 @ConditionalOnProperty(name = "vlmap.spring.loadbalancer.feign.enabled", matchIfMissing = true)
+@ConditionalOnWebApplication
+@EnableConfigurationProperties(GrayLoadBalancerProperties.class)
 
 public class GrayFeignConfiguration {
 
-    @Configuration
 
-    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-    @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
-
-    static class TagFeignClientProxyConfiguration {
-        @Bean
-        public GrayFeignClientProxy feignClientProxy(GrayLoadBalancerProperties properties) {
-            return new GrayFeignClientProxy(properties);
-        }
+    @Bean
+    public GrayFeignClientProxy feignClientProxy(GrayLoadBalancerProperties properties) {
+        return new GrayFeignClientProxy(properties);
     }
+
 }

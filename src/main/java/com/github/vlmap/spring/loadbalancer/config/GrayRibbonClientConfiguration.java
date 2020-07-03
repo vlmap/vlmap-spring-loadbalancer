@@ -3,16 +3,11 @@ package com.github.vlmap.spring.loadbalancer.config;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.github.vlmap.spring.loadbalancer.GrayLoadBalancerProperties;
-import com.github.vlmap.spring.loadbalancer.core.GrayClientServer;
-import com.github.vlmap.spring.loadbalancer.core.GrayLoadBalancer;
-import com.github.vlmap.spring.loadbalancer.util.NamedContextFactoryUtils;
+import com.github.vlmap.spring.loadbalancer.core.ServerListMetadataProvider;
+import com.github.vlmap.spring.loadbalancer.core.route.DefaultInitializingRouteBean;
+import com.github.vlmap.spring.loadbalancer.core.route.InitializingRouteBean;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.ILoadBalancer;
-import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ServerList;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,90 +16,75 @@ import org.springframework.cloud.alibaba.nacos.NacosDiscoveryProperties;
 import org.springframework.cloud.alibaba.nacos.ribbon.NacosServerList;
 import org.springframework.cloud.consul.discovery.ConsulDiscoveryProperties;
 import org.springframework.cloud.consul.discovery.ConsulServerList;
-import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.netflix.ribbon.PropertiesFactory;
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.cloud.netflix.ribbon.eureka.DomainExtractingServerList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-
-import java.util.Set;
+import org.springframework.core.annotation.Order;
 
 
 @Configuration
 @EnableConfigurationProperties({GrayLoadBalancerProperties.class})
-
+@Order(10)
 public class GrayRibbonClientConfiguration {
-
-    private String clientName;
-
-    public GrayRibbonClientConfiguration(IClientConfig clientConfig) {
-
-        this.clientName = clientConfig.getClientName();
-    }
-
-    @Bean
-    public GrayClientServer clientServer(ApplicationContext context, ConfigurableEnvironment environment) {
-
-        GrayClientServer bean = new GrayClientServer(environment, clientName);
-        if (context.getParent() != null) {
-            context = context.getParent();
+    @Configuration
+    static class InitializingRouteConfiguration {
+        @Bean
+        @ConditionalOnMissingBean
+        public InitializingRouteBean initializingRouteBean() {
+            return new DefaultInitializingRouteBean();
         }
-        if (context instanceof AbstractApplicationContext) {
-            AbstractApplicationContext root = (AbstractApplicationContext) context;
-            root.addApplicationListener((EnvironmentChangeEvent event) -> {
-                bean.listener(event);
-            });
+    }
+    @Configuration
+    @ConditionalOnClass(DomainExtractingServerList.class)
+    static class EurekaServerListMetaDataProviderConfiguration {
+
+        @Bean
+        public ServerListMetadataProvider serverListMetaDataProvider(ServerList serverList, IClientConfig config) {
+            if (serverList instanceof DomainExtractingServerList) {
+                return new ServerListMetadataProvider.EurekaServerListMetadataProvider(config);
+            }
+            return new ServerListMetadataProvider.StaticServerListMetadataProvider(config);
+
         }
-        return bean;
     }
 
+    @Configuration
+    @ConditionalOnClass(NacosServerList.class)
+    static class NacosServerListMetaDataProviderConfiguration {
+        @Bean
+        public ServerListMetadataProvider serverListMetaDataProvider(ServerList serverList, IClientConfig config) {
+            if (serverList instanceof NacosServerList) {
+                return new ServerListMetadataProvider.NacosServerListMetadataProvider(config);
+            }
+            return new ServerListMetadataProvider.StaticServerListMetadataProvider(config);
 
-    @Autowired
-    public void initLoadBalancer(ILoadBalancer lb,
-                                 IRule rule,
-                                 GrayClientServer clientServer) {
-
-        //替换默认ILoadBalancer为GrayLoadBalancer
-        rule.setLoadBalancer(new GrayLoadBalancer(lb, clientServer));
-
-    }
-
-
-    @Autowired
-    public void ribbonClientRefresh(ApplicationContext context, SpringClientFactory clientFactory) {
-        ApplicationContext parent = context.getParent();
-        String name = clientName + ".";
-        if (parent instanceof AbstractApplicationContext) {
-            AbstractApplicationContext applicationContext = (AbstractApplicationContext) parent;
-            applicationContext.addApplicationListener((EnvironmentChangeEvent e) -> {
-                Set<String> keys = e.getKeys();
-                if (CollectionUtils.isNotEmpty(keys)) {
-                    for (String key : keys) {
-                        if (StringUtils.startsWith(key, name)) {
-                            NamedContextFactoryUtils.close(clientFactory, clientName);
-
-                            applicationContext.getApplicationListeners().remove(this);
-                            break;
-                        }
-                    }
-                }
-
-            });
         }
 
+    }
+
+
+    @Configuration
+    @ConditionalOnClass(ConsulServerList.class)
+    static class ConsulServerListMetaDataProviderConfiguration {
+        @Bean
+        public ServerListMetadataProvider serverListMetaDataProvider(ServerList serverList, IClientConfig config) {
+            if (serverList instanceof ConsulServerList) {
+                return new ServerListMetadataProvider.ConsulServerListMetadataProvider(config);
+            }
+            return new ServerListMetadataProvider.StaticServerListMetadataProvider(config);
+
+        }
 
     }
+
 
     @Configuration
     @ConditionalOnClass(ConsulDiscoveryProperties.class)
     @ConditionalOnProperty(name = "spring.cloud.consul.discovery.enabled", matchIfMissing = true)
 
     static class ConsulServerListConfiguration {
-        @Autowired
-        private ConsulClient client;
+
 
         /**
          * 先从Environment 读取ServerList，Consul 默认不读取静态ServerList
@@ -115,11 +95,11 @@ public class GrayRibbonClientConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean
-        public ServerList<?> ribbonServerList(IClientConfig config, ConsulDiscoveryProperties properties, PropertiesFactory propertiesFactory) {
+        public ServerList<?> ribbonServerList(IClientConfig config, ConsulClient client, ConsulDiscoveryProperties properties, PropertiesFactory propertiesFactory) {
             if (propertiesFactory.isSet(ServerList.class, config.getClientName())) {
                 return propertiesFactory.get(ServerList.class, config, config.getClientName());
             }
-            ConsulServerList serverList = new ConsulServerList(this.client, properties);
+            ConsulServerList serverList = new ConsulServerList(client, properties);
             serverList.initWithNiwsConfig(config);
 
 

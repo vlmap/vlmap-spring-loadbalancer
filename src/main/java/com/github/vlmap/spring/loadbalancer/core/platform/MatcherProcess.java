@@ -17,8 +17,9 @@ public class MatcherProcess {
     /**
      * 匹配标签后的值返回到 result
      *
-     * @param data
-     * @param paramaters
+     * @param data  请求输入对象
+     * @param jsonDocument  jsonpath对象
+     * @param paramaters 匹配规则
      * @return
      */
     public RequestMatchParamater match(SimpleRequest data, Object jsonDocument, Collection<RequestMatchParamater> paramaters) {

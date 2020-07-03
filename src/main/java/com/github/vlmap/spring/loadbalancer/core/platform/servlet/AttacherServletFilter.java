@@ -5,6 +5,7 @@ import com.github.vlmap.spring.loadbalancer.core.platform.*;
 import com.github.vlmap.spring.loadbalancer.runtime.ContextManager;
 import com.github.vlmap.spring.loadbalancer.runtime.RuntimeContext;
 import com.github.vlmap.spring.loadbalancer.util.RequestUtils;
+import com.github.vlmap.spring.loadbalancer.util.Util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.IteratorUtils;
@@ -31,6 +32,16 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
     public AttacherServletFilter(GrayLoadBalancerProperties properties) {
 
         super(properties);
+
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
 
     }
 
@@ -98,12 +109,12 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
         String headerName = properties.getHeaderName();
         String tag = httpServletRequest.getHeader(headerName);
 
-        if (!this.properties.getAttacher().isEnabled() || StringUtils.isNotBlank(tag)) {
+        if (!Util.isEnabled(this.properties.getAttacher()) || StringUtils.isNotBlank(tag)) {
             chain.doFilter(request, response);
             return;
         }
 
-        List<RequestMatchParamater> paramaters = super.paramaters;
+        List<RequestMatchParamater> paramaters = getParamaters();
         SimpleRequest data = new SimpleRequest();
 
 
@@ -148,7 +159,8 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
             List<String> list = EnumerationUtils.toList(httpServletRequest.getHeaders(headerName));
             headers.put(headerName, list);
         }
-        headers.addAll(values);
+        Util.addAll(headers, values);
+
         return new HttpServletRequestWrapper(httpServletRequest) {
             @Override
             public String getHeader(String name) {
@@ -170,10 +182,8 @@ public class AttacherServletFilter extends AttacherFilter implements Filter {
     }
 
     /**
-     * 收集参数
+     * 收集请求数据
      *
-     * @param
-     * @return
      */
     protected SimpleRequest initData(HttpServletRequest httpServletRequest, SimpleRequest data) {
         return parser(data, httpServletRequest);
